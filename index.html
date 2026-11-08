@@ -201,15 +201,17 @@ h1,h2{text-wrap:balance}
 .msg{position:relative;max-width:720px;width:100%}
 .msg.new{animation:pop .22s ease-out}
 @keyframes pop{from{transform:translateY(4px);opacity:.4}to{transform:none;opacity:1}}
-.msg .del{position:absolute;top:0;right:0}
-.msg:hover .del{opacity:1}
+.msg .del{position:absolute;top:-2px;right:0;z-index:2;font-size:13px;min-width:26px;height:26px;background:var(--sheet);border:1px solid transparent}
+.msg:hover .del,.msg:focus-within .del{opacity:1;border-color:var(--line)}
+.msg .del.armed{opacity:1;width:auto;padding:0 9px;font-size:12px;background:var(--rose-soft);color:var(--rose);border-color:var(--rose)}
+@media (hover:none){.msg .del{opacity:.55}}
 .say,.whisper{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px}
 .say>.dot,.whisper>.dot{width:34px;height:34px;font-size:14px}
 .who{display:flex;align-items:baseline;gap:8px;font-weight:600;font-size:14px;color:var(--cc)}
 .who time{font-weight:400;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .bubble{margin-top:3px;background:var(--sunk);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:9px 14px;overflow-wrap:anywhere;width:fit-content;max-width:100%}
 .whisper .bubble{background:transparent;border-style:dashed;color:var(--muted);font-style:italic}
-.whisper .who::after{content:"귓속말";font-size:11px;font-weight:500;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:0 7px}
+.whisper .who{flex-wrap:wrap}
 .narr{align-self:center;text-align:center;font-family:var(--f-narr);font-size:16.5px;line-height:1.85;padding:6px 20px;max-width:560px;overflow-wrap:anywhere}
 .narr::before,.narr::after{content:"";display:block;width:36px;height:1px;background:var(--line);margin:8px auto}
 .mimg{display:block;max-width:min(100%,420px);max-height:360px;border-radius:10px;margin:4px 0;cursor:zoom-in;border:1px solid var(--line)}
@@ -411,6 +413,10 @@ h1,h2{text-wrap:balance}
 .cover-empty{width:96px;aspect-ratio:16/9;border-radius:8px;border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:12px;flex:none}
 .cover-box img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in}
 .cover-acts{display:flex;gap:4px}
+.wh-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 14px 0;font-size:13px;color:var(--muted)}
+.wh-row select{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:4px 8px;font-size:13.5px;color:var(--ink);max-width:100%}
+.wh-row small{font-size:12px}
+.wh-to{font-size:11.5px;font-weight:500;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:0 8px;white-space:nowrap}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
@@ -604,6 +610,7 @@ h1,h2{text-wrap:balance}
               <button type="button" class="ghost" id="avClear" hidden>사진 빼기</button>
             </div>
           </div>
+          <div class="seg" id="charKindSeg" hidden style="width:100%"><button type="button" data-kind="npc" aria-pressed="true" style="flex:1">NPC</button><button type="button" data-kind="kpc" aria-pressed="false" style="flex:1">KPC (내 캐릭터)</button></div>
           <input id="charName" placeholder="이름 (예: 한서윤)" maxlength="20" autocomplete="off">
           <input id="charNote" placeholder="한 줄 소개 (예: 탐사자 · 사진기자)" maxlength="30" autocomplete="off">
           <div class="swatches" id="charSwatches"></div>
@@ -714,6 +721,7 @@ h1,h2{text-wrap:balance}
           </div>
         </div>
         <div class="attach" id="attach" hidden><img id="attachImg" alt=""><span id="attachInfo"></span><button class="x" id="attachClear" style="opacity:1" aria-label="이미지 빼기">×</button></div>
+        <div class="wh-row" id="whRow" hidden><span>🔒 받는 사람</span><select id="whTo" aria-label="귓속말 받는 사람"></select><small id="whNote"></small></div>
         <textarea id="msg" rows="2" placeholder="대사를 입력하세요"></textarea>
         <div class="send-row">
           <span class="hint"><kbd>Enter</kbd> 보내기 · <kbd>Shift</kbd>+<kbd>Enter</kbd> 줄바꿈 · 이미지는 붙여넣기·끌어놓기도 돼요</span>
@@ -794,7 +802,7 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
@@ -842,7 +850,7 @@ function makeLocal(){
       if(a.hash!==await hashPw(k,pw))throw new AppError('auth/invalid-credential');
       Object.values(db.rooms).forEach(r=>{
         if(!(r.members||[]).includes(u))return;
-        if(r.ownerUid===u){if(r.code)delete db.codes[r.code];delete db.rooms[r.id];delete db.messages[r.id];delete db.chars[r.id]}
+        if(r.ownerUid===u){if(r.code)delete db.codes[r.code];delete db.rooms[r.id];delete db.messages[r.id];delete db.chars[r.id];delete db.whispers[r.id]}
         else{r.members=r.members.filter(x=>x!==u);if(r.memberNames)delete r.memberNames[u];if(db.chars[r.id])Object.keys(db.chars[r.id]).forEach(cid=>{if(db.chars[r.id][cid].ownerUid===u)delete db.chars[r.id][cid]})}
       });
       delete db.accounts[k];write();setMe(null);emit();
@@ -884,14 +892,18 @@ function makeLocal(){
       if(ex.ownerUid!==me.uid&&r.ownerUid!==me.uid)throw new AppError('permission-denied');
       delete db.chars[id][cid];write();emit();
     },
+    watchWhispers:(id,cb)=>sub(()=>{if(isMember(db.rooms[id]))cb((db.whispers[id]||[]).filter(w=>(w.visible||[]).includes(me.uid)).map(w=>({...w,_w:true})))}),
     async addMessage(id,m){
+      if(m.type==='whisper'){(db.whispers[id]||(db.whispers[id]=[])).push({id:'w'+uid(),...m});db.rooms[id].updatedAt=m.ct;if(!write())throw new AppError('quota');emit();return}
       const list=db.messages[id]||(db.messages[id]=[]);const r=db.rooms[id];
       list.push({id:'m'+uid(),...m});const prev={u:r.updatedAt,c:r.msgCount};r.updatedAt=m.ct;r.msgCount=(r.msgCount||0)+1;
       if(!write()){list.pop();r.updatedAt=prev.u;r.msgCount=prev.c;throw new AppError('quota')}
       emit();
     },
-    async deleteMessage(id,mid){db.messages[id]=(db.messages[id]||[]).filter(m=>m.id!==mid);if(db.rooms[id])db.rooms[id].msgCount=db.messages[id].length;write();emit()},
-    async deleteRoom(id){const r=db.rooms[id];if(r&&r.code)delete db.codes[r.code];delete db.rooms[id];delete db.messages[id];delete db.chars[id];write();emit()},
+    async deleteMessage(id,mid,isW){
+      if(isW){db.whispers[id]=(db.whispers[id]||[]).filter(w=>w.id!==mid);write();emit();return}
+      db.messages[id]=(db.messages[id]||[]).filter(m=>m.id!==mid);if(db.rooms[id])db.rooms[id].msgCount=db.messages[id].length;write();emit()},
+    async deleteRoom(id){const r=db.rooms[id];if(r&&r.code)delete db.codes[r.code];delete db.rooms[id];delete db.messages[id];delete db.chars[id];delete db.whispers[id];write();emit()},
     hasRooms:u=>Object.values(db.rooms).some(r=>(r.members||[]).includes(u))
   };
 }
@@ -1009,11 +1021,18 @@ async function makeFirebase(cfg){
       e=>{if(e.code!=='permission-denied')fail(e)}),
     saveChar:(id,c)=>fs.setDoc(fs.doc(db,'rooms',id,'chars',c.id),clone(c)),
     deleteChar:(id,cid)=>fs.deleteDoc(fs.doc(db,'rooms',id,'chars',cid)),
+    watchWhispers:(id,cb)=>fs.onSnapshot(fs.query(fs.collection(db,'rooms',id,'whispers'),fs.where('visible','array-contains',me.uid)),
+      s=>cb(s.docs.map(d=>({id:d.id,...d.data(),_w:true}))),e=>{if(e.code!=='permission-denied')fail(e)}),
     async addMessage(id,m){
+      if(m.type==='whisper'){
+        await fs.addDoc(fs.collection(db,'rooms',id,'whispers'),m);
+        await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct}).catch(()=>{});return;
+      }
       await fs.addDoc(fs.collection(db,'rooms',id,'messages'),m);
       await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct,msgCount:fs.increment(1)});
     },
-    async deleteMessage(id,mid){
+    async deleteMessage(id,mid,isW){
+      if(isW){await fs.deleteDoc(fs.doc(db,'rooms',id,'whispers',mid));return}
       await fs.deleteDoc(fs.doc(db,'rooms',id,'messages',mid));
       await fs.updateDoc(fs.doc(db,'rooms',id),{msgCount:fs.increment(-1)});
     },
@@ -1021,8 +1040,9 @@ async function makeFirebase(cfg){
       const room=await fs.getDoc(fs.doc(db,'rooms',id));const code=room.exists()?room.data().code:null;
       const s=await fs.getDocs(fs.collection(db,'rooms',id,'messages'));
       const cs=await fs.getDocs(fs.collection(db,'rooms',id,'chars'));
+      const ws=await fs.getDocs(fs.query(fs.collection(db,'rooms',id,'whispers'),fs.where('visible','array-contains',me.uid)));
       let b=fs.writeBatch(db),n=0;
-      for(const d of [...s.docs,...cs.docs]){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
+      for(const d of [...s.docs,...cs.docs,...ws.docs]){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
       if(code)b.delete(fs.doc(db,'codes',code));
       b.delete(fs.doc(db,'rooms',id));await b.commit();
     },
@@ -1140,7 +1160,7 @@ const dot=(c,cls='')=>`<span class="dot ${cls}" style="--cc:${esc(c.color||'#6c6
 
 /* ---------------- App state ---------------- */
 let B=null,me=null,rooms=[],filter='all',unsubHome=null;
-let roomId=null,R=null,M=[],CH=[],unsubRoom=[],lastCount=0;
+let roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null;
 let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
@@ -1405,7 +1425,7 @@ $('#pfDelForm').addEventListener('submit',async e=>{
 });
 
 /* ---------------- Room ---------------- */
-function closeRoom(){closeSheet();unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
+function closeRoom(){closeSheet();unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];MP=[];MW=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
 function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
@@ -1426,9 +1446,12 @@ function openRoom(id){
     if(!R)return;R.chars=CH;fixSpeaker();renderRoom();renderLog(false);
     if(sheetCid&&!$('#sheet').contains(document.activeElement))renderSheet();
   }));
-  unsubRoom.push(B.watchMessages(id,list=>{M=list.sort((a,b)=>(a.ct||0)-(b.ct||0));if(R)renderLog(true)}));
+  const merge=()=>{M=[...MP,...MW].sort((a,b)=>(a.ct||0)-(b.ct||0));if(R)renderLog(true)};
+  unsubRoom.push(B.watchMessages(id,list=>{MP=list;merge()}));
+  unsubRoom.push(B.watchWhispers(id,list=>{MW=list;merge()}));
+  whTo=(lsGet('bt-room-'+id,{})||{}).whTo||null;
 }
-function remember(){lsSet('bt-room-'+roomId,{speaker:speakerId,mode})}
+function remember(){lsSet('bt-room-'+roomId,{speaker:speakerId,mode,whTo})}
 function renderMissing(){
   $('#log').innerHTML=`<div class="notfound"><b>들어갈 수 없는 방이에요</b><p style="color:var(--muted);margin:0 0 14px">방이 지워졌거나, 아직 참가하지 않은 방이에요.<br>방장에게 참가 코드를 받아 홈에서 입력해 주세요.</p><button class="btn primary" id="nfBack">세션 목록으로</button></div>`;
   $('#nfBack').onclick=()=>{location.hash=''};
@@ -1438,6 +1461,9 @@ const isGM=()=>!!(R&&me&&R.ownerUid===me.uid);
 const ownerOf=c=>c.ownerUid||R.ownerUid;
 const canEdit=c=>!!c&&(ownerOf(c)===me.uid||isGM());
 const mine=()=>R.chars.filter(c=>ownerOf(c)===me.uid);
+const hasKpc=()=>R.chars.some(c=>c.id===me.uid);
+let charKind='npc';
+function setCharKind(k){charKind=k;$$('#charKindSeg [data-kind]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.kind===k))}
 const speaker=()=>R.chars.find(c=>c.id===speakerId&&ownerOf(c)===me.uid);
 function fixSpeaker(){const m=mine();if(!m.some(c=>c.id===speakerId))speakerId=((m.find(c=>!c.gm)||m[0])||{}).id||null}
 function renderRoom(){
@@ -1446,7 +1472,7 @@ function renderRoom(){
   const st=R.status||'live',sel=$('#statusSel');sel.value=st;sel.className='pill status-sel st-'+st;
   const ended=st==='ended',noChar=!mine().length;
   $('#composer').hidden=ended||noChar;$('#endedBar').hidden=!ended;$('#needChar').hidden=ended||!noChar;
-  const addBtn=$('#addCharBtn');addBtn.hidden=!isGM()&&!noChar;addBtn.textContent=isGM()?'+ NPC 추가':'+ 내 캐릭터';
+  const addBtn=$('#addCharBtn');addBtn.hidden=!isGM()&&!noChar;addBtn.textContent=isGM()?(hasKpc()?'+ NPC 추가':'+ NPC·KPC 추가'):'+ 내 캐릭터';
   $('#roomCode').textContent=R.code||'······';
   const own=isGM();$('#coverSec').hidden=!R.cover&&!own;$('#coverActs').hidden=!own;$('#coverClear').hidden=!R.cover;
   $('#coverPickBtn').textContent=R.cover?'바꾸기':'+ 넣기';
@@ -1456,7 +1482,7 @@ function renderRoom(){
   $('#leaveBtn').hidden=R.ownerUid===me.uid;
   $('#chars').innerHTML=R.chars.length?R.chars.map(c=>{
     const own=ownerOf(c)===me.uid,edit=canEdit(c);
-    const tag=c.gm?'진행':ownerOf(c)===R.ownerUid?'NPC':'';
+    const tag=c.gm?'진행':ownerOf(c)===R.ownerUid?(c.id===R.ownerUid?'KPC':'NPC'):'';
     const who=own?'':(names[ownerOf(c)]||'');
     return `<li class="char${c.id===speakerId?' on':''}">
     <button class="char-pick" ${own?`data-pick="${c.id}"`:`data-sheet="${c.id}"`}>${dot(c)}<span class="char-text"><span class="char-name">${esc(c.name)}</span><span class="char-note">${esc(c.note||'')}${who?`<span class="char-owner">${c.note?' · ':''}${esc(who)}</span>`:''}</span></span></button>
@@ -1474,12 +1500,13 @@ function renderRoom(){
   $('#quick').innerHTML=R.macros.filter(m=>m.on).map(m=>`<button class="qbtn" data-run="${m.id}"><i>${esc(m.f)}</i>${esc(m.name)}${m.t?' '+m.t:''}</button>`).join('');
   $$('#modes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));
   const sp=speaker();
-  $('#msg').placeholder={say:sp?`${sp.name}의 대사를 입력하세요`:'대사를 입력하세요',narr:'상황이나 행동을 서술하세요',whisper:'다른 사람에게 몰래 남길 말'}[mode];
+  $('#msg').placeholder={say:sp?`${sp.name}의 대사를 입력하세요`:'대사를 입력하세요',narr:'상황이나 행동을 서술하세요',whisper:isGM()?'받는 사람에게만 보이는 말':'받는 사람과 방장에게만 보이는 말'}[mode];
+  renderWhTargets();
 }
 function msgHTML(m,opts={}){
   const ch=R&&R.chars.find(x=>x.id===m.cid);if(ch)m={...m,name:ch.name,color:ch.color,avatar:ch.avatar};
   const canDel=!opts.export&&R&&me&&(!m.uid||m.uid===me.uid||R.ownerUid===me.uid);
-  const del=canDel?`<button class="x del" data-delmsg="${esc(m.id)}" aria-label="메시지 삭제">×</button>`:'';
+  const del=canDel?`<button class="x del" data-delmsg="${esc(m.id)}"${m._w?' data-w="1"':''} aria-label="메시지 삭제" title="${m.uid===me.uid?'내 메시지 삭제':'메시지 삭제 (방장)'}">×</button>`:'';
   const player=!opts.export&&R&&m.uid&&(R.members||[]).length>1&&R.memberNames?R.memberNames[m.uid]:'';
   const cls=opts.isNew?' new':'';
   const img=m.img?`<img class="mimg" src="${esc(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
@@ -1487,8 +1514,14 @@ function msgHTML(m,opts={}){
   if(m.type==='dice')return `<div class="msg dice-row${cls}" style="--cc:${esc(m.color)}">${del}<div class="dice"><div class="die">${esc(m.total)}</div><div class="dice-meta">
     <div class="dice-top"><b>${esc(m.name)}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${m.verdict?`<span class="verdict ${esc(m.vc)}">${esc(m.verdict)}</span>`:''}</div>
     <div class="dice-f">${esc(m.f)} → ${esc(m.detail)}</div></div></div></div>`;
+  let wt='';
+  if(m.type==='whisper'){
+    const tc=R&&m.toCid&&R.chars.find(x=>x.id===m.toCid),toName=tc?tc.name:(m.toName||'');
+    const third=me&&m.uid!==me.uid&&m.toUid!==me.uid;
+    wt=`<span class="wh-to">🔒 ${toName?esc(toName)+'에게 귓속말':'귓속말'}${third?' · 방장만 보임':''}</span>`;
+  }
   return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${cls}" style="--cc:${esc(m.color)}">${del}${dot(m)}
-    <div style="min-width:0"><div class="who">${esc(m.name)} <time>${hhmm(m.ct)}</time>${player?`<span class="by">· ${esc(player)}</span>`:''}</div><div class="bubble">${img}${m.text?fmt(m.text):''}</div></div></div>`;
+    <div style="min-width:0"><div class="who">${esc(m.name)} <time>${hhmm(m.ct)}</time>${player?`<span class="by">· ${esc(player)}</span>`:''}${wt}</div><div class="bubble">${img}${m.text?fmt(m.text):''}</div></div></div>`;
 }
 function logBody(list,opts={}){
   let out='',day='';
@@ -1518,6 +1551,15 @@ function rollMsg(f,label,target,cid){
   push({type:'dice',label:label||'',f,total:r.total,detail:r.detail,target:target||null,verdict:j.v,vc:j.c},cid);
   return {r,j};
 }
+function whTargets(){return R?R.chars.filter(c=>ownerOf(c)!==me.uid):[]}
+function renderWhTargets(){
+  const row=$('#whRow');row.hidden=mode!=='whisper';if(row.hidden)return;
+  const names=R.memberNames||{},list=whTargets();
+  if(!list.some(c=>c.id===whTo))whTo=list[0]?list[0].id:null;
+  $('#whTo').innerHTML=list.length?list.map(c=>`<option value="${esc(c.id)}"${c.id===whTo?' selected':''}>${esc(c.name)}${ownerOf(c)===R.ownerUid?' (방장)':names[ownerOf(c)]?' · '+esc(names[ownerOf(c)]):''}</option>`).join(''):'<option value="">보낼 수 있는 사람이 없어요</option>';
+  $('#whNote').textContent=isGM()?'받는 사람에게만 보여요':'받는 사람과 방장에게만 보여요';
+}
+$('#whTo').addEventListener('change',e=>{whTo=e.target.value||null;remember()});
 let sending=false;
 async function send(){
   if(sending||!R)return;
@@ -1525,8 +1567,14 @@ async function send(){
   if(!text&&!pendingImg)return;
   const cmd=!pendingImg&&text.match(/^\/(?:r|roll|ㄱ)\s+([^\s<]+)(?:\s*<=?\s*(\d+))?\s*(.*)$/i);
   if(cmd){if(rollMsg(cmd[1],cmd[3],cmd[2]?+cmd[2]:null)){ta.value='';autoGrow()}ta.focus();return}
+  let extra={};
+  if(mode==='whisper'){
+    const tc=R.chars.find(c=>c.id===whTo&&ownerOf(c)!==me.uid);
+    if(!tc){toast('귓속말을 받을 사람을 골라 주세요');return}
+    const toUid=ownerOf(tc);extra={toCid:tc.id,toName:tc.name,toUid,visible:[...new Set([me.uid,toUid,R.ownerUid])]};
+  }
   sending=true;$('#sendBtn').disabled=true;
-  const ok=await push({type:mode,text,...(pendingImg?{img:pendingImg}:{})});
+  const ok=await push({type:mode,text,...extra,...(pendingImg?{img:pendingImg}:{})});
   sending=false;$('#sendBtn').disabled=false;
   if(ok){ta.value='';pendingImg=null;showAttach();autoGrow()}
   ta.focus();
@@ -1574,7 +1622,9 @@ document.addEventListener('click',e=>{
   if(d.toggle){const macros=R.macros.map(m=>m.id===d.toggle?{...m,on:!m.on}:m);saveRoom({macros});renderRoom();return}
   if(d.delmac){saveRoom({macros:R.macros.filter(m=>m.id!==d.delmac)});renderRoom();return}
   if(d.run){const m=R.macros.find(m=>m.id===d.run);if(m)rollMsg(m.f,m.name,m.t);return}
-  if(d.delmsg){B.deleteMessage(roomId,d.delmsg).catch(()=>toast('지우지 못했어요'));return}
+  if(d.delmsg){
+    if(!t.classList.contains('armed')){t.classList.add('armed');t.textContent='삭제할까요?';setTimeout(()=>{if(t.isConnected){t.classList.remove('armed');t.textContent='×'}},3000);return}
+    B.deleteMessage(roomId,d.delmsg,!!d.w).then(()=>toast('메시지를 지웠어요')).catch(()=>toast('지우지 못했어요'));return}
   if(d.mode){mode=d.mode;remember();renderRoom();$('#msg').focus();return}
   if(d.wrap){wrap(d.wrap);return}
   if(d.color){wrap('{'+d.color+'|','}');return}
@@ -1638,12 +1688,15 @@ function openCharForm(c){
   editing=c?c.id:null;
   $('#charName').value=c?c.name:'';$('#charNote').value=c&&c.note||'';
   pickColor=c?c.color:COLORS[R.chars.length%6];pickAv=c&&c.avatar||null;
-  $('#charFormTitle').textContent=c?`${c.name} 프로필 수정`:isGM()?'새 NPC':'내 캐릭터 만들기';
+  const kpcOk=!c&&isGM()&&!hasKpc();
+  $('#charKindSeg').hidden=!kpcOk;setCharKind('npc');
+  $('#charFormTitle').textContent=c?`${c.name} 프로필 수정`:isGM()?(kpcOk?'새 NPC 또는 KPC':'새 NPC'):'내 캐릭터 만들기';
   $('#charSubmit').textContent=c?'저장':'추가';
   swatches();avPreview();$('#charForm').hidden=false;$('#charName').focus();
 }
 $('#charSwatches').addEventListener('click',e=>{const b=e.target.closest('[data-sw]');if(b){pickColor=b.dataset.sw;swatches();avPreview()}});
 $('#addCharBtn').onclick=()=>openCharForm(null);
+$('#charKindSeg').addEventListener('click',e=>{const b=e.target.closest('[data-kind]');if(b)setCharKind(b.dataset.kind)});
 $('#needCharBtn').onclick=()=>{drawer(true);openCharForm(null)};
 $('#charCancel').onclick=()=>{$('#charForm').hidden=true;editing=null};
 $('#charName').addEventListener('input',avPreview);
@@ -1656,10 +1709,11 @@ $('#charForm').addEventListener('submit',async e=>{e.preventDefault();
   if(editing){const old=R.chars.find(x=>x.id===editing);if(!canEdit(old))return;c={...old,name:n,note,color:pickColor,avatar:pickAv}}
   else{
     if(!isGM()&&mine().length){toast('이 방에서는 캐릭터를 하나만 만들 수 있어요');return}
-    c={id:isGM()?uid():me.uid,ownerUid:me.uid,name:n,note,color:pickColor,avatar:pickAv,sheetKind:defaultKind()};
+    const asKpc=isGM()&&charKind==='kpc'&&!hasKpc();
+    c={id:isGM()&&!asKpc?uid():me.uid,ownerUid:me.uid,name:n,note,color:pickColor,avatar:pickAv,sheetKind:defaultKind()};
   }
   editing=null;$('#charForm').hidden=true;
-  try{await B.saveChar(roomId,c);if(isNew){speakerId=c.id;remember();toast(`${c.name} 등장! 📜 시트에서 능력치를 정해 보세요`)}else toast('프로필을 저장했어요')}
+  try{await B.saveChar(roomId,c);if(isNew){speakerId=c.id;remember();toast(`${c.name}${isGM()?(c.id===me.uid?'(KPC)':'(NPC)'):''} 등장! 📜 시트에서 능력치를 정해 보세요`)}else toast('프로필을 저장했어요')}
   catch(x){toast(errText(x))}
 });
 
@@ -1871,7 +1925,7 @@ function plainLog(){
     if(m.type==='dice')return `🎲 ${name} · ${m.label||'주사위'} ${m.f}${m.target?' (≤'+m.target+')':''} → ${m.total}${m.verdict?' '+m.verdict:''}`;
     const img=m.img?' [이미지]':'';
     if(m.type==='narr')return `— ${plain(m.text)}${img}`;
-    return `${name}${m.type==='whisper'?'(귓속말)':''}: ${plain(m.text)}${img}`;
+    return `${name}${m.type==='whisper'?`(귓속말→${m.toName||''})`:''}: ${plain(m.text)}${img}`;
   }).join('\n');
 }
 function exportHeader(){

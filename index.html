@@ -336,6 +336,13 @@ h1,h2{text-wrap:balance}
 .sk:hover .x{opacity:1}
 .sheet-foot{font-size:12px;color:var(--muted);margin:0}
 .btn.sm{padding:3px 10px;font-size:12.5px}
+.sheet.ro .step,.sheet.ro [data-sdel],.sheet.ro [data-sadd],.sheet.ro [data-srand],.sheet.ro .rollb{display:none}
+.sheet.ro .ab input,.sheet.ro .num{pointer-events:none;background:transparent;border-color:transparent}
+.ro-note{font-size:12px;color:var(--muted);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:0}
+.sk-search{width:100%;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:6px 10px;font-size:13.5px;margin-bottom:6px}
+.sk-search:focus{border-color:var(--accent);outline:none}
+.sk.up .lbl{font-weight:600;color:var(--accent)}
+.char-owner{color:var(--muted);font-size:11px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
 .lightbox img{max-width:100%;max-height:100%;border-radius:8px}
@@ -569,6 +576,7 @@ h1,h2{text-wrap:balance}
       </div>
     </div>
     <aside class="sheet" id="sheet" hidden aria-label="캐릭터 시트"></aside>
+    <div class="ended-bar" id="needChar" hidden>이 방에서 쓸 내 캐릭터를 먼저 만들어 주세요. <button class="btn primary" id="needCharBtn">캐릭터 만들기</button></div>
     <div class="ended-bar" id="endedBar" hidden>종료된 세션이에요. 로그는 그대로 볼 수 있어요. <button class="btn" id="reopenBtn">다시 열기</button></div>
   </main>
 </div>
@@ -603,7 +611,7 @@ let toastT;
 function toast(s){const el=$('#toast');el.textContent=s;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200)}
 
 /* ---------------- Storage + accounts ---------------- */
-const LS_KEY='bungae-table-v3';
+const LS_KEY='bungae-table-v4';
 const CODE_ABC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const makeCode=()=>Array.from(crypto.getRandomValues(new Uint32Array(6)),n=>CODE_ABC[n%CODE_ABC.length]).join('');
 const normCode=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -617,7 +625,7 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
@@ -655,6 +663,19 @@ function makeLocal(){
     },
     async leaveRoom(id){const r=db.rooms[id];if(!r)return;r.members=r.members.filter(u=>u!==me.uid);if(r.memberNames)delete r.memberNames[me.uid];write();emit()},
     async updateRoom(id,patch){if(!db.rooms[id])return;Object.assign(db.rooms[id],patch);write();emit()},
+    watchChars:(id,cb)=>sub(()=>{if(isMember(db.rooms[id]))cb(Object.values(db.chars[id]||{}).map(clone))}),
+    async saveChar(id,c){
+      const r=db.rooms[id];if(!isMember(r))throw new AppError('permission-denied');
+      const box=db.chars[id]||(db.chars[id]={}),ex=box[c.id];
+      if(ex){if(ex.ownerUid!==me.uid&&r.ownerUid!==me.uid)throw new AppError('permission-denied')}
+      else{if(c.ownerUid!==me.uid)throw new AppError('permission-denied');if(c.id!==me.uid&&r.ownerUid!==me.uid)throw new AppError('char/limit')}
+      box[c.id]=clone(c);write();emit();
+    },
+    async deleteChar(id,cid){
+      const r=db.rooms[id],ex=(db.chars[id]||{})[cid];if(!ex)return;
+      if(ex.ownerUid!==me.uid&&r.ownerUid!==me.uid)throw new AppError('permission-denied');
+      delete db.chars[id][cid];write();emit();
+    },
     async addMessage(id,m){
       const list=db.messages[id]||(db.messages[id]=[]);const r=db.rooms[id];
       list.push({id:'m'+uid(),...m});const prev={u:r.updatedAt,c:r.msgCount};r.updatedAt=m.ct;r.msgCount=(r.msgCount||0)+1;
@@ -662,7 +683,7 @@ function makeLocal(){
       emit();
     },
     async deleteMessage(id,mid){db.messages[id]=(db.messages[id]||[]).filter(m=>m.id!==mid);if(db.rooms[id])db.rooms[id].msgCount=db.messages[id].length;write();emit()},
-    async deleteRoom(id){const r=db.rooms[id];if(r&&r.code)delete db.codes[r.code];delete db.rooms[id];delete db.messages[id];write();emit()},
+    async deleteRoom(id){const r=db.rooms[id];if(r&&r.code)delete db.codes[r.code];delete db.rooms[id];delete db.messages[id];delete db.chars[id];write();emit()},
     hasRooms:u=>Object.values(db.rooms).some(r=>(r.members||[]).includes(u))
   };
 }
@@ -715,6 +736,10 @@ async function makeFirebase(cfg){
     },
     leaveRoom:id=>fs.updateDoc(fs.doc(db,'rooms',id),{members:fs.arrayRemove(me.uid),['memberNames.'+me.uid]:fs.deleteField()}),
     updateRoom:(id,patch)=>fs.updateDoc(fs.doc(db,'rooms',id),patch),
+    watchChars:(id,cb)=>fs.onSnapshot(fs.collection(db,'rooms',id,'chars'),s=>cb(s.docs.map(d=>({...d.data(),id:d.id}))),
+      e=>{if(e.code!=='permission-denied')fail(e)}),
+    saveChar:(id,c)=>fs.setDoc(fs.doc(db,'rooms',id,'chars',c.id),clone(c)),
+    deleteChar:(id,cid)=>fs.deleteDoc(fs.doc(db,'rooms',id,'chars',cid)),
     async addMessage(id,m){
       await fs.addDoc(fs.collection(db,'rooms',id,'messages'),m);
       await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct,msgCount:fs.increment(1)});
@@ -726,8 +751,9 @@ async function makeFirebase(cfg){
     async deleteRoom(id){
       const room=await fs.getDoc(fs.doc(db,'rooms',id));const code=room.exists()?room.data().code:null;
       const s=await fs.getDocs(fs.collection(db,'rooms',id,'messages'));
+      const cs=await fs.getDocs(fs.collection(db,'rooms',id,'chars'));
       let b=fs.writeBatch(db),n=0;
-      for(const d of s.docs){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
+      for(const d of [...s.docs,...cs.docs]){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
       if(code)b.delete(fs.doc(db,'codes',code));
       b.delete(fs.doc(db,'rooms',id));await b.commit();
     },
@@ -746,6 +772,7 @@ const ERR_MSG={
   'auth/network-request-failed':'인터넷 연결을 확인해 주세요.',
   'auth/operation-not-allowed':'Firebase 콘솔에서 이메일/비밀번호 로그인을 켜 주세요. (README 1-2단계)',
   'local/no-reset':'혼자 모드에서는 비밀번호 찾기를 쓸 수 없어요.',
+  'char/limit':'이 방에서는 캐릭터를 하나만 만들 수 있어요. NPC는 방장만 만들 수 있어요.',
   'room/not-found':'그 코드의 방을 찾지 못했어요. 코드를 다시 확인해 주세요.',
   'permission-denied':'권한이 없어요. 로그인 상태와 Firestore 규칙을 확인해 주세요.'
 };
@@ -837,7 +864,7 @@ const dot=(c,cls='')=>`<span class="dot ${cls}" style="--cc:${esc(c.color||'#6c6
 
 /* ---------------- App state ---------------- */
 let B=null,me=null,rooms=[],filter='all',unsubHome=null;
-let roomId=null,R=null,M=[],unsubRoom=[],lastCount=0;
+let roomId=null,R=null,M=[],CH=[],unsubRoom=[],lastCount=0;
 let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
@@ -944,14 +971,14 @@ $('#newRoomForm').addEventListener('submit',async e=>{
   const sys=$('#nrSys').value,gm=$('#nrGm').value.trim()||'키퍼',t=now();
   const room={name,system:sys,desc:$('#nrDesc').value.trim(),status:'live',createdAt:t,updatedAt:t,msgCount:0,
     ownerUid:me.uid,members:[me.uid],memberNames:{[me.uid]:me.nick},
-    chars:[{id:uid(),name:gm,color:COLORS[6],gm:true}],
     macros:(PRESET_MACROS[sys]||[]).map(m=>({id:uid(),name:m.name,f:m.f,t:null,on:true}))};
-  try{const {id,code}=await B.createRoom(room);['#nrName','#nrDesc','#nrGm'].forEach(s=>$(s).value='');toast(`방을 만들었어요. 참가 코드: ${code}`);location.hash='room-'+id}
+  try{const {id,code}=await B.createRoom(room);
+    try{await B.saveChar(id,{id:uid(),ownerUid:me.uid,name:gm,color:COLORS[6],gm:true})}catch(x){}['#nrName','#nrDesc','#nrGm'].forEach(s=>$(s).value='');toast(`방을 만들었어요. 참가 코드: ${code}`);location.hash='room-'+id}
   catch(x){err.textContent='방을 만들지 못했어요. '+errText(x);err.hidden=false}
 });
 
 /* ---------------- Room ---------------- */
-function closeRoom(){closeSheet();unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];lastCount=0;pendingImg=null;showAttach()}
+function closeRoom(){closeSheet();unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
 function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
@@ -962,12 +989,16 @@ function openRoom(id){
   let loaded=false;const timer=setTimeout(()=>{if(!loaded)toast('불러오는 데 오래 걸려요. 연결을 확인해 주세요')},10000);
   unsubRoom.push(B.watchRoom(id,r=>{
     loaded=true;clearTimeout(timer);
-    R=r;if(!R.chars||!R.chars.length)R.chars=[{id:uid(),name:'키퍼',color:COLORS[6],gm:true}];R.macros=R.macros||[];
-    if(!R.chars.some(c=>c.id===speakerId))speakerId=(R.chars.find(c=>!c.gm)||R.chars[0]).id;
-    if(sheetDirty){const c=R.chars.find(c=>c.id===sheetDirty.cid);if(c){c.sheets=sheetDirty.sheets;c.sheetKind=sheetDirty.kind}}
+    R=r;R.chars=CH;R.macros=R.macros||[];fixSpeaker();
     renderRoom();renderLog(false);
     if(sheetCid&&!$('#sheet').contains(document.activeElement))renderSheet();
   },()=>{loaded=true;clearTimeout(timer);R=null;renderMissing()}));
+  unsubRoom.push(B.watchChars(id,list=>{
+    CH=list.sort((a,b)=>(b.gm?1:0)-(a.gm?1:0)||String(a.name).localeCompare(String(b.name),'ko'));
+    if(sheetDirty){const c=CH.find(c=>c.id===sheetDirty.cid);if(c){c.sheets=sheetDirty.sheets;c.sheetKind=sheetDirty.kind}}
+    if(!R)return;R.chars=CH;fixSpeaker();renderRoom();renderLog(false);
+    if(sheetCid&&!$('#sheet').contains(document.activeElement))renderSheet();
+  }));
   unsubRoom.push(B.watchMessages(id,list=>{M=list.sort((a,b)=>(a.ct||0)-(b.ct||0));if(R)renderLog(true)}));
 }
 function remember(){lsSet('bt-room-'+roomId,{speaker:speakerId,mode})}
@@ -976,23 +1007,35 @@ function renderMissing(){
   $('#nfBack').onclick=()=>{location.hash=''};
   $('#composer').hidden=true;$('#endedBar').hidden=true;$('#roomName').value='';$('#chars').innerHTML='';$('#members').innerHTML='';$('#roomCode').textContent='······';
 }
-const speaker=()=>R.chars.find(c=>c.id===speakerId)||R.chars[0];
+const isGM=()=>!!(R&&me&&R.ownerUid===me.uid);
+const ownerOf=c=>c.ownerUid||R.ownerUid;
+const canEdit=c=>!!c&&(ownerOf(c)===me.uid||isGM());
+const mine=()=>R.chars.filter(c=>ownerOf(c)===me.uid);
+const speaker=()=>R.chars.find(c=>c.id===speakerId&&ownerOf(c)===me.uid);
+function fixSpeaker(){const m=mine();if(!m.some(c=>c.id===speakerId))speakerId=((m.find(c=>!c.gm)||m[0])||{}).id||null}
 function renderRoom(){
   document.title=(R.name||'세션')+' · TRPG 번개탁 용도';
   if(document.activeElement!==$('#roomName'))$('#roomName').value=R.name||'';
   const st=R.status||'live',sel=$('#statusSel');sel.value=st;sel.className='pill status-sel st-'+st;
-  const ended=st==='ended';$('#composer').hidden=ended;$('#endedBar').hidden=!ended;
+  const ended=st==='ended',noChar=!mine().length;
+  $('#composer').hidden=ended||noChar;$('#endedBar').hidden=!ended;$('#needChar').hidden=ended||!noChar;
+  const addBtn=$('#addCharBtn');addBtn.hidden=!isGM()&&!noChar;addBtn.textContent=isGM()?'+ NPC 추가':'+ 내 캐릭터';
   $('#roomCode').textContent=R.code||'······';
   const names=R.memberNames||{};
   $('#members').innerHTML=(R.members||[]).map(u=>{const n=names[u]||'참가자';return `<li><span class="dot" style="--cc:${u===R.ownerUid?'var(--accent)':'var(--muted)'}">${initial(n)}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n)}</span>${u===R.ownerUid?'<span class="tag">방장</span>':''}${u===me.uid?'<span class="tag">나</span>':''}</li>`}).join('');
   $('#leaveBtn').hidden=R.ownerUid===me.uid;
-  $('#chars').innerHTML=R.chars.map(c=>`<li class="char${c.id===speakerId?' on':''}">
-    <button class="char-pick" data-pick="${c.id}">${dot(c)}<span class="char-text"><span class="char-name">${esc(c.name)}</span>${c.note?`<span class="char-note">${esc(c.note)}</span>`:''}</span></button>
-    ${c.gm?'<span class="tag">진행</span>':''}
+  $('#chars').innerHTML=R.chars.length?R.chars.map(c=>{
+    const own=ownerOf(c)===me.uid,edit=canEdit(c);
+    const tag=c.gm?'진행':ownerOf(c)===R.ownerUid?'NPC':'';
+    const who=own?'':(names[ownerOf(c)]||'');
+    return `<li class="char${c.id===speakerId?' on':''}">
+    <button class="char-pick" ${own?`data-pick="${c.id}"`:`data-sheet="${c.id}"`}>${dot(c)}<span class="char-text"><span class="char-name">${esc(c.name)}</span><span class="char-note">${esc(c.note||'')}${who?`<span class="char-owner">${c.note?' · ':''}${esc(who)}</span>`:''}</span></span></button>
+    ${tag?`<span class="tag">${tag}</span>`:''}
     <button class="x edit" data-sheet="${c.id}" aria-label="${esc(c.name)} 캐릭터 시트" title="캐릭터 시트" style="opacity:1">📜</button>
-    <button class="x edit" data-editchar="${c.id}" aria-label="${esc(c.name)} 프로필 수정" title="프로필 수정">✎</button>
-    ${R.chars.length>1?`<button class="x" data-delchar="${c.id}" aria-label="${esc(c.name)} 삭제">×</button>`:''}</li>`).join('');
-  $('#speakers').innerHTML=R.chars.map(c=>`<button class="spk" style="--cc:${esc(c.color)}" data-pick="${c.id}" aria-pressed="${c.id===speakerId}">${dot(c)}${esc(c.name)}</button>`).join('');
+    ${edit?`<button class="x edit" data-editchar="${c.id}" aria-label="${esc(c.name)} 프로필 수정" title="프로필 수정">✎</button>
+    <button class="x" data-delchar="${c.id}" aria-label="${esc(c.name)} 삭제">×</button>`:''}</li>`}).join('')
+    :'<li class="hint" style="padding:4px 8px">아직 등장인물이 없어요.</li>';
+  $('#speakers').innerHTML=mine().map(c=>`<button class="spk" style="--cc:${esc(c.color)}" data-pick="${c.id}" aria-pressed="${c.id===speakerId}">${dot(c)}${esc(c.name)}</button>`).join('');
   $('#macs').innerHTML=R.macros.length?R.macros.map(m=>`<li class="mac">
     <div class="mac-body"><div class="mac-name">${esc(m.name)}</div><div class="mac-f">${esc(m.f)}${m.t?' ≤ '+m.t:''}</div></div>
     <button class="switch" role="switch" aria-checked="${!!m.on}" data-toggle="${m.id}" aria-label="${esc(m.name)} 빠른 버튼에 표시"></button>
@@ -1000,7 +1043,8 @@ function renderRoom(){
     :'<li class="hint" style="padding:4px 8px">자주 쓰는 판정을 매크로로 만들어 두세요.</li>';
   $('#quick').innerHTML=R.macros.filter(m=>m.on).map(m=>`<button class="qbtn" data-run="${m.id}"><i>${esc(m.f)}</i>${esc(m.name)}${m.t?' '+m.t:''}</button>`).join('');
   $$('#modes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));
-  $('#msg').placeholder={say:`${speaker().name}의 대사를 입력하세요`,narr:'상황이나 행동을 서술하세요',whisper:'다른 사람에게 몰래 남길 말'}[mode];
+  const sp=speaker();
+  $('#msg').placeholder={say:sp?`${sp.name}의 대사를 입력하세요`:'대사를 입력하세요',narr:'상황이나 행동을 서술하세요',whisper:'다른 사람에게 몰래 남길 말'}[mode];
 }
 function msgHTML(m,opts={}){
   const ch=R&&R.chars.find(x=>x.id===m.cid);if(ch)m={...m,name:ch.name,color:ch.color,avatar:ch.avatar};
@@ -1033,7 +1077,8 @@ function renderLog(fromMessages){
 const saveRoom=patch=>{Object.assign(R,patch);return B.updateRoom(roomId,patch).catch(()=>toast('저장하지 못했어요. 연결을 확인해 주세요'))};
 
 async function push(m,cid){
-  const sp=(cid&&R.chars.find(c=>c.id===cid))||speaker();
+  const sp=(cid&&R.chars.find(c=>c.id===cid&&canEdit(c)))||speaker();
+  if(!sp){toast('먼저 이 방에서 쓸 내 캐릭터를 만들어 주세요');return false}
   const msg={cid:sp.id,name:sp.name,color:sp.color,ct:now(),uid:me.uid,...m};
   try{await B.addMessage(roomId,msg);return true}catch(e){if(e.message!=='quota')toast('보내지 못했어요. 연결을 확인해 주세요');return false}
 }
@@ -1089,10 +1134,13 @@ document.addEventListener('click',e=>{
   const im=e.target.closest('img.mimg');if(im){$('#lightboxImg').src=im.src;$('#lightbox').hidden=false;return}
   const t=e.target.closest('button');if(!t||!R||!$('#homeView').hidden&&!t.closest('#roomView'))return;
   const d=t.dataset;
-  if(d.pick){speakerId=d.pick;remember();renderRoom();if(t.closest('.side'))drawer(false);return}
+  if(d.pick){const pc=R.chars.find(c=>c.id===d.pick);if(!pc||ownerOf(pc)!==me.uid)return;speakerId=d.pick;remember();renderRoom();if(t.closest('.side'))drawer(false);return}
   if(d.sheet){openSheet(d.sheet);if(t.closest('.side'))drawer(false);return}
-  if(d.editchar){openCharForm(R.chars.find(c=>c.id===d.editchar));return}
-  if(d.delchar){const chars=R.chars.filter(c=>c.id!==d.delchar);if(speakerId===d.delchar)speakerId=chars[0].id;remember();saveRoom({chars});renderRoom();return}
+  if(d.editchar){const ec=R.chars.find(c=>c.id===d.editchar);if(canEdit(ec))openCharForm(ec);return}
+  if(d.delchar){
+    const dc=R.chars.find(c=>c.id===d.delchar);if(!canEdit(dc))return;
+    if(!t.classList.contains('armed')){t.classList.add('armed');t.textContent='삭제?';t.style.opacity=1;setTimeout(()=>{if(t.isConnected){t.classList.remove('armed');t.textContent='×';t.style.opacity=''}},3000);return}
+    B.deleteChar(roomId,dc.id).then(()=>toast(`${dc.name}을(를) 지웠어요`)).catch(x=>toast(errText(x)));return}
   if(d.toggle){const macros=R.macros.map(m=>m.id===d.toggle?{...m,on:!m.on}:m);saveRoom({macros});renderRoom();return}
   if(d.delmac){saveRoom({macros:R.macros.filter(m=>m.id!==d.delmac)});renderRoom();return}
   if(d.run){const m=R.macros.find(m=>m.id===d.run);if(m)rollMsg(m.f,m.name,m.t);return}
@@ -1153,23 +1201,29 @@ function openCharForm(c){
   editing=c?c.id:null;
   $('#charName').value=c?c.name:'';$('#charNote').value=c&&c.note||'';
   pickColor=c?c.color:COLORS[R.chars.length%6];pickAv=c&&c.avatar||null;
-  $('#charFormTitle').textContent=c?`${c.name} 프로필 수정`:'새 등장인물';
+  $('#charFormTitle').textContent=c?`${c.name} 프로필 수정`:isGM()?'새 NPC':'내 캐릭터 만들기';
   $('#charSubmit').textContent=c?'저장':'추가';
   swatches();avPreview();$('#charForm').hidden=false;$('#charName').focus();
 }
 $('#charSwatches').addEventListener('click',e=>{const b=e.target.closest('[data-sw]');if(b){pickColor=b.dataset.sw;swatches();avPreview()}});
 $('#addCharBtn').onclick=()=>openCharForm(null);
+$('#needCharBtn').onclick=()=>{drawer(true);openCharForm(null)};
 $('#charCancel').onclick=()=>{$('#charForm').hidden=true;editing=null};
 $('#charName').addEventListener('input',avPreview);
 $('#avClear').onclick=()=>{pickAv=null;avPreview()};
 $('#charImg').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{pickAv=await avatarFrom(f);avPreview()}catch(x){toast('이미지를 읽지 못했어요. 다른 파일을 골라 주세요')}});
-$('#charForm').addEventListener('submit',e=>{e.preventDefault();
+$('#charForm').addEventListener('submit',async e=>{e.preventDefault();
   const n=$('#charName').value.trim(),note=$('#charNote').value.trim();if(!n){$('#charName').focus();return}
-  let chars;
-  if(editing){chars=R.chars.map(c=>c.id===editing?{...c,name:n,note,color:pickColor,avatar:pickAv}:c);toast('프로필을 저장했어요')}
-  else{const c={id:uid(),name:n,note,color:pickColor,avatar:pickAv};chars=[...R.chars,c];speakerId=c.id;remember()}
-  editing=null;$('#charForm').hidden=true;saveRoom({chars});renderRoom();renderLog(false);
+  let c,isNew=!editing;
+  if(editing){const old=R.chars.find(x=>x.id===editing);if(!canEdit(old))return;c={...old,name:n,note,color:pickColor,avatar:pickAv}}
+  else{
+    if(!isGM()&&mine().length){toast('이 방에서는 캐릭터를 하나만 만들 수 있어요');return}
+    c={id:isGM()?uid():me.uid,ownerUid:me.uid,name:n,note,color:pickColor,avatar:pickAv,sheetKind:defaultKind()};
+  }
+  editing=null;$('#charForm').hidden=true;
+  try{await B.saveChar(roomId,c);if(isNew){speakerId=c.id;remember();toast(`${c.name} 등장! 📜 시트에서 능력치를 정해 보세요`)}else toast('프로필을 저장했어요')}
+  catch(x){toast(errText(x))}
 });
 
 /* macro form */
@@ -1189,7 +1243,11 @@ const SHEET_TPL={
   coc:{name:'CoC 7판',
     ab:[['STR','근력',50],['CON','건강',50],['SIZ','크기',50],['DEX','민첩',50],['APP','외모',50],['INT','지능',50],['POW','정신',50],['EDU','교육',60],['LUCK','행운',50]],
     res:[['체력',10,10,'#c94a6b'],['마력',10,10,'#5268d0'],['이성',50,99,'#2a8a80']],
-    sk:[['관찰력',25],['듣기',20],['도서관 이용',20],['심리학',10],['회피',25],['은밀행동',20],['응급처치',30],['설득',10],['근접전(격투)',25],['사격(권총)',20]]},
+    sk:[['감정',5],['고고학',1],['과학',1],['관찰력',25],['근접전(격투)',25],['기계수리',10],['길찾기',10],['도서관 이용',20],['도약',20],['듣기',20],
+        ['말재주',5],['매혹',15],['모국어',60],['법률',5],['변장',5],['사격(권총)',20],['사격(라이플/산탄총)',25],['설득',10],['손놀림',10],['수영',20],
+        ['승마',5],['신용',0],['심리학',10],['역사',5],['열쇠공',1],['예술/공예',5],['오르기',20],['오컬트',5],['외국어',1],['운전(자동차)',20],
+        ['위협',15],['은밀행동',20],['응급처치',30],['의료',1],['인류학',1],['자연',10],['전기수리',10],['정신분석',1],['중장비 조작',1],['추적',10],
+        ['컴퓨터 사용',5],['크툴루 신화',0],['투척',20],['회계',5],['회피',25]]},
   dnd:{name:'D&D 5e',
     ab:[['STR','근력',10],['DEX','민첩',10],['CON','건강',10],['INT','지능',10],['WIS','지혜',10],['CHA','매력',10]],
     res:[['체력',10,10,'#c94a6b'],['방어도',12,null,'']],
@@ -1204,7 +1262,7 @@ let sheetCid=null,sheetDirty=null,sheetT=null;
 function newSheet(kind){
   const t=SHEET_TPL[kind];
   return {ab:t.ab.map(([k,label,v])=>({id:uid(),k,label,v})),res:t.res.map(([label,cur,max,color])=>({id:uid(),label,cur,max,color})),
-    sk:t.sk.map(([label,v])=>({id:uid(),label,v})),rule:'d100'};
+    sk:t.sk.map(([label,v])=>({id:uid(),label,v,b:v})),rule:'d100'};
 }
 function defaultKind(){const s=R.system||'';return /CoC/i.test(s)?'coc':/D&D/i.test(s)?'dnd':'free'}
 function sheetOf(c){
@@ -1241,7 +1299,9 @@ function summary(kind,sh){
   const abSum=sh.ab.reduce((a,x)=>a+(+x.v||0),0),skSum=sh.sk.reduce((a,x)=>a+(+x.v||0),0);
   if(kind==='coc'){
     const core=sh.ab.filter(a=>a.k!=='LUCK').reduce((a,x)=>a+(+x.v||0),0);
-    return {ab:`특성치 합계 <b>${core}</b>`,sk:`기능 합계 <b>${skSum}</b>`};
+    const g=k=>+(sh.ab.find(a=>a.k===k)||{}).v||0,avail=g('EDU')*4+g('INT')*2;
+    const used=sh.sk.filter(x=>x.label!=='크툴루 신화').reduce((a,x)=>a+Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b)),0);
+    return {ab:`특성치 합계 <b>${core}</b>`,sk:`기능 포인트 <b class="${used>avail?'over':''}">${used}</b> / ${avail} <span title="직업 포인트 EDU×4 + 관심 포인트 INT×2 기준">(EDU×4+INT×2)</span>`};
   }
   if(kind==='dnd'){
     const vals=sh.ab.map(a=>+a.v||0),ok=vals.every(v=>v>=8&&v<=15);
@@ -1253,7 +1313,8 @@ function summary(kind,sh){
 function renderSheet(){
   const el=$('#sheet');const c=R&&R.chars.find(x=>x.id===sheetCid);
   if(!c){closeSheet();return}
-  const sh=sheetOf(c),kind=c.sheetKind,sum=summary(kind,sh);
+  const sh=sheetOf(c),kind=c.sheetKind,sum=summary(kind,sh),ro=!canEdit(c);
+  const ownerName=(R.memberNames||{})[ownerOf(c)]||'';
   const resHTML=sh.res.map(r=>{
     if(r.max==null)return `<div class="res"><span class="res-k">${esc(r.label)}</span><span></span>
       <span class="res-num"><button class="step" data-sres="${r.id}:-1" aria-label="${esc(r.label)} 내리기">−</button><input class="num" data-f="rescur:${r.id}" value="${esc(r.cur)}" inputmode="numeric" aria-label="${esc(r.label)}"><button class="step" data-sres="${r.id}:1" aria-label="${esc(r.label)} 올리기">+</button></span></div>`;
@@ -1266,11 +1327,11 @@ function renderSheet(){
       <input data-f="ab:${a.id}" value="${esc(a.v)}" inputmode="numeric" aria-label="${esc(a.label)}">
       <span class="ab-sub" data-sub="ab:${a.id}">${esc(abSub(kind,sh,a))}</span>
       <button class="rollb" data-sroll="ab:${a.id}">🎲 굴림</button></div>`).join('');
-  const skHTML=sh.sk.map(s=>`<div class="sk"><input class="lbl" data-f="sklabel:${s.id}" value="${esc(s.label)}" aria-label="항목 이름" maxlength="20">
+  const skHTML=sh.sk.map(s=>`<div class="sk${s.b!=null&&(+s.v||0)>(+s.b)?' up':''}" data-skrow="${esc(s.label)}"><input class="lbl" data-f="sklabel:${s.id}" value="${esc(s.label)}" aria-label="항목 이름" maxlength="20">
       <span class="sk-sub" data-sub="sk:${s.id}">${esc(skSub(kind,sh,s))}</span>
       <input class="num" data-f="sk:${s.id}" value="${esc(s.v)}" inputmode="numeric" aria-label="${esc(s.label)} 값">
       <span style="display:flex;gap:2px"><button class="rollb" data-sroll="sk:${s.id}" aria-label="${esc(s.label)} 굴리기">🎲</button><button class="x" data-sdel="${s.id}" aria-label="${esc(s.label)} 삭제">×</button></span></div>`).join('');
-  el.innerHTML=`<div class="sheet-head" style="--cc:${esc(c.color)}">${dot(c)}<div class="sheet-title"><b>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}</span></div>
+  el.innerHTML=`<div class="sheet-head" style="--cc:${esc(c.color)}">${dot(c)}<div class="sheet-title"><b>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
       <button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
     <div class="sheet-tabs">
       <select id="sheetKind" aria-label="시트 형식">${Object.entries(SHEET_TPL).map(([k,t])=>`<option value="${k}"${k===kind?' selected':''}>${t.name}</option>`).join('')}</select>
@@ -1278,13 +1339,17 @@ function renderSheet(){
       ${kind!=='free'?`<button class="btn sm" data-srand>${kind==='coc'?'🎲 특성치 굴려 정하기':'🎲 4d6 굴려 정하기'}</button>`:''}
     </div>
     <div class="sheet-body">
+      ${ro?'<p class="ro-note">다른 사람의 캐릭터라 보기만 할 수 있어요. 고치거나 굴리는 건 주인과 방장만 할 수 있어요.</p>':''}
       <section><div class="sh-h"><h3>자원</h3></div><div class="res-list">${resHTML}</div></section>
       <section><div class="sh-h"><h3>능력치</h3><span class="sh-sum" data-sum="ab">${sum.ab}</span></div><div class="ab-grid">${abHTML}</div></section>
       <section><div class="sh-h"><h3>${kind==='coc'?'기능':kind==='dnd'?'기술 · 보너스':'항목'}</h3><span class="sh-sum" data-sum="sk">${sum.sk}</span></div>
+        ${sh.sk.length>12?'<input class="sk-search" id="skSearch" placeholder="기능 찾기" aria-label="기능 찾기" autocomplete="off">':''}
         <div class="sk-list">${skHTML||'<p class="sheet-foot">굴릴 항목을 추가해 보세요.</p>'}</div>
         <button class="ghost" data-sadd style="margin-top:6px">+ 항목 추가</button></section>
       <p class="sheet-foot">${kind==='coc'?'값을 누르면 바로 고칠 수 있어요. 굴림은 1d100이며 보통·어려운·극단적 성공을 자동으로 판정해요.':kind==='dnd'?'능력치 굴림은 1d20 + 수정치, 기술은 1d20 + 적은 보너스로 굴려요.':'능력치와 항목 모두 위에서 고른 방식으로 굴려요.'} 굴린 결과는 이 인물 이름으로 로그에 올라가요.</p>
     </div>`;
+  el.classList.toggle('ro',ro);
+  if(ro){el.querySelectorAll('input:not(#skSearch)').forEach(i=>i.readOnly=true);el.querySelectorAll('select').forEach(x=>x.disabled=true)}
   el.hidden=false;
 }
 function openSheet(cid){sheetCid=cid;renderSheet();}
@@ -1295,7 +1360,8 @@ function markSheet(c){
 }
 function flushSheet(){
   clearTimeout(sheetT);if(!sheetDirty||!R){sheetDirty=null;return}
-  const chars=R.chars;sheetDirty=null;saveRoom({chars});
+  const c=R.chars.find(x=>x.id===sheetDirty.cid);sheetDirty=null;
+  if(c&&canEdit(c))B.saveChar(roomId,c).catch(x=>toast('시트를 저장하지 못했어요. '+errText(x)));
 }
 function refreshDerived(c){
   const sh=sheetOf(c),kind=c.sheetKind,el=$('#sheet');
@@ -1306,8 +1372,9 @@ function refreshDerived(c){
 }
 const toNum=v=>{const n=parseInt(String(v).replace(/[^\d-]/g,''),10);return isNaN(n)?0:n};
 $('#sheet').addEventListener('input',e=>{
+  if(e.target.id==='skSearch'){const q=e.target.value.trim();$('#sheet').querySelectorAll('[data-skrow]').forEach(r=>r.hidden=!!q&&!r.dataset.skrow.includes(q));return}
   const f=e.target.dataset.f;if(!f)return;
-  const c=R.chars.find(x=>x.id===sheetCid);const sh=sheetOf(c);const [k,id]=f.split(':');
+  const c=R.chars.find(x=>x.id===sheetCid);if(!canEdit(c))return;const sh=sheetOf(c);const [k,id]=f.split(':');
   if(k==='ab')sh.ab.find(a=>a.id===id).v=toNum(e.target.value);
   else if(k==='sk')sh.sk.find(a=>a.id===id).v=toNum(e.target.value);
   else if(k==='sklabel')sh.sk.find(a=>a.id===id).label=e.target.value;
@@ -1315,9 +1382,9 @@ $('#sheet').addEventListener('input',e=>{
   else if(k==='resmax')sh.res.find(r=>r.id===id).max=Math.max(1,toNum(e.target.value));
   refreshDerived(c);markSheet(c);
 });
-$('#sheet').addEventListener('focusout',()=>setTimeout(()=>{if(sheetCid&&!$('#sheet').contains(document.activeElement))renderSheet()},0));
+$('#sheet').addEventListener('focusout',()=>setTimeout(()=>{if(sheetCid&&!$('#sheet').contains(document.activeElement)&&!($('#skSearch')&&$('#skSearch').value))renderSheet()},0));
 $('#sheet').addEventListener('change',e=>{
-  const c=R.chars.find(x=>x.id===sheetCid);if(!c)return;
+  const c=R.chars.find(x=>x.id===sheetCid);if(!c||!canEdit(c))return;
   if(e.target.id==='sheetKind'){c.sheetKind=e.target.value;sheetOf(c);markSheet(c);renderSheet();toast(`${SHEET_TPL[c.sheetKind].name} 시트로 바꿨어요. 다른 형식에 적은 값도 그대로 남아 있어요`)}
   if(e.target.id==='sheetRule'){sheetOf(c).rule=e.target.value;markSheet(c);renderSheet()}
 });
@@ -1325,6 +1392,7 @@ $('#sheet').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;e.stopPropagation();
   const c=R.chars.find(x=>x.id===sheetCid);if(!c)return;const sh=sheetOf(c),kind=c.sheetKind,d=b.dataset;
   if('sclose' in d){closeSheet();return}
+  if(!canEdit(c))return;
   if(d.sroll){
     const [k,id]=d.sroll.split(':');const item=(k==='ab'?sh.ab:sh.sk).find(x=>x.id===id);if(!item)return;
     if(R.status==='ended'){toast('종료된 세션에서는 굴릴 수 없어요');return}
@@ -1334,7 +1402,7 @@ $('#sheet').addEventListener('click',e=>{
   }
   if(d.sres){const [id,dlt]=d.sres.split(':');const r=sh.res.find(x=>x.id===id);r.cur=(+r.cur||0)+(+dlt);markSheet(c);renderSheet();return}
   if(d.sdel){sh.sk=sh.sk.filter(x=>x.id!==d.sdel);markSheet(c);renderSheet();return}
-  if('sadd' in d){sh.sk.push({id:uid(),label:'새 항목',v:kind==='coc'?20:kind==='dnd'?0:3});markSheet(c);renderSheet();
+  if('sadd' in d){const v0=kind==='coc'?1:kind==='dnd'?0:3;sh.sk.push({id:uid(),label:'새 항목',v:v0,b:v0});markSheet(c);renderSheet();
     const ins=$('#sheet').querySelectorAll('.sk .lbl');const last=ins[ins.length-1];if(last){last.focus();last.select()}return}
   if('srand' in d){
     if(!b.classList.contains('warn')){b.classList.add('warn');b.textContent='한 번 더 누르면 능력치를 새로 굴려요';setTimeout(()=>{if(b.isConnected){b.classList.remove('warn');b.textContent=kind==='coc'?'🎲 특성치 굴려 정하기':'🎲 4d6 굴려 정하기'}},3000);return}
@@ -1345,7 +1413,8 @@ $('#sheet').addEventListener('click',e=>{
       const set=(label,cur,max)=>{const x=sh.res.find(z=>z.label===label);if(x){x.cur=cur;x.max=max}};
       const hp=Math.floor((g('CON')+g('SIZ'))/10),mp=Math.floor(g('POW')/5);
       set('체력',hp,hp);set('마력',mp,mp);set('이성',g('POW'),99);
-      const dodge=sh.sk.find(s=>s.label==='회피');if(dodge)dodge.v=Math.floor(g('DEX')/2);
+      const setBase=(label,val)=>{const x=sh.sk.find(s=>s.label===label);if(x){const raised=Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b));x.b=val;x.v=val+raised}};
+      setBase('회피',Math.floor(g('DEX')/2));setBase('모국어',g('EDU'));
     }else{
       sh.ab.forEach(a=>{const rs=[0,0,0,0].map(()=>r('1d6')).sort((x,y)=>x-y);a.v=rs[1]+rs[2]+rs[3]});
     }
@@ -1415,32 +1484,6 @@ function doExport(kind){
   }catch(e){copyText(txt,'꾸밈 복사가 막혀 텍스트로 복사했어요')}
 }
 
-/* ---------------- Example data for 혼자 모드 ---------------- */
-async function seedLocal(u){
-  const k={id:uid(),name:'키퍼',color:COLORS[6],gm:true},a={id:uid(),name:'한서윤',note:'탐사자 · 사진기자',color:COLORS[0]},b={id:uid(),name:'도윤재',note:'탐사자 · 사립탐정',color:COLORS[1]};
-  const t=now()-1000*60*60*26,own={ownerUid:u.uid,members:[u.uid],memberNames:{[u.uid]:u.nick}};
-  const {id}=await B.createRoom({name:'폐병원의 밤',system:'CoC 7판',desc:'예시 세션 · 2인 · 중간에 멈춘 방',status:'paused',createdAt:t,updatedAt:t,msgCount:0,chars:[k,a,b],...own,
-    macros:[{id:uid(),name:'관찰력',f:'1d100',t:60,on:true},{id:uid(),name:'듣기',f:'1d100',t:45,on:true},{id:uid(),name:'이성 판정',f:'1d100',t:40,on:true},{id:uid(),name:'피해 (주먹)',f:'1d3',t:null,on:false}]});
-  const L=[
-    {cid:k.id,type:'narr',text:'자정을 조금 넘긴 시각. 녹슨 철문 너머로 *복도의 형광등 하나*가 깜빡인다.'},
-    {cid:a.id,type:'say',text:'여기… **진짜** 들어가야 해? 아무리 봐도 {m|사람 사는 데는 아닌데.}'},
-    {cid:b.id,type:'say',text:'의뢰비 받았잖아. 손전등 켜.'},
-    {cid:a.id,type:'dice',label:'관찰력',f:'1d100',total:23,detail:'[23]',target:60,verdict:'어려운 성공',vc:''},
-    {cid:k.id,type:'narr',text:'바닥 먼지 위로 맨발 자국이 이어진다. 발자국은 ||안쪽이 아니라 밖으로|| 향해 있다.'},
-    {cid:k.id,type:'narr',text:'복도 끝 스피커에서 {지직|치직… 거기… 누구…} 하는 소리가 새어 나온다.'},
-    {cid:a.id,type:'say',text:'{흔들|윤재 씨, 지금 들었어요?}'},
-    {cid:b.id,type:'whisper',text:'(서윤 몰래 주머니 속 부적을 만지작거린다)'},
-    {cid:b.id,type:'dice',label:'이성 판정',f:'1d100',total:98,detail:'[98]',target:40,verdict:'대실패',vc:'fumble'}
-  ];
-  const who={[k.id]:k,[a.id]:a,[b.id]:b};
-  for(let i=0;i<L.length;i++){const c=who[L[i].cid];await B.addMessage(id,{name:c.name,color:c.color,ct:t+i*45000,uid:u.uid,...L[i]})}
-  const t2=now()-1000*60*60*24*9;
-  const r2=await B.createRoom({name:'등불지기의 탑',system:'D&D 5e',desc:'원샷 · 엔딩 본 방',status:'ended',createdAt:t2,updatedAt:t2,msgCount:0,...own,
-    chars:[{id:'dm',name:'DM',color:COLORS[6],gm:true},{id:'p1',name:'리엔',note:'하프엘프 바드',color:COLORS[4]}],macros:[{id:uid(),name:'d20',f:'1d20',t:null,on:true}]});
-  await B.addMessage(r2.id,{cid:'dm',name:'DM',color:COLORS[6],type:'narr',ct:t2,uid:u.uid,text:'꼭대기 등불이 {빛|다시 타오른다}. 탑의 저주가 풀렸다.'});
-  await B.addMessage(r2.id,{cid:'p1',name:'리엔',color:COLORS[4],type:'say',ct:t2+60000,uid:u.uid,text:'노래 한 곡 값은 받아야겠는데요. **금화로.**'});
-}
-
 /* ---------------- Night mode ---------------- */
 const THEME_KEY='bt-theme';
 const isDark=()=>{const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
@@ -1465,7 +1508,6 @@ async function boot(){
   let first=true;
   B.onAuth(async u=>{
     const changed=(me&&me.uid)!==(u&&u.uid);me=u;
-    if(u&&B.kind==='local'&&!B.hasRooms(u.uid)&&!lsGet('bt-seeded-'+u.uid)){lsSet('bt-seeded-'+u.uid,true);try{await seedLocal(u)}catch(e){}}
     if(changed||first){subscribeRooms();if(!u&&roomId)location.hash='';route()}
     else if(!$('#homeView').hidden)showHome();
     first=false;

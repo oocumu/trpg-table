@@ -65,7 +65,7 @@ h1,h2{text-wrap:balance}
 .sys{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 7px;white-space:nowrap}
 
 /* ---------- Home ---------- */
-.home{max-width:1180px;margin:0 auto;padding-block:20px 48px}
+.home{max-width:1180px;margin:0 auto;padding-block:20px 96px}
 .home-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:28px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand-mark{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--sheet);display:grid;place-items:center;
@@ -428,6 +428,16 @@ h1,h2{text-wrap:balance}
 .role-row select{flex:1;border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:6px 8px;font-size:14px;color:var(--ink)}
 .char .tag{display:inline-block;vertical-align:1px;margin-left:4px;font-size:10px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;line-height:16px}
 .char .tag.ho{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:var(--accent-soft)}
+.admin-fab{position:fixed;z-index:30;left:calc(20px + env(safe-area-inset-left,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  width:52px;height:52px;border-radius:50%;border:0;background:var(--accent);color:var(--sheet);font-size:22px;line-height:1;display:grid;place-items:center;
+  box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 38%,transparent),0 1px 3px rgba(0,0,0,.15);transition:transform .15s}
+.admin-fab:hover{transform:translateY(-2px) rotate(20deg)}
+.admin-fab.on{background:var(--ink)}
+.adm-tabs{width:100%}
+.adm-tabs button{flex:1;padding:7px 12px;font-size:14px}
+.adm-ta{border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:9px 12px;font-size:15px;color:var(--ink);resize:vertical;min-height:120px}
+.adm-ta:focus{border-color:var(--accent);outline:none}
+#adminView .inv-list{max-height:none}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
@@ -442,7 +452,6 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   #joinForm{order:2}
   .home-grid>section:not(.hero){order:3;margin:12px 0}
   #newRoomForm{order:4}
-  #adminCard{order:5}
   #modeNote{order:6}
   .hero h1,.lede,.eyebrow{margin-bottom:0}
 }
@@ -532,11 +541,6 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
           <p class="err" id="nrErr" hidden></p>
           <button class="btn primary" type="submit">방 파고 코드 받기</button>
         </form>
-        <section class="new-card" id="adminCard" hidden>
-          <h2 style="display:flex;align-items:center;gap:8px">추천 코드 관리 <span class="admin-tag">관리자</span></h2>
-          <form class="inv-new" id="invForm"><input id="invNote" maxlength="30" placeholder="누구에게 줄 코드인지 메모 (선택)" autocomplete="off"><button class="btn primary" type="submit">코드 발급</button></form>
-          <ul class="inv-list" id="invList"></ul>
-        </section>
       </div>
       <p class="mode-note" id="modeNote"></p>
     </section>
@@ -597,6 +601,39 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
     </section>
   </div>
 </div>
+
+<!-- ================= ADMIN ================= -->
+<div class="home" id="adminView" hidden>
+  <header class="home-top">
+    <div class="brand"><div class="brand-mark">d20</div><div><b>TRPG 번개탁 용도</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
+    <div class="home-right"><button class="mail-btn" hidden aria-label="우편함" title="우편함">📮<span class="mail-badge" hidden></span></button><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
+  </header>
+  <div class="pf-wrap">
+    <button class="back" id="admBack"><span class="brand-mark">d20</span>세션 목록으로</button>
+    <h1 class="pf-title" style="display:flex;align-items:center;gap:10px">관리자 <span class="admin-tag">관리자 전용</span></h1>
+    <div class="seg adm-tabs" id="admTabs"><button data-adm="inv" aria-pressed="true">추천 코드</button><button data-adm="notice" aria-pressed="false">공지 보내기</button></div>
+
+    <section class="new-card" id="admInv">
+      <h2>추천 코드 발급</h2>
+      <p class="pf-hint">코드 하나로 한 명만 가입할 수 있어요. 메모를 남겨 두면 누구에게 준 코드인지 알 수 있어요.</p>
+      <form class="inv-new" id="invForm"><input id="invNote" maxlength="30" placeholder="누구에게 줄 코드인지 메모 (선택)" autocomplete="off"><button class="btn primary" type="submit">코드 발급</button></form>
+      <ul class="inv-list" id="invList"></ul>
+    </section>
+
+    <section class="new-card" id="admNotice" hidden>
+      <h2>전체 공지 보내기</h2>
+      <form class="pf-form" id="admNoticeForm">
+        <label class="field">제목<input id="admNtTitle" maxlength="80" autocomplete="off" placeholder="예: 11월 정기 점검 안내"></label>
+        <label class="field">내용<textarea id="admNtBody" rows="6" maxlength="4000" placeholder="모든 회원의 우편함에 도착할 내용이에요. 글 꾸밈 문법도 쓸 수 있어요." class="adm-ta"></textarea></label>
+        <p class="err" id="admNtErr" hidden></p>
+        <button class="btn primary" type="submit" style="padding:10px 14px;font-size:15px">전체 회원에게 보내기</button>
+      </form>
+      <h2 style="margin-top:6px">보낸 공지</h2>
+      <ul class="notice-list" id="admNoticeList"></ul>
+    </section>
+  </div>
+</div>
+<button class="admin-fab" id="adminFab" hidden aria-label="관리자 페이지 열기" title="관리자 페이지">⚙</button>
 
 <!-- ================= ROOM ================= -->
 <div class="app" id="roomView" hidden>
@@ -1186,6 +1223,7 @@ let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
   if(location.hash==='#profile'){if(me)showProfile();else{location.hash='';showHome()}return}
+  if(location.hash==='#admin'){if(me&&me.admin)showAdmin();else{location.hash='';showHome()}return}
   const m=location.hash.match(/^#room-([A-Za-z0-9_-]+)$/);
   if(m&&!me){toast('로그인하면 그 방으로 바로 들어가요');showHome();return}
   if(m)openRoom(m[1]);else showHome();
@@ -1196,7 +1234,7 @@ addEventListener('hashchange',route);
 function showHome(){
   closeRoom();
   document.documentElement.classList.remove('in-room');
-  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title='TRPG 번개탁 용도';
+  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title='TRPG 번개탁 용도';syncFab();
   $('#authForm').hidden=!!me;$('#userArea').hidden=!me;$('#userChip').hidden=!me;
   $('#hello').innerHTML=me?`${esc(me.nick)}님,<br><em>오늘은 뭘 굴려 볼까요?</em>`:'TRPG<br><em>빠르게 준비해요</em>';
   $('#helloSub').textContent=me?'코드를 받았다면 아래에 입력하고, 직접 진행한다면 새 방을 파 보세요.':'쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.';
@@ -1207,7 +1245,7 @@ function showHome(){
 let unsubInv=null,invites=[];
 function subscribeInvites(){
   if(unsubInv){unsubInv();unsubInv=null}
-  invites=[];$('#adminCard').hidden=!(me&&me.admin);
+  invites=[];syncFab();
   if(me&&me.admin)unsubInv=B.listInvites(list=>{invites=list;renderInvites()});
 }
 function renderInvites(){
@@ -1352,7 +1390,7 @@ function subscribeNotices(){
     const fresh=!noticeFirst&&list.find(n=>!notices.some(o=>o.id===n.id)&&n.authorUid!==me.uid);
     notices=list;noticeFirst=false;
     if(fresh)toast(`📮 새 공지가 도착했어요: ${fresh.title}`);
-    renderMailBadge();if(!$('#mailModal').hidden)renderNotices();
+    renderMailBadge();if(!$('#mailModal').hidden)renderNotices();renderAdminNotices();
   });
   renderMailBadge();
 }
@@ -1395,10 +1433,52 @@ $('#noticeList').addEventListener('click',async e=>{
   try{await B.deleteNotice(d.dataset.ntdel);toast('공지를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
 });
 
+/* ---------------- Admin page ---------------- */
+function syncFab(){
+  const fab=$('#adminFab'),onAdmin=!$('#adminView').hidden;
+  fab.hidden=!(me&&me.admin)||!$('#roomView').hidden||!$('#authView').hidden;
+  fab.classList.toggle('on',onAdmin);fab.textContent=onAdmin?'×':'⚙';
+  fab.title=onAdmin?'관리자 페이지 닫기':'관리자 페이지';fab.setAttribute('aria-label',fab.title);
+}
+function showAdmin(){
+  closeRoom();document.documentElement.classList.remove('in-room');
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=false;
+  document.title='관리자 · TRPG 번개탁 용도';syncFab();renderInvites();renderAdminNotices();window.scrollTo(0,0);
+}
+function setAdmTab(t){
+  $$('#admTabs [data-adm]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.adm===t));
+  $('#admInv').hidden=t!=='inv';$('#admNotice').hidden=t!=='notice';
+}
+$('#admTabs').addEventListener('click',e=>{const b=e.target.closest('[data-adm]');if(b)setAdmTab(b.dataset.adm)});
+$('#adminFab').onclick=()=>{location.hash=$('#adminView').hidden?'admin':''};
+$('#admBack').onclick=()=>{location.hash=''};
+function renderAdminNotices(){
+  if($('#adminView').hidden)return;
+  $('#admNoticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice">
+    <div class="nt-top"><b>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
+    <div class="nt-body">${fmt(n.body||'')}</div>
+    <div class="nt-meta">${esc(n.authorNick||'관리자')} · 전체 공지</div>
+    <button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button></li>`).join('')
+    :'<li class="pf-hint" style="padding:6px 2px">아직 보낸 공지가 없어요.</li>';
+}
+$('#admNoticeForm').addEventListener('submit',async e=>{
+  e.preventDefault();const title=$('#admNtTitle').value.trim(),body=$('#admNtBody').value.trim(),err=$('#admNtErr');
+  if(!title){err.textContent='공지 제목을 입력해 주세요.';err.hidden=false;return}
+  if(!body){err.textContent='공지 내용을 입력해 주세요.';err.hidden=false;return}
+  err.hidden=true;
+  try{await B.sendNotice({title,body});e.target.reset();toast('전체 회원에게 공지를 보냈어요')}
+  catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
+});
+$('#admNoticeList').addEventListener('click',async e=>{
+  const d=e.target.closest('[data-ntdel]');if(!d)return;
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{await B.deleteNotice(d.dataset.ntdel);toast('공지를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
+});
+
 /* ---------------- Profile ---------------- */
 function showProfile(){
   closeRoom();document.documentElement.classList.remove('in-room');
-  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#adminView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';syncFab();
   $('#pfNickNow').textContent=me.nick;$('#pfEmail').textContent=me.email||'';$('#pfDot').innerHTML=initial(me.nick);
   $('#pfNick').value=me.nick;['#pfNickErr','#pfPwErr','#pfDelErr'].forEach(x=>$(x).hidden=true);
   renderImpact();window.scrollTo(0,0);
@@ -1451,7 +1531,7 @@ function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
   document.documentElement.classList.add('in-room');
-  $('#homeView').hidden=true;$('#authView').hidden=true;$('#profileView').hidden=true;$('#roomView').hidden=false;
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#roomView').hidden=false;syncFab();
   const st=lsGet('bt-room-'+id,{});speakerId=st.speaker||null;mode=st.mode||'say';
   $('#log').innerHTML='<div class="empty"><b>방을 여는 중</b>로그를 불러오고 있어요.</div>';
   let loaded=false;const timer=setTimeout(()=>{if(!loaded)toast('불러오는 데 오래 걸려요. 연결을 확인해 주세요')},10000);
@@ -2009,7 +2089,7 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncThe
 
 /* ---------------- Boot ---------------- */
 function showOffline(){
-  $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#authView').hidden=false;
+  $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#authView').hidden=false;$('#adminFab').hidden=true;
   $('#authForm').hidden=true;$('#authNote').textContent='';
   $('#authSub').textContent='지금은 접속이 원활하지 않아요. 잠시 후 다시 들어와 주세요.';
   const r=$('#authRetry');r.hidden=false;r.onclick=()=>location.reload();

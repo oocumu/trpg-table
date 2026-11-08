@@ -343,6 +343,19 @@ h1,h2{text-wrap:balance}
 .sk-search:focus{border-color:var(--accent);outline:none}
 .sk.up .lbl{font-weight:600;color:var(--accent)}
 .char-owner{color:var(--muted);font-size:11px}
+.inv-new{display:flex;gap:8px}
+.inv-new input{flex:1;min-width:0;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:8px 12px;font-size:14px}
+.inv-new input:focus{border-color:var(--accent);outline:none}
+.inv-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:280px;overflow-y:auto}
+.inv{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 2px;border-bottom:1px dashed var(--line)}
+.inv:last-child{border-bottom:0}
+.inv code{font-family:var(--f-mono);font-weight:600;font-size:14.5px;letter-spacing:.12em;color:var(--accent)}
+.inv.used code{color:var(--muted);text-decoration:line-through}
+.inv-meta{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inv-act{display:flex;gap:2px}
+.inv-act .x{opacity:1}
+.inv-act .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
+.admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
 .lightbox img{max-width:100%;max-height:100%;border-radius:8px}
@@ -391,6 +404,7 @@ h1,h2{text-wrap:balance}
         <label class="field">이메일<input id="auEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
         <label class="field">비밀번호<input id="auPw" type="password" autocomplete="current-password" placeholder="6자 이상"></label>
         <label class="field" id="auPw2Row" hidden>비밀번호 확인<input id="auPw2" type="password" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력해 주세요"></label>
+        <label class="field" id="auInvRow" hidden>추천 코드<input id="auInv" class="code-input" maxlength="10" autocomplete="off" placeholder="받은 추천 코드를 입력해 주세요" style="font-size:16px"></label>
         <label class="field" id="auNickRow" hidden>닉네임<input id="auNick" maxlength="20" autocomplete="nickname" placeholder="방에서 보일 이름"></label>
         <p class="err" id="auErr" hidden></p>
         <button class="btn primary" type="submit" id="auSubmit">들어가기</button>
@@ -418,6 +432,11 @@ h1,h2{text-wrap:balance}
           <p class="err" id="nrErr" hidden></p>
           <button class="btn primary" type="submit">방 파고 코드 받기</button>
         </form>
+        <section class="new-card" id="adminCard" hidden>
+          <h2 style="display:flex;align-items:center;gap:8px">추천 코드 관리 <span class="admin-tag">관리자</span></h2>
+          <form class="inv-new" id="invForm"><input id="invNote" maxlength="30" placeholder="누구에게 줄 코드인지 메모 (선택)" autocomplete="off"><button class="btn primary" type="submit">코드 발급</button></form>
+          <ul class="inv-list" id="invList"></ul>
+        </section>
       </div>
       <p class="mode-note" id="modeNote"></p>
     </section>
@@ -590,7 +609,6 @@ h1,h2{text-wrap:balance}
    Firebase 설정: 같이 하려면 아래 null 을 Firebase 웹 앱 설정 객체로 바꾸세요.
    (README.md 참고) null 이면 이 브라우저에만 저장되는 혼자 모드로 동작합니다.
    ========================================================= */
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDwDXEC91c5qfcJdi0iQXnhIVrMI1Od7dU",
   authDomain: "trpg-table.firebaseapp.com",
@@ -623,7 +641,7 @@ function toast(s){const el=$('#toast');el.textContent=s;el.hidden=false;clearTim
 /* ---------------- Storage + accounts ---------------- */
 const LS_KEY='bungae-table-v4';
 const CODE_ABC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const makeCode=()=>Array.from(crypto.getRandomValues(new Uint32Array(6)),n=>CODE_ABC[n%CODE_ABC.length]).join('');
+const makeCode=(n=6)=>Array.from(crypto.getRandomValues(new Uint32Array(n)),x=>CODE_ABC[x%CODE_ABC.length]).join('');
 const normCode=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 class AppError extends Error{constructor(code){super(code);this.code=code}}
 async function hashPw(email,pw){
@@ -635,11 +653,12 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
-  const pub=a=>a?{uid:a.uid,nick:a.nick,email:a.email}:null;
+  const isAdminAcc=a=>!!a&&(a.admin||(Object.values(db.accounts)[0]||{}).uid===a.uid);
+  const pub=a=>a?{uid:a.uid,nick:a.nick,email:a.email,admin:isAdminAcc(a)}:null;
   const loadMe=()=>{const id=sessionStorage.getItem('bt-session')||lsGet('bt-session');me=pub(Object.values(db.accounts).find(a=>a.uid===id))};
   const setMe=a=>{me=pub(a);try{sessionStorage.setItem('bt-session',me?me.uid:'')}catch(e){}lsSet('bt-session',me?me.uid:null);authSubs.forEach(f=>f(me))};
   try{loadMe()}catch(e){}
@@ -649,13 +668,26 @@ function makeLocal(){
   return {
     kind:'local',
     onAuth(cb){authSubs.add(cb);queueMicrotask(()=>cb(me));return()=>authSubs.delete(cb)},
-    async signUp(email,pw,nick){
-      const k=email.toLowerCase();
+    async signUp(email,pw,nick,invite){
+      const k=email.toLowerCase(),first=!Object.keys(db.accounts).length,code=normCode(invite);
+      if(!first){
+        if(!code)throw new AppError('invite/missing');
+        const inv=db.invites[code];if(!inv)throw new AppError('invite/invalid');if(inv.used)throw new AppError('invite/used');
+      }
       if(!/^\S+@\S+\.\S+$/.test(email))throw new AppError('auth/invalid-email');
       if(pw.length<6)throw new AppError('auth/weak-password');
       if(db.accounts[k])throw new AppError('auth/email-already-in-use');
-      const a={uid:'u'+uid(),email,nick,hash:await hashPw(k,pw)};db.accounts[k]=a;write();setMe(a);return me;
+      const a={uid:'u'+uid(),email,nick,hash:await hashPw(k,pw),admin:first,invite:first?null:code};db.accounts[k]=a;
+      if(!first)Object.assign(db.invites[code],{used:true,usedBy:a.uid,usedNick:nick,usedAt:now()});
+      write();setMe(a);return me;
     },
+    listInvites:cb=>sub(()=>cb(me&&me.admin?Object.entries(db.invites).map(([code,v])=>({code,...v})):[])),
+    async createInvite(note){
+      if(!me||!me.admin)throw new AppError('permission-denied');
+      let code;do code=makeCode(8);while(db.invites[code]);
+      db.invites[code]={used:false,note:note||'',createdAt:now()};write();emit();return code;
+    },
+    async deleteInvite(code){if(!me||!me.admin)throw new AppError('permission-denied');delete db.invites[code];write();emit()},
     async signIn(email,pw){const k=email.toLowerCase(),a=db.accounts[k];if(!a||a.hash!==await hashPw(k,pw))throw new AppError('auth/invalid-credential');setMe(a);return me},
     async signOut(){setMe(null)},
     async resetPw(){throw new AppError('local/no-reset')},
@@ -706,21 +738,50 @@ async function makeFirebase(cfg){
   let me=null,resolved=false;const authSubs=new Set();
   const notify=()=>{resolved=true;authSubs.forEach(f=>f(me))};
   const fail=e=>{console.error(e);toast('서버와 연결이 끊겼어요. 새로고침해 주세요')};
+  let signingUp=false;
+  const loadProfile=async u=>{
+    const d=await fs.getDoc(fs.doc(db,'users',u.uid));
+    if(!d.exists())return null;
+    let admin=false;try{admin=(await fs.getDoc(fs.doc(db,'admins',u.uid))).exists()}catch(e){}
+    return {uid:u.uid,email:u.email,nick:d.data().nick||u.displayName||(u.email||'').split('@')[0],admin};
+  };
   A.onAuthStateChanged(auth,async u=>{
+    if(signingUp)return;
     if(!u){me=null;notify();return}
-    let nick=u.displayName;
-    if(!nick){try{const d=await fs.getDoc(fs.doc(db,'users',u.uid));if(d.exists())nick=d.data().nick}catch(e){}}
-    me={uid:u.uid,email:u.email,nick:nick||(u.email||'').split('@')[0]};notify();
+    let prof=null;try{prof=await loadProfile(u)}catch(e){console.error(e)}
+    if(!prof){me=null;await A.signOut(auth).catch(()=>{});authNotice='auth/not-approved';notify();return}
+    me=prof;notify();
   });
   return {
     kind:'online',
     onAuth(cb){authSubs.add(cb);if(resolved)queueMicrotask(()=>cb(me));return()=>authSubs.delete(cb)},
-    async signUp(email,pw,nick){
-      const c=await A.createUserWithEmailAndPassword(auth,email,pw);
-      await A.updateProfile(c.user,{displayName:nick});
-      await fs.setDoc(fs.doc(db,'users',c.user.uid),{nick,createdAt:now()});
-      me={uid:c.user.uid,email,nick};notify();return me;
+    async signUp(email,pw,nick,invite){
+      const code=normCode(invite);if(!code)throw new AppError('invite/missing');
+      const inv=await fs.getDoc(fs.doc(db,'invites',code));
+      if(!inv.exists())throw new AppError('invite/invalid');
+      if(inv.data().used)throw new AppError('invite/used');
+      signingUp=true;
+      try{
+        const c=await A.createUserWithEmailAndPassword(auth,email,pw);
+        try{
+          const b=fs.writeBatch(db);
+          b.set(fs.doc(db,'users',c.user.uid),{nick,createdAt:now(),invite:code});
+          b.update(fs.doc(db,'invites',code),{used:true,usedBy:c.user.uid,usedNick:nick,usedAt:now()});
+          await b.commit();
+        }catch(e){await c.user.delete().catch(()=>A.signOut(auth));throw new AppError('invite/used')}
+        await A.updateProfile(c.user,{displayName:nick}).catch(()=>{});
+        me={uid:c.user.uid,email,nick,admin:false};notify();return me;
+      }finally{signingUp=false}
     },
+    listInvites:cb=>me&&me.admin?fs.onSnapshot(fs.collection(db,'invites'),s=>cb(s.docs.map(d=>({code:d.id,...d.data()}))),fail):(cb([]),()=>{}),
+    async createInvite(note){
+      for(let i=0;;i++){
+        const code=makeCode(8),ref=fs.doc(db,'invites',code);
+        if((await fs.getDoc(ref)).exists()&&i<4)continue;
+        await fs.setDoc(ref,{used:false,note:note||'',createdAt:now()});return code;
+      }
+    },
+    deleteInvite:code=>fs.deleteDoc(fs.doc(db,'invites',code)),
     async signIn(email,pw){await A.signInWithEmailAndPassword(auth,email,pw)},
     async signOut(){await A.signOut(auth)},
     async resetPw(email){await A.sendPasswordResetEmail(auth,email)},
@@ -784,10 +845,15 @@ const ERR_MSG={
   'auth/operation-not-allowed':'지금은 가입이나 로그인을 할 수 없어요. 잠시 후 다시 시도해 주세요.',
   'local/no-reset':'지금은 비밀번호 찾기를 쓸 수 없어요.',
   'char/limit':'이 방에서는 캐릭터를 하나만 만들 수 있어요. NPC는 방장만 만들 수 있어요.',
+  'invite/missing':'추천 코드를 입력해 주세요. 추천 코드가 있어야 가입할 수 있어요.',
+  'invite/invalid':'유효하지 않은 추천 코드예요. 코드를 다시 확인해 주세요.',
+  'invite/used':'이미 사용된 추천 코드예요. 새 코드를 받아 주세요.',
+  'auth/not-approved':'가입이 완료되지 않은 계정이에요. 추천 코드로 다시 가입해 주세요.',
   'room/not-found':'그 코드의 방을 찾지 못했어요. 코드를 다시 확인해 주세요.',
   'permission-denied':'이 작업을 할 수 있는 권한이 없어요.'
 };
 const errText=e=>ERR_MSG[e&&e.code]||'문제가 생겼어요. 잠시 후 다시 해 주세요.';
+let authNotice='';
 
 /* ---------------- Formatting ---------------- */
 const FX={'지직':'fx-glitch','흔들':'fx-shake','희미':'fx-fade','빛':'fx-glow','작게':'fx-small','뒤집':'fx-flip','물결':'fx-wave'};
@@ -896,6 +962,31 @@ function showHome(){
   if(me){$('#userNick').textContent=me.nick;$('#userDot').innerHTML=initial(me.nick)}
   renderRooms();
 }
+let unsubInv=null,invites=[];
+function subscribeInvites(){
+  if(unsubInv){unsubInv();unsubInv=null}
+  invites=[];$('#adminCard').hidden=!(me&&me.admin);
+  if(me&&me.admin)unsubInv=B.listInvites(list=>{invites=list;renderInvites()});
+}
+function renderInvites(){
+  const el=$('#invList');
+  const list=[...invites].sort((a,b)=>(a.used-b.used)||((b.createdAt||0)-(a.createdAt||0)));
+  el.innerHTML=list.length?list.map(v=>`<li class="inv${v.used?' used':''}"><code>${esc(v.code)}</code>
+    <span class="inv-meta">${v.used?`사용됨 · ${esc(v.usedNick||'')} · ${ago(v.usedAt)}`:`미사용${v.note?' · '+esc(v.note):''}`}</span>
+    <span class="inv-act">${v.used?'':`<button class="x edit" data-invcopy="${esc(v.code)}" title="코드 복사" aria-label="코드 복사">⧉</button><button class="x" data-invdel="${esc(v.code)}" title="코드 삭제" aria-label="코드 삭제">×</button>`}</span></li>`).join('')
+    :'<li class="inv-meta" style="padding:6px 2px">아직 발급한 코드가 없어요.</li>';
+}
+$('#invForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  try{const code=await B.createInvite($('#invNote').value.trim());$('#invNote').value='';copyText(code,`추천 코드 ${code}를 발급하고 복사했어요`)}
+  catch(x){toast('코드를 발급하지 못했어요. '+errText(x))}
+});
+$('#invList').addEventListener('click',async e=>{
+  const c=e.target.closest('[data-invcopy]');if(c){copyText(c.dataset.invcopy,`추천 코드 ${c.dataset.invcopy}를 복사했어요`);return}
+  const d=e.target.closest('[data-invdel]');if(!d)return;
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{await B.deleteInvite(d.dataset.invdel);toast('코드를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
+});
 function subscribeRooms(){
   if(unsubHome){unsubHome();unsubHome=null}
   rooms=[];
@@ -937,7 +1028,7 @@ $('#roomList').addEventListener('keydown',e=>{const c=e.target.closest('[data-op
 let authMode='login';
 function setAuthMode(m){
   authMode=m;$$('[data-auth]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.auth===m));
-  $('#auNickRow').hidden=m!=='signup';$('#auPw2Row').hidden=m!=='signup';$('#auPw2').value='';$('#auSubmit').textContent=m==='signup'?'가입하고 시작하기':'들어가기';
+  $('#auNickRow').hidden=m!=='signup';$('#auPw2Row').hidden=m!=='signup';$('#auPw2').value='';$('#auInvRow').hidden=m!=='signup';$('#auSubmit').textContent=m==='signup'?'가입하고 시작하기':'들어가기';
   $('#auPw').autocomplete=m==='signup'?'new-password':'current-password';$('#auReset').hidden=m==='signup';$('#auErr').hidden=true;
 }
 $$('[data-auth]').forEach(b=>b.onclick=()=>setAuthMode(b.dataset.auth));
@@ -947,11 +1038,13 @@ $('#authForm').addEventListener('submit',async e=>{
   const email=$('#auEmail').value.trim(),pw=$('#auPw').value,nick=$('#auNick').value.trim();
   if(!email){authErr('이메일을 적어 주세요.');return}
   if(pw.length<6){authErr('비밀번호는 6자 이상이어야 해요.');return}
+  const inv=normCode($('#auInv').value);
+  if(authMode==='signup'&&!inv&&B.kind==='online'){authErr(errText({code:'invite/missing'}));$('#auInv').focus();return}
   if(authMode==='signup'&&pw!==$('#auPw2').value){authErr('비밀번호가 서로 달라요. 두 칸에 같은 비밀번호를 입력해 주세요.');$('#auPw2').focus();return}
   if(authMode==='signup'&&!nick){authErr('방에서 보일 닉네임을 적어 주세요.');$('#auNick').focus();return}
   const btn=$('#auSubmit');btn.disabled=true;authErr('');
   try{
-    if(authMode==='signup'){await B.signUp(email,pw,nick);toast(`${nick}님, 반가워요!`)}
+    if(authMode==='signup'){await B.signUp(email,pw,nick,inv);$('#auInv').value='';toast(`${nick}님, 반가워요!`)}
     else await B.signIn(email,pw);
     $('#auPw').value='';$('#auPw2').value='';
   }catch(x){
@@ -965,6 +1058,7 @@ $('#auReset').onclick=async()=>{
   try{await B.resetPw(email);const el=$('#auErr');el.textContent='비밀번호 재설정 메일을 보냈어요. 메일함을 확인해 주세요.';el.style.color='var(--accent)';el.hidden=false}
   catch(x){authErr(errText(x))}
 };
+$('#auInv').addEventListener('input',e=>{const v=normCode(e.target.value).slice(0,10);if(e.target.value!==v)e.target.value=v});
 $('#logoutBtn').onclick=async()=>{await B.signOut();toast('로그아웃했어요')};
 
 /* join by code */
@@ -1536,7 +1630,8 @@ async function boot(){
   let first=true;
   B.onAuth(async u=>{
     const changed=(me&&me.uid)!==(u&&u.uid);me=u;
-    if(changed||first){subscribeRooms();if(!u&&roomId)location.hash='';route()}
+    if(authNotice&&!u){authErr(errText({code:authNotice}));authNotice=''}
+    if(changed||first){subscribeRooms();subscribeInvites();if(!u&&roomId)location.hash='';route()}
     else if(!$('#homeView').hidden)showHome();
     first=false;
   });

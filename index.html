@@ -372,6 +372,29 @@ h1,h2{text-wrap:balance}
 .btn.danger:disabled{opacity:.45;cursor:default}
 #userNick{border:0;background:none;padding:0;font-weight:600;cursor:pointer;color:var(--ink)}
 #userNick:hover{text-decoration:underline;text-underline-offset:3px}
+.mail-btn{position:relative;width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sheet);border-radius:10px;font-size:15px;line-height:1;display:grid;place-items:center}
+.mail-btn:hover{border-color:var(--accent)}
+.mail-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--rose);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px var(--paper)}
+.modal-back{position:fixed;inset:0;z-index:45;background:rgba(18,14,30,.42);display:grid;place-items:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{width:min(540px,100%);max-height:min(82vh,760px);background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;animation:pop .18s ease-out}
+.modal-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.modal-h h2{margin:0;font-family:var(--f-display);font-size:20px}
+.modal-body{overflow-y:auto;padding:14px 16px 18px;display:flex;flex-direction:column;gap:14px}
+.notice-form{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px dashed var(--accent);background:var(--accent-soft);border-radius:12px}
+.notice-form input,.notice-form textarea{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:8px 10px;font-size:14px;color:var(--ink);resize:vertical;min-width:0}
+.notice-form input:focus,.notice-form textarea:focus{border-color:var(--accent);outline:none}
+.notice-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.notice{position:relative;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--sheet)}
+.notice.unread{border-color:var(--accent);background:var(--accent-soft)}
+.notice.unread .nt-top b::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rose);margin-right:7px;transform:translateY(-2px)}
+.nt-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-right:22px}
+.nt-top b{font-size:15px;overflow-wrap:anywhere}
+.nt-top time{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.nt-body{margin-top:6px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.nt-meta{margin-top:6px;font-size:12px;color:var(--muted)}
+.notice .x{position:absolute;top:8px;right:8px;opacity:1}
+.notice .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
@@ -407,6 +430,7 @@ h1,h2{text-wrap:balance}
     <div class="brand"><div class="brand-mark">d20</div><div><b>TRPG 번개탁 용도</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
     <div class="home-right">
       <div class="modebadge" id="modeBadge"><i></i><span>불러오는 중</span></div>
+      <button class="mail-btn" hidden aria-label="우편함" title="우편함">📮<span class="mail-badge" hidden></span></button>
       <button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button>
       <div class="userchip" id="userChip" hidden><span class="dot" id="userDot" style="--cc:var(--accent)"></span><button id="userNick" title="내 프로필"></button><button class="ghost" id="profileBtn">내 정보</button><button class="ghost" id="logoutBtn">로그아웃</button></div>
     </div>
@@ -593,6 +617,7 @@ h1,h2{text-wrap:balance}
       <button class="menu-btn" id="menuBtn" aria-label="세션 시트 열기">☰</button>
       <input class="room-name" id="roomName" aria-label="세션 이름" maxlength="40">
       <div class="top-actions">
+        <button class="mail-btn" hidden aria-label="우편함" title="우편함">📮<span class="mail-badge" hidden></span></button>
         <button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button>
         <select class="pill status-sel" id="statusSel" aria-label="세션 상태">
           <option value="live">진행 중</option><option value="paused">중단</option><option value="ended">종료</option>
@@ -663,6 +688,21 @@ h1,h2{text-wrap:balance}
   </main>
 </div>
 
+<div class="modal-back" id="mailModal" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="mailTitle">
+    <header class="modal-h"><h2 id="mailTitle">📮 우편함</h2><button class="x" id="mailClose" style="opacity:1;font-size:18px;width:32px;height:32px" aria-label="우편함 닫기">×</button></header>
+    <div class="modal-body">
+      <form class="notice-form" id="noticeForm" hidden>
+        <b style="font-size:13.5px">전체 공지 보내기 <span class="admin-tag">관리자</span></b>
+        <input id="ntTitle" maxlength="80" placeholder="공지 제목" autocomplete="off">
+        <textarea id="ntBody" rows="4" maxlength="4000" placeholder="모든 회원의 우편함에 도착할 내용이에요. 글 꾸밈 문법도 쓸 수 있어요."></textarea>
+        <p class="err" id="ntErr" hidden></p>
+        <button class="btn primary" type="submit" style="align-self:flex-end">전체 회원에게 보내기</button>
+      </form>
+      <ul class="notice-list" id="noticeList"></ul>
+    </div>
+  </section>
+</div>
 <div class="toast" id="toast" hidden></div>
 <div class="lightbox" id="lightbox" hidden><img id="lightboxImg" alt=""></div>
 
@@ -715,12 +755,12 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
   const isAdminAcc=a=>!!a&&(a.admin||(Object.values(db.accounts)[0]||{}).uid===a.uid);
-  const pub=a=>a?{uid:a.uid,nick:a.nick,email:a.email,admin:isAdminAcc(a)}:null;
+  const pub=a=>a?{uid:a.uid,nick:a.nick,email:a.email,admin:isAdminAcc(a),noticeSeen:a.noticeSeen||0}:null;
   const loadMe=()=>{const id=sessionStorage.getItem('bt-session')||lsGet('bt-session');me=pub(Object.values(db.accounts).find(a=>a.uid===id))};
   const setMe=a=>{me=pub(a);try{sessionStorage.setItem('bt-session',me?me.uid:'')}catch(e){}lsSet('bt-session',me?me.uid:null);authSubs.forEach(f=>f(me))};
   try{loadMe()}catch(e){}
@@ -743,6 +783,10 @@ function makeLocal(){
       if(!first)Object.assign(db.invites[code],{used:true,usedBy:a.uid,usedNick:nick,usedAt:now()});
       write();setMe(a);return me;
     },
+    watchNotices:cb=>sub(()=>cb(me?[...db.notices].sort((a,b)=>b.ct-a.ct).slice(0,50):[])),
+    async sendNotice(n){if(!me||!me.admin)throw new AppError('permission-denied');db.notices.push({id:'n'+uid(),...n,authorUid:me.uid,authorNick:me.nick,ct:now()});write();emit()},
+    async deleteNotice(id){if(!me||!me.admin)throw new AppError('permission-denied');db.notices=db.notices.filter(n=>n.id!==id);write();emit()},
+    async markNoticesSeen(ts){const a=Object.values(db.accounts).find(x=>x.uid===me.uid);if(a){a.noticeSeen=ts;write()}me={...me,noticeSeen:ts}},
     async updateNick(nick){
       const a=Object.values(db.accounts).find(x=>x.uid===me.uid);a.nick=nick;
       Object.values(db.rooms).forEach(r=>{if((r.members||[]).includes(me.uid))r.memberNames={...(r.memberNames||{}),[me.uid]:nick}});
@@ -826,7 +870,7 @@ async function makeFirebase(cfg){
     const d=await fs.getDoc(fs.doc(db,'users',u.uid));
     if(!d.exists())return null;
     let admin=false;try{admin=(await fs.getDoc(fs.doc(db,'admins',u.uid))).exists()}catch(e){}
-    return {uid:u.uid,email:u.email,nick:d.data().nick||u.displayName||(u.email||'').split('@')[0],admin};
+    return {uid:u.uid,email:u.email,nick:d.data().nick||u.displayName||(u.email||'').split('@')[0],admin,noticeSeen:d.data().noticeSeen||0};
   };
   A.onAuthStateChanged(auth,async u=>{
     if(signingUp)return;
@@ -856,6 +900,11 @@ async function makeFirebase(cfg){
         me={uid:c.user.uid,email,nick,admin:false};notify();return me;
       }finally{signingUp=false}
     },
+    watchNotices:cb=>fs.onSnapshot(fs.query(fs.collection(db,'notices'),fs.orderBy('ct','desc'),fs.limit(50)),
+      s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),e=>{if(e.code!=='permission-denied')fail(e)}),
+    sendNotice:n=>fs.addDoc(fs.collection(db,'notices'),{...n,authorUid:me.uid,authorNick:me.nick,ct:now()}),
+    deleteNotice:id=>fs.deleteDoc(fs.doc(db,'notices',id)),
+    async markNoticesSeen(ts){await fs.updateDoc(fs.doc(db,'users',me.uid),{noticeSeen:ts});me={...me,noticeSeen:ts}},
     async updateNick(nick){
       const u=auth.currentUser;
       await fs.updateDoc(fs.doc(db,'users',u.uid),{nick});
@@ -1197,6 +1246,59 @@ $('#newRoomForm').addEventListener('submit',async e=>{
   try{const {id,code}=await B.createRoom(room);
     try{await B.saveChar(id,{id:uid(),ownerUid:me.uid,name:gm,color:COLORS[6],gm:true})}catch(x){}['#nrName','#nrDesc','#nrGm'].forEach(s=>$(s).value='');toast(`방을 만들었어요. 참가 코드: ${code}`);location.hash='room-'+id}
   catch(x){err.textContent='방을 만들지 못했어요. '+errText(x);err.hidden=false}
+});
+
+/* ---------------- Mailbox ---------------- */
+let notices=[],unsubNotice=null,noticeFirst=true;
+const unreadCount=()=>me?notices.filter(n=>n.ct>(me.noticeSeen||0)&&n.authorUid!==me.uid).length:0;
+function subscribeNotices(){
+  if(unsubNotice){unsubNotice();unsubNotice=null}
+  notices=[];noticeFirst=true;$$('.mail-btn').forEach(b=>b.hidden=!me);
+  if(me)unsubNotice=B.watchNotices(list=>{
+    const fresh=!noticeFirst&&list.find(n=>!notices.some(o=>o.id===n.id)&&n.authorUid!==me.uid);
+    notices=list;noticeFirst=false;
+    if(fresh)toast(`📮 새 공지가 도착했어요: ${fresh.title}`);
+    renderMailBadge();if(!$('#mailModal').hidden)renderNotices();
+  });
+  renderMailBadge();
+}
+function renderMailBadge(){
+  const n=unreadCount();
+  $$('.mail-btn').forEach(b=>{const s=b.querySelector('.mail-badge');s.hidden=!n;s.textContent=n>9?'9+':n;b.title=n?`우편함 · 읽지 않은 공지 ${n}개`:'우편함'});
+}
+function renderNotices(){
+  const seen=me.noticeSeen||0;
+  $('#noticeForm').hidden=!me.admin;
+  $('#noticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice${n.ct>seen&&n.authorUid!==me.uid?' unread':''}">
+    <div class="nt-top"><b>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
+    <div class="nt-body">${fmt(n.body||'')}</div>
+    <div class="nt-meta">${esc(n.authorNick||'관리자')} · 전체 공지</div>
+    ${me.admin?`<button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button>`:''}</li>`).join('')
+    :'<li class="list-empty" style="border:0;padding:28px 10px"><b>아직 받은 공지가 없어요</b>새 공지가 오면 여기에 쌓여요.</li>';
+}
+function openMail(){
+  if(!me)return;
+  renderNotices();$('#mailModal').hidden=false;$('#mailClose').focus();
+  const latest=notices.reduce((m,n)=>Math.max(m,n.ct||0),0);
+  if(latest>(me.noticeSeen||0))B.markNoticesSeen(latest).then(()=>{me.noticeSeen=latest;renderMailBadge()}).catch(()=>{});
+}
+function closeMail(){$('#mailModal').hidden=true;renderMailBadge()}
+$$('.mail-btn').forEach(b=>b.addEventListener('click',openMail));
+$('#mailClose').onclick=closeMail;
+$('#mailModal').addEventListener('click',e=>{if(e.target.id==='mailModal')closeMail()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#mailModal').hidden)closeMail()});
+$('#noticeForm').addEventListener('submit',async e=>{
+  e.preventDefault();const title=$('#ntTitle').value.trim(),body=$('#ntBody').value.trim(),err=$('#ntErr');
+  if(!title){err.textContent='공지 제목을 입력해 주세요.';err.hidden=false;return}
+  if(!body){err.textContent='공지 내용을 입력해 주세요.';err.hidden=false;return}
+  err.hidden=true;
+  try{await B.sendNotice({title,body});e.target.reset();toast('전체 회원에게 공지를 보냈어요')}
+  catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
+});
+$('#noticeList').addEventListener('click',async e=>{
+  const d=e.target.closest('[data-ntdel]');if(!d)return;e.stopPropagation();
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{await B.deleteNotice(d.dataset.ntdel);toast('공지를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
 });
 
 /* ---------------- Profile ---------------- */
@@ -1794,11 +1896,12 @@ async function boot(){
   B.onAuth(async u=>{
     const changed=(me&&me.uid)!==(u&&u.uid);me=u;
     if(authNotice&&!u){authErr(errText({code:authNotice}));authNotice=''}
-    if(changed||first){subscribeRooms();subscribeInvites();if(!u&&roomId)location.hash='';route()}
+    if(changed||first){subscribeRooms();subscribeInvites();subscribeNotices();if(!u)closeMail();if(!u&&roomId)location.hash='';route()}
     else if(!$('#homeView').hidden)showHome();
     first=false;
   });
 }
+boot();
 boot();
 </script>
 

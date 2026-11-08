@@ -355,6 +355,23 @@ h1,h2{text-wrap:balance}
 .inv-act{display:flex;gap:2px}
 .inv-act .x{opacity:1}
 .inv-act .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
+.pf-wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.pf-title{font-family:var(--f-display);font-size:30px;margin:4px 0 2px;letter-spacing:-.01em}
+.pf-me{display:flex;align-items:center;gap:12px}
+.pf-me .dot{width:44px;height:44px;font-size:18px}
+.pf-me b{display:block;font-size:16px}
+.pf-me small{color:var(--muted);font-size:13px}
+.pf-hint{font-size:12.5px;color:var(--muted);margin:0}
+.pf-form{display:flex;flex-direction:column;gap:12px}
+.pf-ok{color:var(--accent);font-size:12.5px;margin:0}
+.new-card.danger{border-color:color-mix(in srgb,var(--rose) 45%,var(--line))}
+.new-card.danger h2{color:var(--rose)}
+.pf-impact{margin:0;padding-left:18px;font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.pf-impact b{color:var(--ink)}
+.btn.danger{background:var(--rose);border-color:var(--rose);color:#fff;padding:10px 14px;font-size:15px}
+.btn.danger:disabled{opacity:.45;cursor:default}
+#userNick{border:0;background:none;padding:0;font-weight:600;cursor:pointer;color:var(--ink)}
+#userNick:hover{text-decoration:underline;text-underline-offset:3px}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
@@ -391,7 +408,7 @@ h1,h2{text-wrap:balance}
     <div class="home-right">
       <div class="modebadge" id="modeBadge"><i></i><span>불러오는 중</span></div>
       <button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button>
-      <div class="userchip" id="userChip" hidden><span class="dot" id="userDot" style="--cc:var(--accent)"></span><b id="userNick"></b><button class="ghost" id="logoutBtn">로그아웃</button></div>
+      <div class="userchip" id="userChip" hidden><span class="dot" id="userDot" style="--cc:var(--accent)"></span><button id="userNick" title="내 프로필"></button><button class="ghost" id="profileBtn">내 정보</button><button class="ghost" id="logoutBtn">로그아웃</button></div>
     </div>
   </header>
   <div class="home-grid">
@@ -449,6 +466,51 @@ h1,h2{text-wrap:balance}
         </div>
       </div>
       <div class="room-list" id="roomList"></div>
+    </section>
+  </div>
+</div>
+
+<!-- ================= PROFILE ================= -->
+<div class="home" id="profileView" hidden>
+  <header class="home-top">
+    <div class="brand"><div class="brand-mark">d20</div><div><b>TRPG 번개탁 용도</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
+    <div class="home-right"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
+  </header>
+  <div class="pf-wrap">
+    <button class="back" id="pfBack"><span class="brand-mark">d20</span>세션 목록으로</button>
+    <h1 class="pf-title">내 프로필</h1>
+
+    <section class="new-card">
+      <div class="pf-me"><span class="dot" id="pfDot" style="--cc:var(--accent)"></span><div><b id="pfNickNow"></b><small id="pfEmail"></small></div></div>
+      <form class="pf-form" id="pfNickForm">
+        <label class="field">닉네임<input id="pfNick" maxlength="20" autocomplete="nickname"></label>
+        <p class="pf-hint">닉네임을 바꾸면 참가 중인 방의 참가자 목록에도 바로 반영돼요.</p>
+        <p class="err" id="pfNickErr" hidden></p>
+        <button class="btn primary" type="submit" style="padding:10px 14px;font-size:15px">닉네임 저장</button>
+      </form>
+    </section>
+
+    <section class="new-card">
+      <h2>비밀번호 변경</h2>
+      <form class="pf-form" id="pfPwForm">
+        <label class="field">현재 비밀번호<input id="pfPwCur" type="password" autocomplete="current-password"></label>
+        <label class="field">새 비밀번호<input id="pfPwNew" type="password" autocomplete="new-password" placeholder="6자 이상"></label>
+        <label class="field">새 비밀번호 확인<input id="pfPwNew2" type="password" autocomplete="new-password" placeholder="한 번 더 입력해 주세요"></label>
+        <p class="err" id="pfPwErr" hidden></p>
+        <button class="btn primary" type="submit" style="padding:10px 14px;font-size:15px">비밀번호 바꾸기</button>
+      </form>
+    </section>
+
+    <section class="new-card danger">
+      <h2>회원 탈퇴</h2>
+      <p class="pf-hint" style="font-size:13.5px;color:var(--ink)">탈퇴하면 계정이 바로 삭제되고 되돌릴 수 없어요.</p>
+      <ul class="pf-impact" id="pfImpact"></ul>
+      <form class="pf-form" id="pfDelForm">
+        <label class="field">현재 비밀번호<input id="pfDelPw" type="password" autocomplete="current-password"></label>
+        <label class="field"><span>확인을 위해 <b style="color:var(--ink)">탈퇴</b>라고 입력해 주세요</span><input id="pfDelConfirm" autocomplete="off" placeholder="탈퇴"></label>
+        <p class="err" id="pfDelErr" hidden></p>
+        <button class="btn danger" type="submit" id="pfDelBtn" disabled>회원 탈퇴</button>
+      </form>
     </section>
   </div>
 </div>
@@ -681,6 +743,27 @@ function makeLocal(){
       if(!first)Object.assign(db.invites[code],{used:true,usedBy:a.uid,usedNick:nick,usedAt:now()});
       write();setMe(a);return me;
     },
+    async updateNick(nick){
+      const a=Object.values(db.accounts).find(x=>x.uid===me.uid);a.nick=nick;
+      Object.values(db.rooms).forEach(r=>{if((r.members||[]).includes(me.uid))r.memberNames={...(r.memberNames||{}),[me.uid]:nick}});
+      write();me={...me,nick};emit();return me;
+    },
+    async changePassword(cur,next){
+      const k=me.email.toLowerCase(),a=db.accounts[k];
+      if(a.hash!==await hashPw(k,cur))throw new AppError('auth/invalid-credential');
+      if(next.length<6)throw new AppError('auth/weak-password');
+      a.hash=await hashPw(k,next);write();
+    },
+    async deleteAccount(pw){
+      const k=me.email.toLowerCase(),a=db.accounts[k],u=me.uid;
+      if(a.hash!==await hashPw(k,pw))throw new AppError('auth/invalid-credential');
+      Object.values(db.rooms).forEach(r=>{
+        if(!(r.members||[]).includes(u))return;
+        if(r.ownerUid===u){if(r.code)delete db.codes[r.code];delete db.rooms[r.id];delete db.messages[r.id];delete db.chars[r.id]}
+        else{r.members=r.members.filter(x=>x!==u);if(r.memberNames)delete r.memberNames[u];if(db.chars[r.id])Object.keys(db.chars[r.id]).forEach(cid=>{if(db.chars[r.id][cid].ownerUid===u)delete db.chars[r.id][cid]})}
+      });
+      delete db.accounts[k];write();setMe(null);emit();
+    },
     listInvites:cb=>sub(()=>cb(me&&me.admin?Object.entries(db.invites).map(([code,v])=>({code,...v})):[])),
     async createInvite(note){
       if(!me||!me.admin)throw new AppError('permission-denied');
@@ -773,6 +856,33 @@ async function makeFirebase(cfg){
         me={uid:c.user.uid,email,nick,admin:false};notify();return me;
       }finally{signingUp=false}
     },
+    async updateNick(nick){
+      const u=auth.currentUser;
+      await fs.updateDoc(fs.doc(db,'users',u.uid),{nick});
+      await A.updateProfile(u,{displayName:nick}).catch(()=>{});
+      const rs=await fs.getDocs(fs.query(fs.collection(db,'rooms'),fs.where('members','array-contains',u.uid)));
+      await Promise.all(rs.docs.map(d=>fs.updateDoc(d.ref,{['memberNames.'+u.uid]:nick}).catch(()=>{})));
+      me={...me,nick};notify();return me;
+    },
+    async changePassword(cur,next){
+      const u=auth.currentUser;
+      await A.reauthenticateWithCredential(u,A.EmailAuthProvider.credential(u.email,cur));
+      await A.updatePassword(u,next);
+    },
+    async deleteAccount(pw){
+      const u=auth.currentUser,uidv=u.uid;
+      await A.reauthenticateWithCredential(u,A.EmailAuthProvider.credential(u.email,pw));
+      const rs=await fs.getDocs(fs.query(fs.collection(db,'rooms'),fs.where('members','array-contains',uidv)));
+      for(const d of rs.docs){
+        const r=d.data();
+        if(r.ownerUid===uidv){await this.deleteRoom(d.id).catch(e=>console.error(e));continue}
+        const cs=await fs.getDocs(fs.collection(db,'rooms',d.id,'chars')).catch(()=>null);
+        if(cs)for(const c of cs.docs){if(c.data().ownerUid===uidv)await fs.deleteDoc(c.ref).catch(()=>{})}
+        await fs.updateDoc(d.ref,{members:fs.arrayRemove(uidv),['memberNames.'+uidv]:fs.deleteField()}).catch(e=>console.error(e));
+      }
+      await fs.deleteDoc(fs.doc(db,'users',uidv));
+      await A.deleteUser(u);
+    },
     listInvites:cb=>me&&me.admin?fs.onSnapshot(fs.collection(db,'invites'),s=>cb(s.docs.map(d=>({code:d.id,...d.data()}))),fail):(cb([]),()=>{}),
     async createInvite(note){
       for(let i=0;;i++){
@@ -845,6 +955,7 @@ const ERR_MSG={
   'auth/operation-not-allowed':'지금은 가입이나 로그인을 할 수 없어요. 잠시 후 다시 시도해 주세요.',
   'local/no-reset':'지금은 비밀번호 찾기를 쓸 수 없어요.',
   'char/limit':'이 방에서는 캐릭터를 하나만 만들 수 있어요. NPC는 방장만 만들 수 있어요.',
+  'auth/requires-recent-login':'보안을 위해 로그아웃 후 다시 로그인한 뒤 시도해 주세요.',
   'invite/missing':'추천 코드를 입력해 주세요. 추천 코드가 있어야 가입할 수 있어요.',
   'invite/invalid':'유효하지 않은 추천 코드예요. 코드를 다시 확인해 주세요.',
   'invite/used':'이미 사용된 추천 코드예요. 새 코드를 받아 주세요.',
@@ -945,6 +1056,7 @@ let roomId=null,R=null,M=[],CH=[],unsubRoom=[],lastCount=0;
 let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
+  if(location.hash==='#profile'){if(me)showProfile();else{location.hash='';showHome()}return}
   const m=location.hash.match(/^#room-([A-Za-z0-9_-]+)$/);
   if(m&&!me){toast('로그인하면 그 방으로 바로 들어가요');showHome();return}
   if(m)openRoom(m[1]);else showHome();
@@ -955,11 +1067,12 @@ addEventListener('hashchange',route);
 function showHome(){
   closeRoom();
   document.documentElement.classList.remove('in-room');
-  $('#roomView').hidden=true;$('#homeView').hidden=false;document.title='TRPG 번개탁 용도';
+  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#homeView').hidden=false;document.title='TRPG 번개탁 용도';
   $('#authForm').hidden=!!me;$('#userArea').hidden=!me;$('#userChip').hidden=!me;
   $('#hello').innerHTML=me?`${esc(me.nick)}님,<br><em>오늘은 뭘 굴려 볼까요?</em>`:'TRPG<br><em>빠르게 준비해요</em>';
   $('#helloSub').textContent=me?'코드를 받았다면 아래에 입력하고, 직접 진행한다면 새 방을 파 보세요.':'쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.';
   if(me){$('#userNick').textContent=me.nick;$('#userDot').innerHTML=initial(me.nick)}
+  $$('#profileView form').forEach(f=>f.reset());
   renderRooms();
 }
 let unsubInv=null,invites=[];
@@ -990,7 +1103,7 @@ $('#invList').addEventListener('click',async e=>{
 function subscribeRooms(){
   if(unsubHome){unsubHome();unsubHome=null}
   rooms=[];
-  if(me)unsubHome=B.listRooms(list=>{rooms=list;if(!$('#homeView').hidden)renderRooms()});
+  if(me)unsubHome=B.listRooms(list=>{rooms=list;if(!$('#homeView').hidden)renderRooms();renderImpact()});
 }
 function renderRooms(){
   $$('#filters .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.filter===filter));
@@ -1086,13 +1199,63 @@ $('#newRoomForm').addEventListener('submit',async e=>{
   catch(x){err.textContent='방을 만들지 못했어요. '+errText(x);err.hidden=false}
 });
 
+/* ---------------- Profile ---------------- */
+function showProfile(){
+  closeRoom();document.documentElement.classList.remove('in-room');
+  $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';
+  $('#pfNickNow').textContent=me.nick;$('#pfEmail').textContent=me.email||'';$('#pfDot').innerHTML=initial(me.nick);
+  $('#pfNick').value=me.nick;['#pfNickErr','#pfPwErr','#pfDelErr'].forEach(x=>$(x).hidden=true);
+  renderImpact();window.scrollTo(0,0);
+}
+function renderImpact(){
+  if($('#profileView').hidden||!me)return;
+  const owned=rooms.filter(r=>r.ownerUid===me.uid),joined=rooms.filter(r=>r.ownerUid!==me.uid);
+  const names=l=>l.slice(0,3).map(r=>`「${esc(r.name||'이름 없는 방')}」`).join(', ')+(l.length>3?` 외 ${l.length-3}개`:'');
+  $('#pfImpact').innerHTML=[
+    owned.length?`<li>내가 만든 방 <b>${owned.length}개</b>(${names(owned)})는 로그·캐릭터와 함께 <b>모두 삭제</b>돼요. 다른 참가자도 더 이상 볼 수 없어요.</li>`:'',
+    joined.length?`<li>참가 중인 방 <b>${joined.length}개</b>에서 나가고, 그 방의 내 캐릭터가 삭제돼요. 내가 남긴 대사는 로그에 남아요.</li>`:'',
+    '<li>같은 이메일로 다시 가입하려면 새 추천 코드가 필요해요.</li>'
+  ].join('');
+}
+const pfMsg=(id,t,ok)=>{const el=$(id);el.textContent=t;el.hidden=!t;el.className=ok?'pf-ok':'err'};
+const pwErr=x=>['auth/invalid-credential','auth/wrong-password'].includes(x&&x.code)?'현재 비밀번호가 맞지 않아요.':errText(x);
+$('#profileBtn').onclick=()=>{location.hash='profile'};
+$('#userNick').onclick=()=>{location.hash='profile'};
+$('#pfBack').onclick=()=>{location.hash=''};
+$('#pfNickForm').addEventListener('submit',async e=>{
+  e.preventDefault();const nick=$('#pfNick').value.trim();
+  if(!nick){pfMsg('#pfNickErr','닉네임을 입력해 주세요.');return}
+  if(nick===me.nick){pfMsg('#pfNickErr','지금 닉네임과 같아요.');return}
+  try{await B.updateNick(nick);me.nick=nick;$('#pfNickNow').textContent=nick;$('#pfDot').innerHTML=initial(nick);
+    $('#userNick').textContent=nick;$('#userDot').innerHTML=initial(nick);pfMsg('#pfNickErr','닉네임을 바꿨어요.',true)}
+  catch(x){pfMsg('#pfNickErr',errText(x))}
+});
+$('#pfPwForm').addEventListener('submit',async e=>{
+  e.preventDefault();const cur=$('#pfPwCur').value,n1=$('#pfPwNew').value,n2=$('#pfPwNew2').value;
+  if(!cur){pfMsg('#pfPwErr','현재 비밀번호를 입력해 주세요.');return}
+  if(n1.length<6){pfMsg('#pfPwErr','새 비밀번호는 6자 이상이어야 해요.');return}
+  if(n1!==n2){pfMsg('#pfPwErr','새 비밀번호가 서로 달라요. 두 칸에 같은 비밀번호를 입력해 주세요.');return}
+  if(n1===cur){pfMsg('#pfPwErr','지금 비밀번호와 다른 비밀번호를 정해 주세요.');return}
+  try{await B.changePassword(cur,n1);e.target.reset();pfMsg('#pfPwErr','비밀번호를 바꿨어요.',true)}
+  catch(x){pfMsg('#pfPwErr',pwErr(x))}
+});
+$('#pfDelConfirm').addEventListener('input',e=>{$('#pfDelBtn').disabled=e.target.value.trim()!=='탈퇴'});
+$('#pfDelForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if($('#pfDelConfirm').value.trim()!=='탈퇴')return;
+  const pw=$('#pfDelPw').value;if(!pw){pfMsg('#pfDelErr','현재 비밀번호를 입력해 주세요.');return}
+  const btn=$('#pfDelBtn');btn.disabled=true;btn.textContent='탈퇴하는 중…';
+  try{await B.deleteAccount(pw);location.hash='';toast('탈퇴가 완료됐어요. 그동안 함께해 주셔서 고마워요.')}
+  catch(x){pfMsg('#pfDelErr',pwErr(x));btn.disabled=false;btn.textContent='회원 탈퇴'}
+});
+
 /* ---------------- Room ---------------- */
 function closeRoom(){closeSheet();unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
 function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
   document.documentElement.classList.add('in-room');
-  $('#homeView').hidden=true;$('#roomView').hidden=false;
+  $('#homeView').hidden=true;$('#profileView').hidden=true;$('#roomView').hidden=false;
   const st=lsGet('bt-room-'+id,{});speakerId=st.speaker||null;mode=st.mode||'say';
   $('#log').innerHTML='<div class="empty"><b>방을 여는 중</b>로그를 불러오고 있어요.</div>';
   let loaded=false;const timer=setTimeout(()=>{if(!loaded)toast('불러오는 데 오래 걸려요. 연결을 확인해 주세요')},10000);

@@ -589,12 +589,15 @@ h1,h2{text-wrap:balance}
    Firebase 설정: 같이 하려면 아래 null 을 Firebase 웹 앱 설정 객체로 바꾸세요.
    (README.md 참고) null 이면 이 브라우저에만 저장되는 혼자 모드로 동작합니다.
    ========================================================= */
-const FIREBASE_CONFIG = {authDomain: "trpg-table.firebaseapp.com",
+const firebaseConfig = {
+  apiKey: "AIzaSyDwDXEC91c5qfcJdi0iQXnhIVrMI1Od7dU",
+  authDomain: "trpg-table.firebaseapp.com",
   projectId: "trpg-table",
   storageBucket: "trpg-table.firebasestorage.app",
   messagingSenderId: "408083328859",
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
-  measurementId: "G-KHGVNGNGN5"};
+  measurementId: "G-KHGVNGNGN5"
+};
 
 const COLORS=['#c94a6b','#2a8a80','#b8862a','#5268d0','#8758c4','#5e8f3e','#6c6680'];
 const PRESET_MACROS={

@@ -395,6 +395,15 @@ h1,h2{text-wrap:balance}
 .nt-meta{margin-top:6px;font-size:12px;color:var(--muted)}
 .notice .x{position:absolute;top:8px;right:8px;opacity:1}
 .notice .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
+.auth-page{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.auth-top{display:flex;justify-content:flex-end;padding-block:16px 0;max-width:1180px;width:100%;margin:0 auto}
+.auth-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding-block:20px 64px;text-align:center}
+.auth-brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-size:18px}
+.auth-h1{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,6vw,42px);line-height:1.2;margin:6px 0 0;letter-spacing:-.02em}
+.auth-h1 em{font-style:normal;color:var(--accent)}
+.auth-sub{color:var(--muted);margin:0 0 8px;max-width:36ch;font-size:14.5px;line-height:1.7}
+.auth-center .new-card{width:min(400px,100%);text-align:left}
+.auth-note{font-size:12.5px;color:var(--muted);margin:4px 0 0;max-width:46ch;line-height:1.55}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
@@ -424,6 +433,29 @@ h1,h2{text-wrap:balance}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
+<!-- ================= AUTH ================= -->
+<div class="auth-page" id="authView" hidden>
+  <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
+  <div class="auth-center">
+    <div class="auth-brand"><span class="brand-mark">d20</span><b>TRPG 번개탁 용도</b></div>
+    <h1 class="auth-h1">TRPG<br><em>빠르게 준비해요</em></h1>
+    <p class="auth-sub" id="authSub">쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.</p>
+    <form class="new-card" id="authForm" novalidate>
+        <div class="seg auth-tabs"><button type="button" data-auth="login" aria-pressed="true">로그인</button><button type="button" data-auth="signup" aria-pressed="false">회원가입</button></div>
+        <label class="field">이메일<input id="auEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+        <label class="field">비밀번호<input id="auPw" type="password" autocomplete="current-password" placeholder="6자 이상"></label>
+        <label class="field" id="auPw2Row" hidden>비밀번호 확인<input id="auPw2" type="password" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력해 주세요"></label>
+        <label class="field" id="auInvRow" hidden>추천 코드<input id="auInv" class="code-input" maxlength="10" autocomplete="off" placeholder="받은 추천 코드를 입력해 주세요" style="font-size:16px"></label>
+        <label class="field" id="auNickRow" hidden>닉네임<input id="auNick" maxlength="20" autocomplete="nickname" placeholder="방에서 보일 이름"></label>
+        <p class="err" id="auErr" hidden></p>
+        <button class="btn primary" type="submit" id="auSubmit">들어가기</button>
+        <button type="button" class="ghost" id="auReset" style="align-self:center">비밀번호를 잊으셨나요?</button>
+      </form>
+    <button class="btn primary" id="authRetry" hidden style="padding:10px 18px">새로고침</button>
+    <p class="auth-note" id="authNote"></p>
+  </div>
+</div>
+
 <!-- ================= HOME ================= -->
 <div class="home" id="homeView">
   <header class="home-top">
@@ -440,17 +472,6 @@ h1,h2{text-wrap:balance}
       <p class="eyebrow">TRPG 번개탁</p>
       <h1 id="hello">TRPG<br><em>빠르게 준비해요</em></h1>
       <p class="lede" id="helloSub">쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.</p>
-      <form class="new-card" id="authForm" novalidate>
-        <div class="seg auth-tabs"><button type="button" data-auth="login" aria-pressed="true">로그인</button><button type="button" data-auth="signup" aria-pressed="false">회원가입</button></div>
-        <label class="field">이메일<input id="auEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
-        <label class="field">비밀번호<input id="auPw" type="password" autocomplete="current-password" placeholder="6자 이상"></label>
-        <label class="field" id="auPw2Row" hidden>비밀번호 확인<input id="auPw2" type="password" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력해 주세요"></label>
-        <label class="field" id="auInvRow" hidden>추천 코드<input id="auInv" class="code-input" maxlength="10" autocomplete="off" placeholder="받은 추천 코드를 입력해 주세요" style="font-size:16px"></label>
-        <label class="field" id="auNickRow" hidden>닉네임<input id="auNick" maxlength="20" autocomplete="nickname" placeholder="방에서 보일 이름"></label>
-        <p class="err" id="auErr" hidden></p>
-        <button class="btn primary" type="submit" id="auSubmit">들어가기</button>
-        <button type="button" class="ghost" id="auReset" style="align-self:center">비밀번호를 잊으셨나요?</button>
-      </form>
       <div class="user-area" id="userArea" hidden>
         <form class="new-card" id="joinForm">
           <h2>코드로 들어가기</h2>
@@ -1116,7 +1137,7 @@ addEventListener('hashchange',route);
 function showHome(){
   closeRoom();
   document.documentElement.classList.remove('in-room');
-  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#homeView').hidden=false;document.title='TRPG 번개탁 용도';
+  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title='TRPG 번개탁 용도';
   $('#authForm').hidden=!!me;$('#userArea').hidden=!me;$('#userChip').hidden=!me;
   $('#hello').innerHTML=me?`${esc(me.nick)}님,<br><em>오늘은 뭘 굴려 볼까요?</em>`:'TRPG<br><em>빠르게 준비해요</em>';
   $('#helloSub').textContent=me?'코드를 받았다면 아래에 입력하고, 직접 진행한다면 새 방을 파 보세요.':'쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.';
@@ -1304,7 +1325,7 @@ $('#noticeList').addEventListener('click',async e=>{
 /* ---------------- Profile ---------------- */
 function showProfile(){
   closeRoom();document.documentElement.classList.remove('in-room');
-  $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';
   $('#pfNickNow').textContent=me.nick;$('#pfEmail').textContent=me.email||'';$('#pfDot').innerHTML=initial(me.nick);
   $('#pfNick').value=me.nick;['#pfNickErr','#pfPwErr','#pfDelErr'].forEach(x=>$(x).hidden=true);
   renderImpact();window.scrollTo(0,0);
@@ -1357,7 +1378,7 @@ function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
   document.documentElement.classList.add('in-room');
-  $('#homeView').hidden=true;$('#profileView').hidden=true;$('#roomView').hidden=false;
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#profileView').hidden=true;$('#roomView').hidden=false;
   const st=lsGet('bt-room-'+id,{});speakerId=st.speaker||null;mode=st.mode||'say';
   $('#log').innerHTML='<div class="empty"><b>방을 여는 중</b>로그를 불러오고 있어요.</div>';
   let loaded=false;const timer=setTimeout(()=>{if(!loaded)toast('불러오는 데 오래 걸려요. 연결을 확인해 주세요')},10000);
@@ -1869,10 +1890,10 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncThe
 
 /* ---------------- Boot ---------------- */
 function showOffline(){
-  $('#modeBadge').hidden=true;$('#authForm').hidden=true;$('#userArea').hidden=true;$('#modeNote').textContent='';
-  $('#helloSub').textContent='지금은 접속이 원활하지 않아요. 잠시 후 다시 들어와 주세요.';
-  $('#roomList').innerHTML='<div class="list-empty"><b>잠시 후 다시 시도해 주세요</b>접속이 원활하지 않아요.<br><br><button class="btn primary" id="retryBtn">새로고침</button></div>';
-  $('#retryBtn').onclick=()=>location.reload();
+  $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#authView').hidden=false;
+  $('#authForm').hidden=true;$('#authNote').textContent='';
+  $('#authSub').textContent='지금은 접속이 원활하지 않아요. 잠시 후 다시 들어와 주세요.';
+  const r=$('#authRetry');r.hidden=false;r.onclick=()=>location.reload();
 }
 async function boot(){
   if(FIREBASE_CONFIG){
@@ -1889,6 +1910,7 @@ async function boot(){
   const badge=$('#modeBadge');badge.classList.toggle('online',online);
   badge.querySelector('span').textContent=online?'온라인':'혼자 모드';
   badge.hidden=online;
+  if(!online)$('#authNote').textContent='지금은 혼자 모드라 계정과 방이 이 브라우저에만 저장돼요.';
   $('#modeNote').textContent=online
     ?'로그인하면 휴대폰이든 컴퓨터든 내 방을 그대로 이어서 볼 수 있어요.'
     :'지금은 혼자 모드라 이 브라우저에만 저장돼요. 친구와 함께 하려면 README를 따라 Firebase를 연결한 뒤 올려 주세요. (탭을 하나 더 열어 다른 계정으로 가입하면 코드 참가를 연습해 볼 수 있어요)';
@@ -1901,7 +1923,6 @@ async function boot(){
     first=false;
   });
 }
-boot();
 boot();
 </script>
 

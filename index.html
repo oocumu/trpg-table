@@ -34,7 +34,7 @@
   --gl-a:#ff4f86; --gl-b:#3fe3ef;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
 
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box}
 html.in-room,html.in-room body{height:100%;overflow:hidden}
 *,*::before,*::after{box-sizing:border-box}
@@ -78,7 +78,7 @@ h1,h2{text-wrap:balance}
 .modebadge i{width:7px;height:7px;border-radius:50%;background:var(--gold);font-style:normal}
 .modebadge.online i{background:var(--accent)}
 .home-grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:40px;align-items:start}
-.hero h1{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,4.6vw,46px);line-height:1.22;margin:0 0 14px;letter-spacing:-.03em}
+.hero h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,3.6vw,40px);line-height:1.25;margin:0 0 14px;letter-spacing:-.03em}
 .hero h1 em{font-style:normal;color:var(--accent)}
 .eyebrow{font-size:12px;letter-spacing:.14em;color:var(--muted);font-weight:600;margin:0 0 12px}
 .lede{color:var(--muted);margin:0 0 26px;max-width:38ch}
@@ -153,6 +153,7 @@ h1,h2{text-wrap:balance}
 .char:hover .x,.mac:hover .x,.x:focus-visible{opacity:1}
 .x:hover{background:var(--rose-soft);color:var(--rose)}
 .x.edit:hover{background:var(--accent-soft);color:var(--accent)}
+.char .x.armed,.mac .x.armed{opacity:1;min-width:0;width:auto;height:22px;padding:0 6px;font-size:11px;font-weight:600;line-height:22px;background:var(--rose-soft);color:var(--rose);border-radius:6px}
 @media (hover:none){.char .x,.mac .x,.rcard .x{opacity:1}}
 
 .mini-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;padding:12px;border-radius:10px;background:var(--sunk);border:1px dashed var(--line)}
@@ -185,9 +186,15 @@ h1,h2{text-wrap:balance}
 .menu-btn{display:none;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:var(--sunk);border-radius:10px;flex:none}
 .room-name{flex:1;min-width:0;border:0;background:none;font-family:var(--f-display);font-weight:700;font-size:21px;padding:4px 6px;border-radius:8px;text-overflow:ellipsis}
 .room-name:hover,.room-name:focus{background:var(--sunk);outline:none}
-.status-sel{appearance:none;border:0;cursor:pointer;font-family:var(--f-body)}
+.status-sel{appearance:none;-webkit-appearance:none;border:0;cursor:pointer;font-family:var(--f-body);height:34px;width:84px;padding:0 22px 0 10px;
+  text-align:center;text-align-last:center;border-radius:10px;font-size:13px;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:right 12px center,right 8px center;background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+.status-sel.pill::before{content:none}
+.status-sel.st-live{background-color:var(--accent-soft)}.status-sel.st-paused{background-color:var(--gold-soft)}.status-sel.st-ended{background-color:var(--sunk)}
 .status-sel option{background:var(--sheet);color:var(--ink)}
-.top-actions{display:flex;gap:6px;flex:none;position:relative}
+.top-actions{display:flex;gap:6px;flex:none;position:relative;align-items:center}
+.top-actions>.btn{height:34px;display:inline-flex;align-items:center;gap:4px;border-radius:10px}
 .menu{position:absolute;top:calc(100% + 6px);right:0;z-index:12;background:var(--sheet);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;min-width:220px}
 .menu button{border:0;background:none;text-align:left;padding:8px 10px;border-radius:8px;display:flex;flex-direction:column;gap:1px}
 .menu button:hover{background:var(--sunk)}
@@ -417,14 +424,27 @@ h1,h2{text-wrap:balance}
 .wh-row select{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:4px 8px;font-size:13.5px;color:var(--ink);max-width:100%}
 .wh-row small{font-size:12px}
 .wh-to{font-size:11.5px;font-weight:500;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:0 8px;white-space:nowrap}
+.role-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500}
+.role-row select{flex:1;border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:6px 8px;font-size:14px;color:var(--ink)}
+.char .tag{display:inline-block;vertical-align:1px;margin-left:4px;font-size:10px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;line-height:16px}
+.char .tag.ho{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:var(--accent-soft)}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
+html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(15,13,20,.82);display:grid;place-items:center;padding:24px;cursor:zoom-out}
 .lightbox img{max-width:100%;max-height:100%;border-radius:8px}
 .scrim{display:none}
 
 @media (max-width:900px){
-  .home-grid{grid-template-columns:minmax(0,1fr);gap:32px}
+  .home-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+  .hero,.user-area{display:contents}
+  .hero>*{order:1}
+  #joinForm{order:2}
+  .home-grid>section:not(.hero){order:3;margin:12px 0}
+  #newRoomForm{order:4}
+  #adminCard{order:5}
+  #modeNote{order:6}
+  .hero h1,.lede,.eyebrow{margin-bottom:0}
 }
 @media (max-width:860px){
   .app{grid-template-columns:minmax(0,1fr);padding-block:10px}
@@ -611,6 +631,7 @@ h1,h2{text-wrap:balance}
             </div>
           </div>
           <div class="seg" id="charKindSeg" hidden style="width:100%"><button type="button" data-kind="npc" aria-pressed="true" style="flex:1">NPC</button><button type="button" data-kind="kpc" aria-pressed="false" style="flex:1">KPC (내 캐릭터)</button></div>
+          <label class="role-row" id="charRoleRow" hidden><span>구분</span><select id="charRole" aria-label="캐릭터 구분"><option value="PC">PC</option><option value="HO1">HO1</option><option value="HO2">HO2</option><option value="HO3">HO3</option><option value="HO4">HO4</option><option value="HO5">HO5</option><option value="HO6">HO6</option><option value="HO7">HO7</option><option value="HO8">HO8</option></select></label>
           <input id="charName" placeholder="이름 (예: 한서윤)" maxlength="20" autocomplete="off">
           <input id="charNote" placeholder="한 줄 소개 (예: 탐사자 · 사진기자)" maxlength="30" autocomplete="off">
           <div class="swatches" id="charSwatches"></div>
@@ -1482,11 +1503,10 @@ function renderRoom(){
   $('#leaveBtn').hidden=R.ownerUid===me.uid;
   $('#chars').innerHTML=R.chars.length?R.chars.map(c=>{
     const own=ownerOf(c)===me.uid,edit=canEdit(c);
-    const tag=c.gm?'진행':ownerOf(c)===R.ownerUid?(c.id===R.ownerUid?'KPC':'NPC'):'';
+    const tag=c.gm?'진행':ownerOf(c)===R.ownerUid?(c.id===R.ownerUid?'KPC':'NPC'):(c.role||'PC');
     const who=own?'':(names[ownerOf(c)]||'');
     return `<li class="char${c.id===speakerId?' on':''}">
-    <button class="char-pick" ${own?`data-pick="${c.id}"`:`data-sheet="${c.id}"`}>${dot(c)}<span class="char-text"><span class="char-name">${esc(c.name)}</span><span class="char-note">${esc(c.note||'')}${who?`<span class="char-owner">${c.note?' · ':''}${esc(who)}</span>`:''}</span></span></button>
-    ${tag?`<span class="tag">${tag}</span>`:''}
+    <button class="char-pick" ${own?`data-pick="${c.id}"`:`data-sheet="${c.id}"`}>${dot(c)}<span class="char-text"><span class="char-name">${esc(c.name)}${tag?` <span class="tag${/^HO/.test(tag)?' ho':''}">${tag}</span>`:''}</span><span class="char-note">${esc(c.note||'')}${who?`<span class="char-owner">${c.note?' · ':''}${esc(who)}</span>`:''}</span></span></button>
     <button class="x edit" data-sheet="${c.id}" aria-label="${esc(c.name)} 캐릭터 시트" title="캐릭터 시트" style="opacity:1">📜</button>
     ${edit?`<button class="x edit" data-editchar="${c.id}" aria-label="${esc(c.name)} 프로필 수정" title="프로필 수정">✎</button>
     <button class="x" data-delchar="${c.id}" aria-label="${esc(c.name)} 삭제">×</button>`:''}</li>`}).join('')
@@ -1689,6 +1709,8 @@ function openCharForm(c){
   $('#charName').value=c?c.name:'';$('#charNote').value=c&&c.note||'';
   pickColor=c?c.color:COLORS[R.chars.length%6];pickAv=c&&c.avatar||null;
   const kpcOk=!c&&isGM()&&!hasKpc();
+  const isPlayerChar=c?(ownerOf(c)!==R.ownerUid):!isGM();
+  $('#charRoleRow').hidden=!isPlayerChar;$('#charRole').value=(c&&c.role)||'PC';
   $('#charKindSeg').hidden=!kpcOk;setCharKind('npc');
   $('#charFormTitle').textContent=c?`${c.name} 프로필 수정`:isGM()?(kpcOk?'새 NPC 또는 KPC':'새 NPC'):'내 캐릭터 만들기';
   $('#charSubmit').textContent=c?'저장':'추가';
@@ -1706,11 +1728,12 @@ $('#charImg').addEventListener('change',async e=>{const f=e.target.files[0];e.ta
 $('#charForm').addEventListener('submit',async e=>{e.preventDefault();
   const n=$('#charName').value.trim(),note=$('#charNote').value.trim();if(!n){$('#charName').focus();return}
   let c,isNew=!editing;
-  if(editing){const old=R.chars.find(x=>x.id===editing);if(!canEdit(old))return;c={...old,name:n,note,color:pickColor,avatar:pickAv}}
+  const role=$('#charRoleRow').hidden?undefined:$('#charRole').value;
+  if(editing){const old=R.chars.find(x=>x.id===editing);if(!canEdit(old))return;c={...old,name:n,note,color:pickColor,avatar:pickAv};if(role)c.role=role}
   else{
     if(!isGM()&&mine().length){toast('이 방에서는 캐릭터를 하나만 만들 수 있어요');return}
     const asKpc=isGM()&&charKind==='kpc'&&!hasKpc();
-    c={id:isGM()&&!asKpc?uid():me.uid,ownerUid:me.uid,name:n,note,color:pickColor,avatar:pickAv,sheetKind:defaultKind()};
+    c={...(role?{role}:{}),id:isGM()&&!asKpc?uid():me.uid,ownerUid:me.uid,name:n,note,color:pickColor,avatar:pickAv,sheetKind:defaultKind()};
   }
   editing=null;$('#charForm').hidden=true;
   try{await B.saveChar(roomId,c);if(isNew){speakerId=c.id;remember();toast(`${c.name}${isGM()?(c.id===me.uid?'(KPC)':'(NPC)'):''} 등장! 📜 시트에서 능력치를 정해 보세요`)}else toast('프로필을 저장했어요')}

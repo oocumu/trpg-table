@@ -186,6 +186,8 @@ h1,h2{text-wrap:balance}
 .menu-btn{display:none;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:var(--sunk);border-radius:10px;flex:none}
 .room-name{flex:1;min-width:0;border:0;background:none;font-family:var(--f-display);font-weight:700;font-size:21px;padding:4px 6px;border-radius:8px;text-overflow:ellipsis}
 .room-name:hover,.room-name:focus{background:var(--sunk);outline:none}
+.room-name[readonly]{cursor:default}
+.room-name[readonly]:hover,.room-name[readonly]:focus{background:none}
 .status-sel{appearance:none;-webkit-appearance:none;border:0;cursor:pointer;font-family:var(--f-body);height:34px;width:84px;padding:0 22px 0 10px;
   text-align:center;text-align-last:center;border-radius:10px;font-size:13px;
   background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
@@ -1574,6 +1576,7 @@ function fixSpeaker(){const m=mine();if(!m.some(c=>c.id===speakerId))speakerId=(
 function renderRoom(){
   document.title=(R.name||'세션')+' · TRPG 번개탁 용도';
   if(document.activeElement!==$('#roomName'))$('#roomName').value=R.name||'';
+  const rn=$('#roomName');rn.readOnly=!isGM();rn.title=isGM()?'눌러서 세션 이름 바꾸기':'';rn.tabIndex=isGM()?0:-1;
   const st=R.status||'live',sel=$('#statusSel');sel.value=st;sel.className='pill status-sel st-'+st;
   const ended=st==='ended',noChar=!mine().length;
   $('#composer').hidden=ended||noChar;$('#endedBar').hidden=!ended;$('#needChar').hidden=ended||!noChar;
@@ -1758,7 +1761,7 @@ $('#imgInput').addEventListener('change',e=>{takeImage(e.target.files[0]);e.targ
 $('#attachClear').onclick=()=>{pendingImg=null;showAttach()};
 $('#sendBtn').onclick=send;
 let nameT;
-$('#roomName').addEventListener('input',e=>{clearTimeout(nameT);const v=e.target.value.trim();nameT=setTimeout(()=>{if(v&&R)saveRoom({name:v})},500)});
+$('#roomName').addEventListener('input',e=>{if(!isGM())return;clearTimeout(nameT);const v=e.target.value.trim();nameT=setTimeout(()=>{if(v&&R&&isGM())saveRoom({name:v})},500)});
 $('#roomName').addEventListener('blur',e=>{if(!e.target.value.trim()&&R)e.target.value=R.name||''});
 $('#statusSel').addEventListener('change',e=>{saveRoom({status:e.target.value});renderRoom();toast(`세션을 '${STATUS[e.target.value]}' 상태로 바꿨어요`)});
 $('#reopenBtn').onclick=()=>{saveRoom({status:'live'});renderRoom()};

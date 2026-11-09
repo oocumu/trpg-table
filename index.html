@@ -477,6 +477,39 @@ h1,h2{text-wrap:balance}
 .adm-ta{border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:9px 12px;font-size:15px;color:var(--ink);resize:vertical;min-height:120px}
 .adm-ta:focus{border-color:var(--accent);outline:none}
 #adminView .inv-list{max-height:none}
+.tab-badge{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;margin-left:5px;border-radius:999px;background:var(--rose);color:#fff;font-size:10.5px;font-weight:700;vertical-align:1px}
+.mail-tabs{padding:10px 16px 0}
+.mail-tabs .seg{width:100%}.mail-tabs .seg button{flex:1;padding:6px 8px;font-size:13.5px}
+.notice-form select{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:6px 8px;font-size:14px;color:var(--ink);width:fit-content}
+.inq-h{margin:16px 0 8px;font-size:13px;color:var(--muted);letter-spacing:.06em}
+.inq-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.inq{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--sheet);position:relative}
+.inq.unread{border-color:var(--accent);background:var(--accent-soft)}
+.inq-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-right:26px}
+.inq-top b{font-size:15px;overflow-wrap:anywhere}
+.inq-cat{font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px}
+.inq-st{font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px}
+.inq-st.open{background:var(--gold-soft);color:var(--gold)}.inq-st.answered{background:var(--accent-soft);color:var(--accent)}
+.inq-meta{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.inq-body{margin-top:8px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.inq-reply{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--sunk);border-left:3px solid var(--accent);font-size:14px;line-height:1.7}
+.inq-reply small{display:block;font-size:11.5px;color:var(--muted);margin-bottom:2px}
+.inq-form{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.inq-form textarea{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:8px 10px;font-size:14px;color:var(--ink);resize:vertical;min-height:70px;font-family:inherit}
+.inq-form textarea:focus{border-color:var(--accent);outline:none}
+.inq .x{position:absolute;top:8px;right:8px;opacity:1}
+.inq .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
+.nt-kind{width:100%}.nt-kind button{flex:1}
+.nt-tag{font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;margin-right:6px;background:var(--sunk);color:var(--muted);border:1px solid var(--line);vertical-align:2px}
+.nt-tag.patch{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.user-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.user-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px}
+.user-table th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px 10px;background:var(--sunk);border-bottom:1px solid var(--line);white-space:nowrap}
+.user-table td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.user-table tr:last-child td{border-bottom:0}
+.user-table td.mono{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.admin-fab .mail-badge{top:-2px;right:-2px;box-shadow:0 0 0 2px var(--paper)}
+.adm-tabs button{white-space:nowrap}
 .admin-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:999px;font-size:13.5px;z-index:40;max-width:calc(100vw - 32px);text-align:center}
 html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
@@ -650,7 +683,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   <div class="pf-wrap">
     <button class="back" id="admBack"><span class="brand-mark">d20</span>세션 목록으로</button>
     <h1 class="pf-title" style="display:flex;align-items:center;gap:10px">관리자 <span class="admin-tag">관리자 전용</span></h1>
-    <div class="seg adm-tabs" id="admTabs"><button data-adm="inv" aria-pressed="true">추천 코드</button><button data-adm="notice" aria-pressed="false">공지 보내기</button></div>
+    <div class="seg adm-tabs" id="admTabs"><button data-adm="inv" aria-pressed="true">추천 코드</button><button data-adm="users" aria-pressed="false">회원</button><button data-adm="notice" aria-pressed="false">공지 · 패치</button><button data-adm="inq" aria-pressed="false">문의함<span class="tab-badge" id="admInqBadge" hidden></span></button></div>
 
     <section class="new-card" id="admInv">
       <h2>추천 코드 발급</h2>
@@ -659,9 +692,22 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
       <ul class="inv-list" id="invList"></ul>
     </section>
 
+    <section class="new-card" id="admUsers" hidden>
+      <div class="sh-h" style="margin:0"><h2>가입한 회원</h2><span class="pf-hint" id="admUserCount"></span></div>
+      <input class="sk-search" id="admUserSearch" placeholder="닉네임이나 이메일로 찾기" autocomplete="off" aria-label="회원 찾기">
+      <div class="user-table-wrap"><table class="user-table"><thead><tr><th>닉네임</th><th>이메일</th><th>가입일</th><th>추천 코드</th></tr></thead><tbody id="admUserList"></tbody></table></div>
+      <p class="pf-hint">이메일은 회원이 가입하거나 다음에 로그인할 때 기록돼요.</p>
+    </section>
+
+    <section class="new-card" id="admInq" hidden>
+      <div class="sh-h" style="margin:0"><h2>문의함</h2><div class="seg"><button data-inqf="open" aria-pressed="true">답변 대기</button><button data-inqf="all" aria-pressed="false">전체</button></div></div>
+      <ul class="inq-list" id="admInqList"></ul>
+    </section>
+
     <section class="new-card" id="admNotice" hidden>
-      <h2>전체 공지 보내기</h2>
+      <h2>전체 공지 · 패치 노트 보내기</h2>
       <form class="pf-form" id="admNoticeForm">
+        <div class="seg nt-kind" id="admNtKind"><button type="button" data-ntk="notice" aria-pressed="true">📢 공지</button><button type="button" data-ntk="patch" aria-pressed="false">🛠 패치 노트</button></div>
         <label class="field">제목<input id="admNtTitle" maxlength="80" autocomplete="off" placeholder="예: 11월 정기 점검 안내"></label>
         <label class="field">내용<textarea id="admNtBody" rows="6" maxlength="4000" placeholder="모든 회원의 우편함에 도착할 내용이에요. 글 꾸밈 문법도 쓸 수 있어요." class="adm-ta"></textarea></label>
         <p class="err" id="admNtErr" hidden></p>
@@ -672,7 +718,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
     </section>
   </div>
 </div>
-<button class="admin-fab" id="adminFab" hidden aria-label="관리자 페이지 열기" title="관리자 페이지">⚙</button>
+<button class="admin-fab" id="adminFab" hidden aria-label="관리자 페이지 열기" title="관리자 페이지"><span id="fabIcon">⚙</span><span class="mail-badge" id="fabBadge" hidden></span></button>
 
 <!-- ================= ROOM ================= -->
 <div class="app" id="roomView" hidden>
@@ -835,6 +881,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <div class="modal-back" id="mailModal" hidden>
   <section class="modal" role="dialog" aria-modal="true" aria-labelledby="mailTitle">
     <header class="modal-h"><h2 id="mailTitle">📮 우편함</h2><button class="x" id="mailClose" style="opacity:1;font-size:18px;width:32px;height:32px" aria-label="우편함 닫기">×</button></header>
+    <div class="mail-tabs"><div class="seg"><button data-mtab="notice" aria-pressed="true">공지사항<span class="tab-badge" id="mtNoticeBadge" hidden></span></button><button data-mtab="inq" aria-pressed="false">문의 · 건의<span class="tab-badge" id="mtInqBadge" hidden></span></button></div></div>
     <div class="modal-body">
       <form class="notice-form" id="noticeForm" hidden>
         <b style="font-size:13.5px">전체 공지 보내기 <span class="admin-tag">관리자</span></b>
@@ -844,6 +891,18 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
         <button class="btn primary" type="submit" style="align-self:flex-end">전체 회원에게 보내기</button>
       </form>
       <ul class="notice-list" id="noticeList"></ul>
+      <div id="inqPane" hidden>
+        <form class="notice-form" id="inqForm">
+          <b style="font-size:13.5px">관리자에게 문의 · 건의하기</b>
+          <select id="inqCat" aria-label="분류"><option>건의</option><option>버그 신고</option><option>문의</option><option>기타</option></select>
+          <input id="inqTitle" maxlength="100" placeholder="제목" autocomplete="off">
+          <textarea id="inqBody" rows="4" maxlength="4000" placeholder="내용을 적어 주세요. 답장은 이 우편함으로 와요."></textarea>
+          <p class="err" id="inqErr" hidden></p>
+          <button class="btn primary" type="submit" style="align-self:flex-end">보내기</button>
+        </form>
+        <h3 class="inq-h">내 문의</h3>
+        <ul class="inq-list" id="myInqList"></ul>
+      </div>
     </div>
   </section>
 </div>
@@ -899,7 +958,7 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};db.inquiries=db.inquiries||[];
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
@@ -923,7 +982,7 @@ function makeLocal(){
       if(!/^\S+@\S+\.\S+$/.test(email))throw new AppError('auth/invalid-email');
       if(pw.length<6)throw new AppError('auth/weak-password');
       if(db.accounts[k])throw new AppError('auth/email-already-in-use');
-      const a={uid:'u'+uid(),email,nick,hash:await hashPw(k,pw),admin:first,invite:first?null:code};db.accounts[k]=a;
+      const a={uid:'u'+uid(),email,nick,hash:await hashPw(k,pw),admin:first,invite:first?null:code,createdAt:now()};db.accounts[k]=a;
       if(!first)Object.assign(db.invites[code],{used:true,usedBy:a.uid,usedNick:nick,usedAt:now()});
       write();setMe(a);return me;
     },
@@ -950,8 +1009,15 @@ function makeLocal(){
         if(r.ownerUid===u){if(r.code)delete db.codes[r.code];delete db.rooms[r.id];delete db.messages[r.id];delete db.chars[r.id];delete db.whispers[r.id]}
         else{r.members=r.members.filter(x=>x!==u);if(r.memberNames)delete r.memberNames[u];if(db.chars[r.id])Object.keys(db.chars[r.id]).forEach(cid=>{if(db.chars[r.id][cid].ownerUid===u)delete db.chars[r.id][cid]})}
       });
-      delete db.accounts[k];write();setMe(null);emit();
+      db.inquiries=db.inquiries.filter(q=>q.uid!==u);delete db.accounts[k];write();setMe(null);emit();
     },
+    listUsers:cb=>sub(()=>cb(me&&me.admin?Object.values(db.accounts).map(a=>({uid:a.uid,nick:a.nick,email:a.email,createdAt:a.createdAt||0,invite:a.invite||'',admin:isAdminAcc(a)})):[])),
+    watchMyInquiries:cb=>sub(()=>cb(me?db.inquiries.filter(q=>q.uid===me.uid).map(clone):[])),
+    watchAllInquiries:cb=>sub(()=>cb(me&&me.admin?db.inquiries.map(clone):[])),
+    async createInquiry(q){const t=now();db.inquiries.push({id:'q'+uid(),...q,uid:me.uid,nick:me.nick,email:me.email,ct:t,status:'open',replies:[],lastReplyAt:0,userSeen:t});write();emit()},
+    async replyInquiry(id,text){if(!me.admin)throw new AppError('permission-denied');const q=db.inquiries.find(x=>x.id===id);const t=now();q.replies.push({by:'admin',nick:me.nick,text,ct:t});q.status='answered';q.lastReplyAt=t;write();emit()},
+    async markInquirySeen(id,ts){const q=db.inquiries.find(x=>x.id===id);if(q&&q.uid===me.uid){q.userSeen=ts;write();emit()}},
+    async deleteInquiry(id){const q=db.inquiries.find(x=>x.id===id);if(!q||(!me.admin&&q.uid!==me.uid))throw new AppError('permission-denied');db.inquiries=db.inquiries.filter(x=>x.id!==id);write();emit()},
     listInvites:cb=>sub(()=>cb(me&&me.admin?Object.entries(db.invites).map(([code,v])=>({code,...v})):[])),
     async createInvite(note){
       if(!me||!me.admin)throw new AppError('permission-denied');
@@ -1036,6 +1102,7 @@ async function makeFirebase(cfg){
     let prof=null;try{prof=await loadProfile(u)}catch(e){console.error(e)}
     if(!prof){me=null;await A.signOut(auth).catch(()=>{});authNotice='auth/not-approved';notify();return}
     me=prof;notify();
+    if(u.email&&prof.email!==undefined)fs.getDoc(fs.doc(db,'users',u.uid)).then(d=>{if(d.exists()&&d.data().email!==u.email)fs.updateDoc(d.ref,{email:u.email}).catch(()=>{})}).catch(()=>{});
   });
   return {
     kind:'online',
@@ -1050,7 +1117,7 @@ async function makeFirebase(cfg){
         const c=await A.createUserWithEmailAndPassword(auth,email,pw);
         try{
           const b=fs.writeBatch(db);
-          b.set(fs.doc(db,'users',c.user.uid),{nick,createdAt:now(),invite:code});
+          b.set(fs.doc(db,'users',c.user.uid),{nick,email:c.user.email||email,createdAt:now(),invite:code});
           b.update(fs.doc(db,'invites',code),{used:true,usedBy:c.user.uid,usedNick:nick,usedAt:now()});
           await b.commit();
         }catch(e){await c.user.delete().catch(()=>A.signOut(auth));throw new AppError('invite/used')}
@@ -1087,9 +1154,19 @@ async function makeFirebase(cfg){
         if(cs)for(const c of cs.docs){if(c.data().ownerUid===uidv){await fs.deleteDoc(fs.doc(db,'rooms',d.id,'secrets',c.id)).catch(()=>{});await fs.deleteDoc(c.ref).catch(()=>{})}}
         await fs.updateDoc(d.ref,{members:fs.arrayRemove(uidv),['memberNames.'+uidv]:fs.deleteField()}).catch(e=>console.error(e));
       }
+      const iq=await fs.getDocs(fs.query(fs.collection(db,'inquiries'),fs.where('uid','==',uidv))).catch(()=>({docs:[]}));
+      for(const q of iq.docs)await fs.deleteDoc(q.ref).catch(()=>{});
       await fs.deleteDoc(fs.doc(db,'users',uidv));
       await A.deleteUser(u);
     },
+    listUsers:cb=>me&&me.admin?fs.onSnapshot(fs.collection(db,'users'),s=>cb(s.docs.map(d=>({uid:d.id,...d.data()}))),fail):(cb([]),()=>{}),
+    watchMyInquiries:cb=>me?fs.onSnapshot(fs.query(fs.collection(db,'inquiries'),fs.where('uid','==',me.uid)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),
+      e=>{if(e.code!=='permission-denied')fail(e)}):(cb([]),()=>{}),
+    watchAllInquiries:cb=>me&&me.admin?fs.onSnapshot(fs.query(fs.collection(db,'inquiries'),fs.orderBy('ct','desc'),fs.limit(300)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),fail):(cb([]),()=>{}),
+    async createInquiry(q){const t=now();await fs.addDoc(fs.collection(db,'inquiries'),{...q,uid:me.uid,nick:me.nick,email:me.email||'',ct:t,status:'open',replies:[],lastReplyAt:0,userSeen:t})},
+    async replyInquiry(id,text){const t=now();await fs.updateDoc(fs.doc(db,'inquiries',id),{replies:fs.arrayUnion({by:'admin',nick:me.nick,text,ct:t}),status:'answered',lastReplyAt:t})},
+    markInquirySeen:(id,ts)=>fs.updateDoc(fs.doc(db,'inquiries',id),{userSeen:ts}),
+    deleteInquiry:id=>fs.deleteDoc(fs.doc(db,'inquiries',id)),
     listInvites:cb=>me&&me.admin?fs.onSnapshot(fs.collection(db,'invites'),s=>cb(s.docs.map(d=>({code:d.id,...d.data()}))),fail):(cb([]),()=>{}),
     async createInvite(note){
       for(let i=0;;i++){
@@ -1191,7 +1268,9 @@ let authNotice='';
 /* ---------------- Formatting ---------------- */
 const FX={'지직':'fx-glitch','흔들':'fx-shake','희미':'fx-fade','빛':'fx-glow','작게':'fx-small','뒤집':'fx-flip','물결':'fx-wave'};
 function fmt(s){
-  let h=esc(s||'');
+  let h=esc(s||'')
+    .replace(/\(([^()\n]*)\)/g,'<span class="paren">($1)</span>')
+    .replace(/（([^（）\n]*)）/g,'<span class="paren">（$1）</span>');
   h=h.replace(/\{([rbgypm])\|([^{}]+?)\}/g,'<span class="tc-$1">$2</span>');
   h=h.replace(/\{(지직|흔들|희미|빛|작게|뒤집|물결)\|([^{}]+?)\}/g,(m,k,t)=>{
     if(k==='지직')return `<span class="fx-glitch" data-t="${t.replace(/<[^>]+>/g,'').replace(/\*\*|__|~~|##|\|\||\*/g,'').replace(/"/g,'&quot;')}">${t}</span>`;
@@ -1212,8 +1291,6 @@ function fmt(s){
     .replace(/\|\|(.+?)\|\|/g,'<span class="spoiler" tabindex="0" role="button" title="눌러서 보기">$1</span>')
     .replace(/##(.+?)##/g,'<span class="big">$1</span>')
     .replace(/(^|[^*])\*([^*\n]+?)\*/g,'$1<em>$2</em>')
-    .replace(/\(([^()\n]*)\)/g,'<span class="paren">($1)</span>')
-    .replace(/（([^（）\n]*)）/g,'<span class="paren">（$1）</span>')
     .replace(/\n/g,'<br>');
 }
 const plain=s=>(s||'').replace(/\{(?:[rbgypm]|지직|흔들|희미|빛|작게|뒤집|물결)\|([^{}]+?)\}/g,'$1').replace(/(\*\*|__|~~|##|\|\||\*)/g,'');
@@ -1272,7 +1349,9 @@ function ago(t){
   if(s<86400*7)return Math.floor(s/86400)+'일 전';return ymd(t);
 }
 const initial=n=>esc([...String(n||'?').trim()][0]||'?');
-const dot=(c,cls='')=>`<span class="dot ${cls}" style="--cc:${esc(c.color||'#6c6680')}">${c.avatar?`<img src="${esc(c.avatar)}" alt="">`:initial(c.name)}</span>`;
+const safeColor=c=>typeof c==='string'&&/^#[0-9a-f]{3,8}$/i.test(c)?c:'#6c6680';
+const safeImg=u=>typeof u==='string'&&/^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(u)?u:'';
+const dot=(c,cls='')=>{const av=safeImg(c.avatar);return `<span class="dot ${cls}" style="--cc:${safeColor(c.color)}">${av?`<img src="${av}" alt="">`:initial(c.name)}</span>`};
 
 /* ---------------- App state ---------------- */
 let B=null,me=null,rooms=[],filter='all',unsubHome=null;
@@ -1341,7 +1420,7 @@ function renderRooms(){
   el.innerHTML=list.map(r=>{
     const st=r.status||'live',chars=(r.chars||[]).slice(0,5),mine=r.ownerUid===me.uid;
     return `<div class="rcard ${st==='ended'?'ended':''}" role="link" tabindex="0" data-open="${esc(r.id)}">
-      ${r.cover?`<img class="rcover" src="${esc(r.cover)}" alt="" loading="lazy">`:''}
+      ${r.cover?`<img class="rcover" src="${safeImg(r.cover)}" alt="" loading="lazy">`:''}
       <div class="rcard-top"><span class="pill st-${st}">${STATUS[st]}</span>${r.system?`<span class="sys">${esc(r.system)}</span>`:''}${mine?'<span class="sys">방장</span>':''}</div>
       <h3>${esc(r.name||'이름 없는 세션')}</h3>
       ${r.desc?`<p>${esc(r.desc)}</p>`:''}
@@ -1447,28 +1526,58 @@ function subscribeNotices(){
   if(me)unsubNotice=B.watchNotices(list=>{
     const fresh=!noticeFirst&&list.find(n=>!notices.some(o=>o.id===n.id)&&n.authorUid!==me.uid);
     notices=list;noticeFirst=false;
-    if(fresh)toast(`📮 새 공지가 도착했어요: ${fresh.title}`);
+    if(fresh)toast(`📮 ${fresh.kind==='patch'?'새 패치 노트':'새 공지'}가 도착했어요: ${fresh.title}`);
     renderMailBadge();if(!$('#mailModal').hidden)renderNotices();renderAdminNotices();
   });
   renderMailBadge();
 }
+let myInq=[],unsubMyInq=null,myInqFirst=true,mailTab='notice';
+const inqUnread=q=>(q.lastReplyAt||0)>(q.userSeen||0);
+function subscribeMyInquiries(){
+  if(unsubMyInq){unsubMyInq();unsubMyInq=null}
+  myInq=[];myInqFirst=true;
+  if(me)unsubMyInq=B.watchMyInquiries(list=>{
+    const fresh=!myInqFirst&&list.find(q=>inqUnread(q)&&!myInq.some(o=>o.id===q.id&&(o.lastReplyAt||0)===(q.lastReplyAt||0)));
+    myInq=list.sort((a,b)=>(b.ct||0)-(a.ct||0));myInqFirst=false;
+    if(fresh)toast(`📮 문의 「${fresh.title}」에 답장이 왔어요`);
+    if(!$('#mailModal').hidden&&mailTab==='inq'){renderMyInq();markMyInqSeen()}
+    renderMailBadge();
+  });
+}
 function renderMailBadge(){
-  const n=unreadCount();
-  $$('.mail-btn').forEach(b=>{const s=b.querySelector('.mail-badge');s.hidden=!n;s.textContent=n>9?'9+':n;b.title=n?`우편함 · 읽지 않은 공지 ${n}개`:'우편함'});
+  const n1=unreadCount(),n2=myInq.filter(inqUnread).length,n=n1+n2;
+  $$('.mail-btn').forEach(b=>{const s=b.querySelector('.mail-badge');s.hidden=!n;s.textContent=n>9?'9+':n;b.title=n?`우편함 · 새 소식 ${n}개`:'우편함'});
+  const a=$('#mtNoticeBadge'),c=$('#mtInqBadge');a.hidden=!n1;a.textContent=n1;c.hidden=!n2;c.textContent=n2;
+}
+function setMailTab(t){
+  mailTab=t;$$('[data-mtab]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mtab===t));
+  const isN=t==='notice';$('#noticeList').hidden=!isN;$('#noticeForm').hidden=!isN||!me.admin;$('#inqPane').hidden=isN;
+  if(isN)renderNotices();else{renderMyInq();markMyInqSeen()}
+}
+function markMyInqSeen(){myInq.filter(inqUnread).forEach(q=>B.markInquirySeen(q.id,q.lastReplyAt).then(()=>{q.userSeen=q.lastReplyAt;renderMailBadge()}).catch(()=>{}))}
+const inqCard=(q,admin)=>`<li class="inq${!admin&&inqUnread(q)?' unread':''}">
+    <div class="inq-top"><span class="inq-st ${q.status==='answered'?'answered':'open'}">${q.status==='answered'?'답변 완료':'답변 대기'}</span><span class="inq-cat">${esc(q.cat||'문의')}</span><b>${esc(q.title)}</b></div>
+    <div class="inq-meta">${admin?`${esc(q.nick||'')} · ${esc(q.email||'')} · `:''}${ymd(q.ct)} ${hhmm(q.ct)}</div>
+    <div class="inq-body">${fmt(q.body||'')}</div>
+    ${(q.replies||[]).map(r=>`<div class="inq-reply"><small>관리자 답변 · ${ymd(r.ct)} ${hhmm(r.ct)}</small>${fmt(r.text||'')}</div>`).join('')}
+    ${admin?`<form class="inq-form" data-inqform="${esc(q.id)}"><textarea maxlength="4000" placeholder="${esc(q.nick||'')}님에게만 보내는 답장이에요" aria-label="답장"></textarea><button class="btn primary sm" type="submit" style="align-self:flex-end;padding:6px 14px">답장 보내기</button></form>`:''}
+    <button class="x" data-inqdel="${esc(q.id)}" aria-label="문의 삭제" title="문의 삭제">×</button></li>`;
+function renderMyInq(){
+  $('#myInqList').innerHTML=myInq.length?myInq.map(q=>inqCard(q,false)).join(''):'<li class="pf-hint" style="padding:6px 2px">아직 보낸 문의가 없어요.</li>';
 }
 function renderNotices(){
   const seen=me.noticeSeen||0;
-  $('#noticeForm').hidden=!me.admin;
+  $('#noticeForm').hidden=!me.admin||mailTab!=='notice';
   $('#noticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice${n.ct>seen&&n.authorUid!==me.uid?' unread':''}">
-    <div class="nt-top"><b>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
+    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
     <div class="nt-body">${fmt(n.body||'')}</div>
-    <div class="nt-meta">${esc(n.authorNick||'관리자')} · 전체 공지</div>
+    <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}</div>
     ${me.admin?`<button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button>`:''}</li>`).join('')
     :'<li class="list-empty" style="border:0;padding:28px 10px"><b>아직 받은 공지가 없어요</b>새 공지가 오면 여기에 쌓여요.</li>';
 }
 function openMail(){
   if(!me)return;
-  renderNotices();$('#mailModal').hidden=false;$('#mailClose').focus();
+  setMailTab(unreadCount()===0&&myInq.some(inqUnread)?'inq':'notice');$('#mailModal').hidden=false;$('#mailClose').focus();
   const latest=notices.reduce((m,n)=>Math.max(m,n.ct||0),0);
   if(latest>(me.noticeSeen||0))B.markNoticesSeen(latest).then(()=>{me.noticeSeen=latest;renderMailBadge()}).catch(()=>{});
 }
@@ -1485,6 +1594,20 @@ $('#noticeForm').addEventListener('submit',async e=>{
   try{await B.sendNotice({title,body});e.target.reset();toast('전체 회원에게 공지를 보냈어요')}
   catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
 });
+$$('[data-mtab]').forEach(b=>b.addEventListener('click',()=>setMailTab(b.dataset.mtab)));
+$('#inqForm').addEventListener('submit',async e=>{
+  e.preventDefault();const title=$('#inqTitle').value.trim(),body=$('#inqBody').value.trim(),cat=$('#inqCat').value,err=$('#inqErr');
+  if(!title){err.textContent='제목을 입력해 주세요.';err.hidden=false;return}
+  if(!body){err.textContent='내용을 입력해 주세요.';err.hidden=false;return}
+  err.hidden=true;
+  try{await B.createInquiry({cat,title,body});e.target.reset();toast('문의를 보냈어요. 답장이 오면 우편함으로 알려 드릴게요')}
+  catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
+});
+async function inqDelete(d){
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{await B.deleteInquiry(d.dataset.inqdel);toast('문의를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
+}
+$('#myInqList').addEventListener('click',e=>{const d=e.target.closest('[data-inqdel]');if(d){e.stopPropagation();inqDelete(d)}});
 $('#noticeList').addEventListener('click',async e=>{
   const d=e.target.closest('[data-ntdel]');if(!d)return;e.stopPropagation();
   if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
@@ -1492,20 +1615,62 @@ $('#noticeList').addEventListener('click',async e=>{
 });
 
 /* ---------------- Admin page ---------------- */
+let allInq=[],unsubAllInq=null,users=[],unsubUsers=null,inqFilter='open',admTab='inv';
+function subscribeAdmin(){
+  if(unsubAllInq){unsubAllInq();unsubAllInq=null}if(unsubUsers){unsubUsers();unsubUsers=null}
+  allInq=[];users=[];
+  if(me&&me.admin){
+    unsubAllInq=B.watchAllInquiries(list=>{allInq=list.sort((a,b)=>(b.ct||0)-(a.ct||0));renderAdminInq();syncFab()});
+    unsubUsers=B.listUsers(list=>{users=list;renderUsers()});
+  }
+  syncFab();
+}
+function renderUsers(){
+  if($('#adminView').hidden)return;
+  const q=($('#admUserSearch').value||'').trim().toLowerCase();
+  const list=[...users].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).filter(u=>!q||(u.nick||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+  $('#admUserCount').textContent=`총 ${users.length}명`;
+  $('#admUserList').innerHTML=list.length?list.map(u=>`<tr><td><b>${esc(u.nick||'')}</b>${u.admin?' <span class="admin-tag">관리자</span>':''}</td><td>${u.email?esc(u.email):'<span class="pf-hint">기록 전</span>'}</td><td class="mono">${u.createdAt?ymd(u.createdAt):'-'}</td><td class="mono">${esc(u.invite||'-')}</td></tr>`).join('')
+    :`<tr><td colspan="4" class="pf-hint" style="padding:14px 10px">${q?'찾는 회원이 없어요.':'아직 회원이 없어요.'}</td></tr>`;
+}
+function renderAdminInq(){
+  const open=allInq.filter(q=>q.status!=='answered').length,bd=$('#admInqBadge');bd.hidden=!open;bd.textContent=open;
+  if($('#adminView').hidden)return;
+  $$('[data-inqf]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.inqf===inqFilter));
+  const list=inqFilter==='open'?allInq.filter(q=>q.status!=='answered'):allInq;
+  const keep={};$$('#admInqList [data-inqform] textarea').forEach(t=>{if(t.value)keep[t.closest('[data-inqform]').dataset.inqform]=t.value});
+  $('#admInqList').innerHTML=list.length?list.map(q=>inqCard(q,true)).join(''):`<li class="pf-hint" style="padding:6px 2px">${inqFilter==='open'?'답변을 기다리는 문의가 없어요.':'아직 받은 문의가 없어요.'}</li>`;
+  Object.entries(keep).forEach(([id,v])=>{const t=$(`#admInqList [data-inqform="${CSS.escape(id)}"] textarea`);if(t)t.value=v});
+}
+$('#admUserSearch').addEventListener('input',renderUsers);
+$('#admInq').addEventListener('click',e=>{
+  const f=e.target.closest('[data-inqf]');if(f){inqFilter=f.dataset.inqf;renderAdminInq();return}
+  const d=e.target.closest('[data-inqdel]');if(d)inqDelete(d);
+});
+$('#admInqList').addEventListener('submit',async e=>{
+  const f=e.target.closest('[data-inqform]');if(!f)return;e.preventDefault();
+  const ta=f.querySelector('textarea'),text=ta.value.trim();if(!text){ta.focus();return}
+  const btn=f.querySelector('button');btn.disabled=true;
+  try{await B.replyInquiry(f.dataset.inqform,text);ta.value='';toast('답장을 보냈어요. 문의한 사람에게만 보여요')}
+  catch(x){toast('보내지 못했어요. '+errText(x))}
+  btn.disabled=false;
+});
 function syncFab(){
   const fab=$('#adminFab'),onAdmin=!$('#adminView').hidden;
   fab.hidden=!(me&&me.admin)||!$('#roomView').hidden||!$('#authView').hidden;
-  fab.classList.toggle('on',onAdmin);fab.textContent=onAdmin?'×':'⚙';
+  const open=allInq.filter(q=>q.status!=='answered').length,fb=$('#fabBadge');fb.hidden=!open||onAdmin;fb.textContent=open>9?'9+':open;
+  fab.classList.toggle('on',onAdmin);$('#fabIcon').textContent=onAdmin?'×':'⚙';
   fab.title=onAdmin?'관리자 페이지 닫기':'관리자 페이지';fab.setAttribute('aria-label',fab.title);
 }
 function showAdmin(){
   closeRoom();document.documentElement.classList.remove('in-room');
   $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=false;
-  document.title='관리자 · TRPG 번개탁 용도';syncFab();renderInvites();renderAdminNotices();window.scrollTo(0,0);
+  document.title='관리자 · TRPG 번개탁 용도';syncFab();setAdmTab(admTab);renderInvites();renderAdminNotices();renderUsers();renderAdminInq();window.scrollTo(0,0);
 }
 function setAdmTab(t){
-  $$('#admTabs [data-adm]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.adm===t));
-  $('#admInv').hidden=t!=='inv';$('#admNotice').hidden=t!=='notice';
+  admTab=t;$$('#admTabs [data-adm]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.adm===t));
+  $('#admInv').hidden=t!=='inv';$('#admNotice').hidden=t!=='notice';$('#admUsers').hidden=t!=='users';$('#admInq').hidden=t!=='inq';
+  if(t==='users')renderUsers();if(t==='inq')renderAdminInq();
 }
 $('#admTabs').addEventListener('click',e=>{const b=e.target.closest('[data-adm]');if(b)setAdmTab(b.dataset.adm)});
 $('#adminFab').onclick=()=>{location.hash=$('#adminView').hidden?'admin':''};
@@ -1513,9 +1678,9 @@ $('#admBack').onclick=()=>{location.hash=''};
 function renderAdminNotices(){
   if($('#adminView').hidden)return;
   $('#admNoticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice">
-    <div class="nt-top"><b>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
+    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
     <div class="nt-body">${fmt(n.body||'')}</div>
-    <div class="nt-meta">${esc(n.authorNick||'관리자')} · 전체 공지</div>
+    <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}</div>
     <button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button></li>`).join('')
     :'<li class="pf-hint" style="padding:6px 2px">아직 보낸 공지가 없어요.</li>';
 }
@@ -1524,9 +1689,12 @@ $('#admNoticeForm').addEventListener('submit',async e=>{
   if(!title){err.textContent='공지 제목을 입력해 주세요.';err.hidden=false;return}
   if(!body){err.textContent='공지 내용을 입력해 주세요.';err.hidden=false;return}
   err.hidden=true;
-  try{await B.sendNotice({title,body});e.target.reset();toast('전체 회원에게 공지를 보냈어요')}
+  try{await B.sendNotice({title,body,kind:admNtKind});e.target.reset();toast(admNtKind==='patch'?'패치 노트를 모든 회원에게 보냈어요':'전체 회원에게 공지를 보냈어요')}
   catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
 });
+let admNtKind='notice';
+$('#admNtKind').addEventListener('click',e=>{const b=e.target.closest('[data-ntk]');if(!b)return;admNtKind=b.dataset.ntk;$$('#admNtKind [data-ntk]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('#admNtTitle').placeholder=admNtKind==='patch'?'예: v1.2 패치 노트':'예: 11월 정기 점검 안내'});
 $('#admNoticeList').addEventListener('click',async e=>{
   const d=e.target.closest('[data-ntdel]');if(!d)return;
   if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
@@ -1636,7 +1804,7 @@ function renderRoom(){
   $('#roomCode').textContent=R.code||'······';
   const own=isGM();$('#coverSec').hidden=!R.cover&&!own;$('#coverActs').hidden=!own;$('#coverClear').hidden=!R.cover;
   $('#coverPickBtn').textContent=R.cover?'바꾸기':'+ 넣기';
-  $('#coverBox').innerHTML=R.cover?`<img src="${esc(R.cover)}" alt="세션 대표 이미지" class="mimg-cover">`:(own?'<p class="hint" style="margin:0">방을 대표할 이미지를 넣으면 세션 목록에 같이 보여요.</p>':'');
+  $('#coverBox').innerHTML=R.cover?`<img src="${safeImg(R.cover)}" alt="세션 대표 이미지" class="mimg-cover">`:(own?'<p class="hint" style="margin:0">방을 대표할 이미지를 넣으면 세션 목록에 같이 보여요.</p>':'');
   const names=R.memberNames||{};
   $('#members').innerHTML=(R.members||[]).map(u=>{const n=names[u]||'참가자';return `<li><span class="dot" style="--cc:${u===R.ownerUid?'var(--accent)':'var(--muted)'}">${initial(n)}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n)}</span>${u===R.ownerUid?'<span class="tag">방장</span>':''}${u===me.uid?'<span class="tag">나</span>':''}</li>`}).join('');
   $('#leaveBtn').hidden=R.ownerUid===me.uid;
@@ -1650,7 +1818,7 @@ function renderRoom(){
     ${edit?`<button class="x edit" data-editchar="${c.id}" aria-label="${esc(c.name)} 프로필 수정" title="프로필 수정">✎</button>
     <button class="x" data-delchar="${c.id}" aria-label="${esc(c.name)} 삭제">×</button>`:''}</li>`}).join('')
     :'<li class="hint" style="padding:4px 8px">아직 등장인물이 없어요.</li>';
-  $('#speakers').innerHTML=mine().map(c=>`<button class="spk" style="--cc:${esc(c.color)}" data-pick="${c.id}" aria-pressed="${c.id===speakerId}">${dot(c)}${esc(c.name)}</button>`).join('');
+  $('#speakers').innerHTML=mine().map(c=>`<button class="spk" style="--cc:${safeColor(c.color)}" data-pick="${c.id}" aria-pressed="${c.id===speakerId}">${dot(c)}${esc(c.name)}</button>`).join('');
   $('#macs').innerHTML=R.macros.length?R.macros.map(m=>`<li class="mac">
     <div class="mac-body"><div class="mac-name">${esc(m.name)}</div><div class="mac-f">${esc(m.f)}${m.t?' ≤ '+m.t:''}</div></div>
     <button class="switch" role="switch" aria-checked="${!!m.on}" data-toggle="${m.id}" aria-label="${esc(m.name)} 빠른 버튼에 표시"></button>
@@ -1668,9 +1836,9 @@ function msgHTML(m,opts={}){
   const del=canDel?`<button class="x del" data-delmsg="${esc(m.id)}"${m._w?' data-w="1"':''} aria-label="메시지 삭제" title="${m.uid===me.uid?'내 메시지 삭제':'메시지 삭제 (방장)'}">×</button>`:'';
   const player=!opts.export&&R&&m.uid&&(R.members||[]).length>1&&R.memberNames?R.memberNames[m.uid]:'';
   const cls=opts.isNew?' new':'';
-  const img=m.img?`<img class="mimg" src="${esc(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
+  const img=m.img?`<img class="mimg" src="${safeImg(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
   if(m.type==='narr')return `<div class="msg narr${cls}">${del}${img}${fmt(m.text)}</div>`;
-  if(m.type==='dice')return `<div class="msg dice-row${cls}" style="--cc:${esc(m.color)}">${del}<div class="dice"><div class="die">${esc(m.total)}</div><div class="dice-meta">
+  if(m.type==='dice')return `<div class="msg dice-row${cls}" style="--cc:${safeColor(m.color)}">${del}<div class="dice"><div class="die">${esc(m.total)}</div><div class="dice-meta">
     <div class="dice-top"><b>${esc(m.name)}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${m.verdict?`<span class="verdict ${esc(m.vc)}">${esc(m.verdict)}</span>`:''}</div>
     <div class="dice-f">${esc(m.f)} → ${esc(m.detail)}</div></div></div></div>`;
   let wt='';
@@ -1679,7 +1847,7 @@ function msgHTML(m,opts={}){
     const third=me&&m.uid!==me.uid&&m.toUid!==me.uid;
     wt=`<span class="wh-to">🔒 ${toName?esc(toName)+'에게 귓속말':'귓속말'}${third?' · 방장만 보임':''}</span>`;
   }
-  return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${cls}" style="--cc:${esc(m.color)}">${dot(m)}
+  return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${cls}" style="--cc:${safeColor(m.color)}">${dot(m)}
     <div style="min-width:0"><div class="who">${esc(m.name)} <time>${hhmm(m.ct)}</time>${player?`<span class="by">· ${esc(player)}</span>`:''}${wt}</div><div class="bubble">${del}${img}${m.text?fmt(m.text):''}</div></div></div>`;
 }
 function logBody(list,opts={}){
@@ -1995,11 +2163,11 @@ function statTabHTML(c,sh,kind,ro){
     if(r.max==null)return `<div class="res"><span class="res-k">${esc(r.label)}</span><span></span>
       <span class="res-num"><button class="step" data-sres="${r.id}:-1" aria-label="${esc(r.label)} 내리기">−</button><input class="num" data-f="rescur:${r.id}" value="${esc(r.cur)}" inputmode="numeric" aria-label="${esc(r.label)}"><button class="step" data-sres="${r.id}:1" aria-label="${esc(r.label)} 올리기">+</button></span></div>`;
     const pct=Math.max(0,Math.min(100,(+r.cur||0)/(+r.max||1)*100));
-    return `<div class="res" style="--resc:${esc(r.color||'var(--accent)')}"><span class="res-k">${esc(r.label)}</span>
+    return `<div class="res" style="--resc:${r.color?safeColor(r.color):'var(--accent)'}"><span class="res-k">${esc(r.label)}</span>
       <div class="res-bar"><i data-bar="${r.id}" style="width:${pct}%"></i></div>
       <span class="res-num"><button class="step" data-sres="${r.id}:-1" aria-label="${esc(r.label)} 내리기">−</button><input class="num" data-f="rescur:${r.id}" value="${esc(r.cur)}" inputmode="numeric" aria-label="현재 ${esc(r.label)}">/<input class="num" data-f="resmax:${r.id}" value="${esc(r.max)}" inputmode="numeric" aria-label="최대 ${esc(r.label)}"><button class="step" data-sres="${r.id}:1" aria-label="${esc(r.label)} 올리기">+</button></span></div>`;
   }).join('');
-  const abHTML=sh.ab.map(a=>`<div class="ab"><span class="ab-k">${esc(a.k)}<small>${esc(a.label)}</small></span>
+  const abHTML=sh.ab.map(a=>`<div class="ab"><span class="ab-k">${esc(a.label)}<small>${esc(a.k)}</small></span>
       <input data-f="ab:${a.id}" value="${esc(a.v)}" inputmode="numeric" aria-label="${esc(a.label)}">
       <span class="ab-sub" data-sub="ab:${a.id}">${esc(abSub(kind,sh,a))}</span>
       <button class="rollb" data-sroll="ab:${a.id}">🎲 굴림</button></div>`).join('');
@@ -2011,8 +2179,8 @@ function statTabHTML(c,sh,kind,ro){
       <input class="num" data-f="sk:${s.id}" value="${esc(s.v)}" inputmode="numeric" aria-label="${esc(s.label)} 값">
       <span class="sk-act">${skEdit&&!ro?`<button class="step" data-smove="${s.id}:-1" aria-label="${esc(s.label)} 위로">▲</button><button class="step" data-smove="${s.id}:1" aria-label="${esc(s.label)} 아래로">▼</button>`
         :`<button class="rollb" data-sroll="sk:${s.id}" aria-label="${esc(s.label)} 굴리기">🎲</button><button class="x" data-sdel="${s.id}" aria-label="${esc(s.label)} 삭제">×</button>`}</span></div>`).join('');
-  const abOpts=k=>sh.ab.map(a=>`<option value="${esc(a.k)}"${a.k===k?' selected':''}>${esc(a.k)}</option>`).join('');
-  const pfHTML=kind==='coc'?`<div class="pf-row"><span class="pf-lbl">계산식</span>${sh.pf.map((t,i)=>`${i?'<span class="pf-op">+</span>':''}<span class="pf-term"><select data-pfk="${i}" aria-label="능력치">${abOpts(t.k)}</select><span class="pf-x">×</span><input class="num" data-f="pfm:${i}" value="${t.m==null?'':esc(t.m)}" inputmode="numeric" placeholder="" aria-label="${esc(t.k)}에 곱할 수">${sh.pf.length>1?`<button class="pf-del" data-pfdel="${i}" title="이 항목 빼기" aria-label="${esc(t.k)} 항목 빼기">−</button>`:''}</span>`).join('')}<button class="ghost pf-add" data-pfadd>+ 항목</button></div>`:'';
+  const abOpts=k=>sh.ab.map(a=>`<option value="${esc(a.k)}"${a.k===k?' selected':''}>${esc(a.label||a.k)}</option>`).join('');
+  const pfHTML=kind==='coc'?`<div class="pf-row"><span class="pf-lbl">계산식</span>${sh.pf.map((t,i)=>`${i?'<span class="pf-op">+</span>':''}<span class="pf-term"><select data-pfk="${i}" aria-label="능력치">${abOpts(t.k)}</select><span class="pf-x">×</span><input class="num" data-f="pfm:${i}" value="${t.m==null?'':esc(t.m)}" inputmode="numeric" placeholder="" aria-label="${esc((sh.ab.find(a=>a.k===t.k)||{}).label||t.k)}에 곱할 수">${sh.pf.length>1?`<button class="pf-del" data-pfdel="${i}" title="이 항목 빼기" aria-label="${esc((sh.ab.find(a=>a.k===t.k)||{}).label||t.k)} 항목 빼기">−</button>`:''}</span>`).join('')}<button class="ghost pf-add" data-pfadd>+ 항목</button></div>`:'';
   const emptyFav='<p class="sheet-foot" style="padding:8px 2px">자주 쓰는 기능이 없어요. 전체 항목에서 ★을 눌러 모아 보세요.</p>';
   return `<div class="sheet-ctl">
       <select id="sheetKind" aria-label="시트 형식">${Object.entries(SHEET_TPL).map(([k,t])=>`<option value="${k}"${k===kind?' selected':''}>${t.name}</option>`).join('')}</select>
@@ -2076,7 +2244,7 @@ function renderSheet(){
   const tabs=[['stat','능력치'],['info','정보'],['story','서사'],...(ro?[]:[['secret','🔒 비밀']])];
   const body=sheetTab==='info'?infoTabHTML(c,kind):sheetTab==='story'?storyTabHTML(c,kind):sheetTab==='secret'?secretTabHTML(c):statTabHTML(c,sh,kind,ro);
   const scroll=el.querySelector('.sheet-body')?.scrollTop||0;
-  el.innerHTML=`<div class="sheet-head" style="--cc:${esc(c.color)}">${dot(c)}<div class="sheet-title"><b data-stitle>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
+  el.innerHTML=`<div class="sheet-head" style="--cc:${safeColor(c.color)}">${dot(c)}<div class="sheet-title"><b data-stitle>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
       <button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
     <div class="sheet-nav"><div class="seg">${tabs.map(([k,l])=>`<button data-stab="${k}" aria-pressed="${k===sheetTab}">${l}</button>`).join('')}</div></div>
     <div class="sheet-body">
@@ -2291,7 +2459,7 @@ async function boot(){
   B.onAuth(async u=>{
     const changed=(me&&me.uid)!==(u&&u.uid);me=u;
     if(authNotice&&!u){authErr(errText({code:authNotice}));authNotice=''}
-    if(changed||first){subscribeRooms();subscribeInvites();subscribeNotices();if(!u)closeMail();if(!u&&roomId)location.hash='';route()}
+    if(changed||first){subscribeRooms();subscribeInvites();subscribeNotices();subscribeMyInquiries();subscribeAdmin();if(!u)closeMail();if(!u&&roomId)location.hash='';route()}
     else if(!$('#homeView').hidden)showHome();
     first=false;
   });

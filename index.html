@@ -497,6 +497,8 @@ h1,h2{text-wrap:balance}
 .inq-form{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .inq-form textarea{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:8px 10px;font-size:14px;color:var(--ink);resize:vertical;min-height:70px;font-family:inherit}
 .inq-form textarea:focus{border-color:var(--accent);outline:none}
+.inq.gone{background:var(--sunk);border-style:dashed}
+.inq-gone{font-size:12.5px;font-weight:600;color:var(--rose);margin:0 26px 6px 0}
 .inq .x{position:absolute;top:8px;right:8px;opacity:1}
 .inq .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
 .nt-kind{width:100%}.nt-kind button{flex:1}
@@ -1009,7 +1011,7 @@ function makeLocal(){
         if(r.ownerUid===u){if(r.code)delete db.codes[r.code];delete db.rooms[r.id];delete db.messages[r.id];delete db.chars[r.id];delete db.whispers[r.id]}
         else{r.members=r.members.filter(x=>x!==u);if(r.memberNames)delete r.memberNames[u];if(db.chars[r.id])Object.keys(db.chars[r.id]).forEach(cid=>{if(db.chars[r.id][cid].ownerUid===u)delete db.chars[r.id][cid]})}
       });
-      db.inquiries=db.inquiries.filter(q=>q.uid!==u);delete db.accounts[k];write();setMe(null);emit();
+      db.inquiries.forEach(q=>{if(q.uid===u&&!q.userDeleted){q.userDeleted=true;q.userDeletedAt=now();q.withdrawn=true}});delete db.accounts[k];write();setMe(null);emit();
     },
     listUsers:cb=>sub(()=>cb(me&&me.admin?Object.values(db.accounts).map(a=>({uid:a.uid,nick:a.nick,email:a.email,createdAt:a.createdAt||0,invite:a.invite||'',admin:isAdminAcc(a)})):[])),
     watchMyInquiries:cb=>sub(()=>cb(me?db.inquiries.filter(q=>q.uid===me.uid).map(clone):[])),
@@ -1017,7 +1019,8 @@ function makeLocal(){
     async createInquiry(q){const t=now();db.inquiries.push({id:'q'+uid(),...q,uid:me.uid,nick:me.nick,email:me.email,ct:t,status:'open',replies:[],lastReplyAt:0,userSeen:t});write();emit()},
     async replyInquiry(id,text){if(!me.admin)throw new AppError('permission-denied');const q=db.inquiries.find(x=>x.id===id);const t=now();q.replies.push({by:'admin',nick:me.nick,text,ct:t});q.status='answered';q.lastReplyAt=t;write();emit()},
     async markInquirySeen(id,ts){const q=db.inquiries.find(x=>x.id===id);if(q&&q.uid===me.uid){q.userSeen=ts;write();emit()}},
-    async deleteInquiry(id){const q=db.inquiries.find(x=>x.id===id);if(!q||(!me.admin&&q.uid!==me.uid))throw new AppError('permission-denied');db.inquiries=db.inquiries.filter(x=>x.id!==id);write();emit()},
+    async withdrawInquiry(id){const q=db.inquiries.find(x=>x.id===id);if(!q||q.uid!==me.uid)throw new AppError('permission-denied');q.userDeleted=true;q.userDeletedAt=now();write();emit()},
+    async deleteInquiry(id){if(!me.admin)throw new AppError('permission-denied');db.inquiries=db.inquiries.filter(x=>x.id!==id);write();emit()},
     listInvites:cb=>sub(()=>cb(me&&me.admin?Object.entries(db.invites).map(([code,v])=>({code,...v})):[])),
     async createInvite(note){
       if(!me||!me.admin)throw new AppError('permission-denied');
@@ -1155,7 +1158,7 @@ async function makeFirebase(cfg){
         await fs.updateDoc(d.ref,{members:fs.arrayRemove(uidv),['memberNames.'+uidv]:fs.deleteField()}).catch(e=>console.error(e));
       }
       const iq=await fs.getDocs(fs.query(fs.collection(db,'inquiries'),fs.where('uid','==',uidv))).catch(()=>({docs:[]}));
-      for(const q of iq.docs)await fs.deleteDoc(q.ref).catch(()=>{});
+      for(const q of iq.docs)if(!q.data().userDeleted)await fs.updateDoc(q.ref,{userDeleted:true,userDeletedAt:now(),withdrawn:true}).catch(()=>{});
       await fs.deleteDoc(fs.doc(db,'users',uidv));
       await A.deleteUser(u);
     },
@@ -1166,6 +1169,7 @@ async function makeFirebase(cfg){
     async createInquiry(q){const t=now();await fs.addDoc(fs.collection(db,'inquiries'),{...q,uid:me.uid,nick:me.nick,email:me.email||'',ct:t,status:'open',replies:[],lastReplyAt:0,userSeen:t})},
     async replyInquiry(id,text){const t=now();await fs.updateDoc(fs.doc(db,'inquiries',id),{replies:fs.arrayUnion({by:'admin',nick:me.nick,text,ct:t}),status:'answered',lastReplyAt:t})},
     markInquirySeen:(id,ts)=>fs.updateDoc(fs.doc(db,'inquiries',id),{userSeen:ts}),
+    withdrawInquiry:id=>fs.updateDoc(fs.doc(db,'inquiries',id),{userDeleted:true,userDeletedAt:now()}),
     deleteInquiry:id=>fs.deleteDoc(fs.doc(db,'inquiries',id)),
     listInvites:cb=>me&&me.admin?fs.onSnapshot(fs.collection(db,'invites'),s=>cb(s.docs.map(d=>({code:d.id,...d.data()}))),fail):(cb([]),()=>{}),
     async createInvite(note){
@@ -1538,7 +1542,7 @@ function subscribeMyInquiries(){
   myInq=[];myInqFirst=true;
   if(me)unsubMyInq=B.watchMyInquiries(list=>{
     const fresh=!myInqFirst&&list.find(q=>inqUnread(q)&&!myInq.some(o=>o.id===q.id&&(o.lastReplyAt||0)===(q.lastReplyAt||0)));
-    myInq=list.sort((a,b)=>(b.ct||0)-(a.ct||0));myInqFirst=false;
+    myInq=list.filter(q=>!q.userDeleted).sort((a,b)=>(b.ct||0)-(a.ct||0));myInqFirst=false;
     if(fresh)toast(`📮 문의 「${fresh.title}」에 답장이 왔어요`);
     if(!$('#mailModal').hidden&&mailTab==='inq'){renderMyInq();markMyInqSeen()}
     renderMailBadge();
@@ -1555,13 +1559,14 @@ function setMailTab(t){
   if(isN)renderNotices();else{renderMyInq();markMyInqSeen()}
 }
 function markMyInqSeen(){myInq.filter(inqUnread).forEach(q=>B.markInquirySeen(q.id,q.lastReplyAt).then(()=>{q.userSeen=q.lastReplyAt;renderMailBadge()}).catch(()=>{}))}
-const inqCard=(q,admin)=>`<li class="inq${!admin&&inqUnread(q)?' unread':''}">
+const inqCard=(q,admin)=>`<li class="inq${!admin&&inqUnread(q)?' unread':''}${admin&&q.userDeleted?' gone':''}">
+    ${admin&&q.userDeleted?`<div class="inq-gone">[${q.withdrawn?'탈퇴한 회원의 문의입니다':'사용자가 삭제한 문의입니다'}] · ${ymd(q.userDeletedAt||q.ct)} ${hhmm(q.userDeletedAt||q.ct)}</div>`:''}
     <div class="inq-top"><span class="inq-st ${q.status==='answered'?'answered':'open'}">${q.status==='answered'?'답변 완료':'답변 대기'}</span><span class="inq-cat">${esc(q.cat||'문의')}</span><b>${esc(q.title)}</b></div>
     <div class="inq-meta">${admin?`${esc(q.nick||'')} · ${esc(q.email||'')} · `:''}${ymd(q.ct)} ${hhmm(q.ct)}</div>
     <div class="inq-body">${fmt(q.body||'')}</div>
     ${(q.replies||[]).map(r=>`<div class="inq-reply"><small>관리자 답변 · ${ymd(r.ct)} ${hhmm(r.ct)}</small>${fmt(r.text||'')}</div>`).join('')}
-    ${admin?`<form class="inq-form" data-inqform="${esc(q.id)}"><textarea maxlength="4000" placeholder="${esc(q.nick||'')}님에게만 보내는 답장이에요" aria-label="답장"></textarea><button class="btn primary sm" type="submit" style="align-self:flex-end;padding:6px 14px">답장 보내기</button></form>`:''}
-    <button class="x" data-inqdel="${esc(q.id)}" aria-label="문의 삭제" title="문의 삭제">×</button></li>`;
+    ${admin&&!q.userDeleted?`<form class="inq-form" data-inqform=""${esc(q.id)}"><textarea maxlength="4000" placeholder="${esc(q.nick||'')}님에게만 보내는 답장이에요" aria-label="답장"></textarea><button class="btn primary sm" type="submit" style="align-self:flex-end;padding:6px 14px">답장 보내기</button></form>`:''}
+    <button class="x" data-inqdel="${esc(q.id)}" aria-label="문의 삭제" title="${admin?'문의 완전히 삭제':'문의 삭제'}">×</button></li>`;
 function renderMyInq(){
   $('#myInqList').innerHTML=myInq.length?myInq.map(q=>inqCard(q,false)).join(''):'<li class="pf-hint" style="padding:6px 2px">아직 보낸 문의가 없어요.</li>';
 }
@@ -1603,9 +1608,10 @@ $('#inqForm').addEventListener('submit',async e=>{
   try{await B.createInquiry({cat,title,body});e.target.reset();toast('문의를 보냈어요. 답장이 오면 우편함으로 알려 드릴게요')}
   catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
 });
-async function inqDelete(d){
-  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
-  try{await B.deleteInquiry(d.dataset.inqdel);toast('문의를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
+async function inqDelete(d,admin){
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent=admin?'완전히 삭제?':'삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{if(admin){await B.deleteInquiry(d.dataset.inqdel);toast('문의를 완전히 지웠어요')}else{await B.withdrawInquiry(d.dataset.inqdel);toast('문의를 지웠어요')}}
+  catch(x){toast('지우지 못했어요. '+errText(x))}
 }
 $('#myInqList').addEventListener('click',e=>{const d=e.target.closest('[data-inqdel]');if(d){e.stopPropagation();inqDelete(d)}});
 $('#noticeList').addEventListener('click',async e=>{
@@ -1634,10 +1640,10 @@ function renderUsers(){
     :`<tr><td colspan="4" class="pf-hint" style="padding:14px 10px">${q?'찾는 회원이 없어요.':'아직 회원이 없어요.'}</td></tr>`;
 }
 function renderAdminInq(){
-  const open=allInq.filter(q=>q.status!=='answered').length,bd=$('#admInqBadge');bd.hidden=!open;bd.textContent=open;
+  const open=allInq.filter(q=>q.status!=='answered'&&!q.userDeleted).length,bd=$('#admInqBadge');bd.hidden=!open;bd.textContent=open;
   if($('#adminView').hidden)return;
   $$('[data-inqf]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.inqf===inqFilter));
-  const list=inqFilter==='open'?allInq.filter(q=>q.status!=='answered'):allInq;
+  const list=inqFilter==='open'?allInq.filter(q=>q.status!=='answered'&&!q.userDeleted):allInq;
   const keep={};$$('#admInqList [data-inqform] textarea').forEach(t=>{if(t.value)keep[t.closest('[data-inqform]').dataset.inqform]=t.value});
   $('#admInqList').innerHTML=list.length?list.map(q=>inqCard(q,true)).join(''):`<li class="pf-hint" style="padding:6px 2px">${inqFilter==='open'?'답변을 기다리는 문의가 없어요.':'아직 받은 문의가 없어요.'}</li>`;
   Object.entries(keep).forEach(([id,v])=>{const t=$(`#admInqList [data-inqform="${CSS.escape(id)}"] textarea`);if(t)t.value=v});
@@ -1645,7 +1651,7 @@ function renderAdminInq(){
 $('#admUserSearch').addEventListener('input',renderUsers);
 $('#admInq').addEventListener('click',e=>{
   const f=e.target.closest('[data-inqf]');if(f){inqFilter=f.dataset.inqf;renderAdminInq();return}
-  const d=e.target.closest('[data-inqdel]');if(d)inqDelete(d);
+  const d=e.target.closest('[data-inqdel]');if(d)inqDelete(d,true);
 });
 $('#admInqList').addEventListener('submit',async e=>{
   const f=e.target.closest('[data-inqform]');if(!f)return;e.preventDefault();
@@ -1658,7 +1664,7 @@ $('#admInqList').addEventListener('submit',async e=>{
 function syncFab(){
   const fab=$('#adminFab'),onAdmin=!$('#adminView').hidden;
   fab.hidden=!(me&&me.admin)||!$('#roomView').hidden||!$('#authView').hidden;
-  const open=allInq.filter(q=>q.status!=='answered').length,fb=$('#fabBadge');fb.hidden=!open||onAdmin;fb.textContent=open>9?'9+':open;
+  const open=allInq.filter(q=>q.status!=='answered'&&!q.userDeleted).length,fb=$('#fabBadge');fb.hidden=!open||onAdmin;fb.textContent=open>9?'9+':open;
   fab.classList.toggle('on',onAdmin);$('#fabIcon').textContent=onAdmin?'×':'⚙';
   fab.title=onAdmin?'관리자 페이지 닫기':'관리자 페이지';fab.setAttribute('aria-label',fab.title);
 }

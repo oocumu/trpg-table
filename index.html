@@ -305,9 +305,21 @@ h1,h2{text-wrap:balance}
 .notfound{margin:auto;text-align:center;padding:40px 20px}
 .notfound b{display:block;font-family:var(--f-display);font-size:22px;margin-bottom:6px}
 
-.sheet{position:absolute;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--sheet);border-left:1px solid var(--line);box-shadow:-14px 0 36px rgba(20,18,28,.14);z-index:9;display:flex;flex-direction:column;animation:slidein .2s ease-out}
-@keyframes slidein{from{transform:translateX(24px);opacity:.5}to{transform:none;opacity:1}}
-.sheet-head{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sheet{position:fixed;z-index:35;width:460px;height:640px;min-width:320px;min-height:280px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);
+  background:var(--sheet);border:1px solid var(--line);border-radius:14px;overflow:hidden;resize:both;
+  box-shadow:0 18px 50px rgba(20,14,40,.22),0 2px 6px rgba(20,14,40,.08);display:flex;flex-direction:column;animation:sheetpop .16s ease-out}
+@keyframes sheetpop{from{transform:scale(.97);opacity:.4}to{transform:none;opacity:1}}
+.sheet.moving{user-select:none;opacity:.96;box-shadow:0 24px 60px rgba(20,14,40,.3)}
+.sheet-head{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);cursor:move;touch-action:none;background:var(--sunk)}
+.sheet-head .x,.sheet-head button{cursor:pointer}
+.sheet-grip{font-size:11px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+.sheet::after{content:"";position:absolute;right:3px;bottom:3px;width:10px;height:10px;border-right:2px solid var(--line);border-bottom:2px solid var(--line);border-radius:0 0 4px 0;pointer-events:none}
+@media (max-width:700px){
+  .sheet{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%!important;height:86vh!important;max-width:none;max-height:none;
+    resize:none;border-radius:16px 16px 0 0;border-bottom:0}
+  .sheet-head{cursor:default}
+  .sheet-grip,.sheet::after{display:none}
+}
 .sheet-head .dot{width:46px;height:46px;font-size:18px}
 .sheet-title{flex:1;min-width:0}
 .sheet-title b{display:block;font-family:var(--f-display);font-size:19px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2251,7 +2263,7 @@ function renderSheet(){
   const body=sheetTab==='info'?infoTabHTML(c,kind):sheetTab==='story'?storyTabHTML(c,kind):sheetTab==='secret'?secretTabHTML(c):statTabHTML(c,sh,kind,ro);
   const scroll=el.querySelector('.sheet-body')?.scrollTop||0;
   el.innerHTML=`<div class="sheet-head" style="--cc:${safeColor(c.color)}">${dot(c)}<div class="sheet-title"><b data-stitle>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
-      <button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
+      <span class="sheet-grip" aria-hidden="true">⠿ 끌어서 이동</span><button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
     <div class="sheet-nav"><div class="seg">${tabs.map(([k,l])=>`<button data-stab="${k}" aria-pressed="${k===sheetTab}">${l}</button>`).join('')}</div></div>
     <div class="sheet-body">
       ${ro?'<p class="ro-note">다른 사람의 캐릭터라 보기만 할 수 있어요. 고치거나 굴리는 건 주인과 방장만 할 수 있어요.</p>':''}
@@ -2262,7 +2274,47 @@ function renderSheet(){
   el.hidden=false;
   const nb=el.querySelector('.sheet-body');if(nb&&scroll)nb.scrollTop=scroll;
 }
-function openSheet(cid){if(sheetCid!==cid){sheetTab='stat';skTab=null;skEdit=false}sheetCid=cid;renderSheet();}
+const GEO_KEY='bt-sheet-geo',mobileSheet=()=>matchMedia('(max-width:700px)').matches;
+function clampSheet(){
+  const el=$('#sheet');if(!el||el.hidden||mobileSheet())return;
+  const W=innerWidth,H=innerHeight,w=Math.min(el.offsetWidth,W-16),h=Math.min(el.offsetHeight,H-16);
+  let x=parseFloat(el.style.left)||0,y=parseFloat(el.style.top)||0;
+  x=Math.max(8,Math.min(x,W-w-8));y=Math.max(8,Math.min(y,H-h-8));
+  el.style.left=x+'px';el.style.top=y+'px';
+}
+function placeSheet(){
+  const el=$('#sheet');if(mobileSheet())return;
+  const g=lsGet(GEO_KEY)||{},W=innerWidth,H=innerHeight;
+  const w=Math.min(g.w||460,W-16),h=Math.min(g.h||Math.min(700,H-48),H-16);
+  el.style.width=w+'px';el.style.height=h+'px';
+  el.style.left=(g.x!=null?g.x:W-w-24)+'px';el.style.top=(g.y!=null?g.y:24)+'px';
+  clampSheet();
+}
+function saveSheetGeo(){
+  const el=$('#sheet');if(!el||el.hidden||mobileSheet())return;
+  lsSet(GEO_KEY,{x:parseFloat(el.style.left)||0,y:parseFloat(el.style.top)||0,w:el.offsetWidth,h:el.offsetHeight});
+}
+function openSheet(cid){
+  const wasOpen=!!sheetCid&&!$('#sheet').hidden;
+  if(sheetCid!==cid){sheetTab='stat';skTab=null;skEdit=false}sheetCid=cid;renderSheet();
+  if(!wasOpen)placeSheet();
+}
+(()=>{
+  const el=$('#sheet');let drag=null;
+  el.addEventListener('pointerdown',e=>{
+    const h=e.target.closest('.sheet-head');if(!h||e.target.closest('button')||mobileSheet()||e.button!==0)return;
+    drag={dx:e.clientX-el.offsetLeft,dy:e.clientY-el.offsetTop,id:e.pointerId};h.setPointerCapture(e.pointerId);el.classList.add('moving');e.preventDefault();
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    el.style.left=(e.clientX-drag.dx)+'px';el.style.top=(e.clientY-drag.dy)+'px';clampSheet();
+  });
+  const end=e=>{if(!drag)return;drag=null;el.classList.remove('moving');saveSheetGeo()};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  let rt;try{new ResizeObserver(()=>{if(el.hidden)return;clearTimeout(rt);rt=setTimeout(()=>{clampSheet();saveSheetGeo()},200)}).observe(el)}catch(x){}
+  addEventListener('resize',()=>{clampSheet()});
+  el.addEventListener('dblclick',e=>{if(e.target.closest('.sheet-head')&&!e.target.closest('button')&&!mobileSheet()){lsSet(GEO_KEY,{});placeSheet()}});
+})();
 function closeSheet(){flushSheet();flushSecret();if(secretUnsub){secretUnsub();secretUnsub=null}secretCid=null;secretText=null;sheetCid=null;skEdit=false;const el=$('#sheet');if(el){el.hidden=true;el.innerHTML=''}}
 function markSheet(c){
   sheetDirty={cid:c.id,sheets:c.sheets,kind:c.sheetKind,info:c.info,story:c.story,name:c.name};

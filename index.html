@@ -305,7 +305,7 @@ h1,h2{text-wrap:balance}
 .notfound{margin:auto;text-align:center;padding:40px 20px}
 .notfound b{display:block;font-family:var(--f-display);font-size:22px;margin-bottom:6px}
 
-.sheet{position:absolute;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--sheet);border-left:1px solid var(--line);box-shadow:-14px 0 36px rgba(20,18,28,.14);z-index:9;display:flex;flex-direction:column;animation:slidein .2s ease-out}
+.sheet{position:absolute;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--sheet);border-left:1px solid var(--line);box-shadow:-14px 0 36px rgba(20,18,28,.14);z-index:9;display:flex;flex-direction:column;animation:slidein .2s ease-out}
 @keyframes slidein{from{transform:translateX(24px);opacity:.5}to{transform:none;opacity:1}}
 .sheet-head{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
 .sheet-head .dot{width:46px;height:46px;font-size:18px}
@@ -340,7 +340,7 @@ h1,h2{text-wrap:balance}
 .rollb{border:1px solid var(--line);background:var(--sheet);border-radius:8px;font-size:12px;padding:3px 10px;margin-top:5px;color:var(--accent);font-weight:600;white-space:nowrap}
 .rollb:hover{background:var(--accent-soft);border-color:var(--accent)}
 .sk-list{display:flex;flex-direction:column}
-.sk{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line)}
+.sk{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line)}
 .sk:last-child{border-bottom:0}
 .sk .lbl{border:0;background:none;min-width:0;padding:4px 6px;border-radius:6px;font-size:14px}
 .sk .lbl:focus{background:var(--sunk);outline:none}
@@ -350,7 +350,42 @@ h1,h2{text-wrap:balance}
 .sk:hover .x{opacity:1}
 .sheet-foot{font-size:12px;color:var(--muted);margin:0}
 .btn.sm{padding:3px 10px;font-size:12.5px}
-.sheet.ro .step,.sheet.ro [data-sdel],.sheet.ro [data-sadd],.sheet.ro [data-srand],.sheet.ro .rollb{display:none}
+.sheet.ro .step,.sheet.ro [data-sdel],.sheet.ro [data-sadd],.sheet.ro [data-srand],.sheet.ro .rollb,.sheet.ro [data-sedit],.sheet.ro [data-pfadd],.sheet.ro .pf-del{display:none}
+.sheet.ro .star{pointer-events:none}.sheet.ro .star:not(.on){visibility:hidden}
+.sheet-nav{padding:8px 16px;border-bottom:1px solid var(--line)}
+.sheet-nav .seg{width:100%}
+.sheet-nav .seg button{flex:1;padding:5px 6px;font-size:13px;white-space:nowrap}
+.sheet-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sheet-ctl select{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:4px 8px;font-size:13px;color:var(--ink)}
+.info-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.info-grid .full{grid-column:1/-1}
+.sf{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500;min-width:0}
+.sf input,.sf textarea{width:100%;min-width:0;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:7px 10px;font-size:14px;color:var(--ink);font-family:inherit;line-height:1.55;resize:vertical}
+.sf textarea{min-height:70px}
+.sf input:focus,.sf textarea:focus{border-color:var(--accent);outline:none;background:var(--sheet)}
+.sf .ro-in,.sheet.ro .sf input,.sheet.ro .sf textarea{background:transparent}
+.secret-box{border:1px dashed color-mix(in srgb,var(--rose) 55%,var(--line));background:color-mix(in srgb,var(--rose-soft) 55%,var(--sheet));border-radius:12px;padding:12px}
+.secret-box .sf textarea{background:var(--sheet);min-height:220px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.pf-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin:0 0 10px;padding:8px 10px;background:var(--sunk);border:1px solid var(--line);border-radius:10px}
+.pf-lbl{font-weight:600;margin-right:2px}
+.pf-term{display:inline-flex;align-items:center;gap:4px}
+.pf-term select{border:1px solid var(--line);background:var(--sheet);border-radius:6px;padding:2px 4px;font-family:var(--f-mono);font-size:12.5px;color:var(--ink)}
+.pf-term .num{width:2.8em;background:var(--sheet)}
+.pf-x,.pf-op{font-family:var(--f-mono);color:var(--muted)}
+.pf-del{width:20px;height:20px;border:1px solid var(--line);background:var(--sheet);border-radius:50%;font-size:12px;line-height:1;padding:0;color:var(--muted)}
+.pf-del:hover{color:var(--rose);border-color:var(--rose)}
+.pf-add{font-size:12.5px;padding:2px 6px}
+.sk-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.sk-tabs button{font-size:12.5px;padding:3px 10px}
+.star{border:0;background:none;padding:0;width:22px;height:22px;font-size:15px;line-height:1;color:var(--line)}
+.star:hover{color:var(--gold)}
+.star.on{color:var(--gold)}
+.grip{cursor:grab;color:var(--muted);text-align:center;user-select:none;font-size:15px}
+.sk[draggable="true"]{cursor:grab}
+.sk.dragging{opacity:.4}
+.sk.drop-over{box-shadow:inset 0 2px 0 var(--accent)}
+.sk-act{display:flex;gap:2px;align-items:center}
 .sheet.ro .ab input,.sheet.ro .num{pointer-events:none;background:transparent;border-color:transparent}
 .ro-note{font-size:12px;color:var(--muted);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:0}
 .sk-search{width:100%;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:6px 10px;font-size:13.5px;margin-bottom:6px}
@@ -864,7 +899,7 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
@@ -952,7 +987,17 @@ function makeLocal(){
     async deleteChar(id,cid){
       const r=db.rooms[id],ex=(db.chars[id]||{})[cid];if(!ex)return;
       if(ex.ownerUid!==me.uid&&r.ownerUid!==me.uid)throw new AppError('permission-denied');
-      delete db.chars[id][cid];write();emit();
+      delete db.chars[id][cid];if(db.secrets[id])delete db.secrets[id][cid];write();emit();
+    },
+    watchSecret:(id,cid,cb)=>sub(()=>{
+      const r=db.rooms[id],ch=(db.chars[id]||{})[cid];
+      if(!r||!ch||!me||(me.uid!==r.ownerUid&&me.uid!==ch.ownerUid)){cb(null);return}
+      cb(((db.secrets[id]||{})[cid]||{}).text||'');
+    }),
+    async saveSecret(id,cid,text){
+      const r=db.rooms[id],ch=(db.chars[id]||{})[cid];
+      if(!r||!ch||(me.uid!==r.ownerUid&&me.uid!==ch.ownerUid))throw new AppError('permission-denied');
+      (db.secrets[id]||(db.secrets[id]={}))[cid]={text,ut:now()};write();
     },
     watchWhispers:(id,cb)=>sub(()=>{if(isMember(db.rooms[id]))cb((db.whispers[id]||[]).filter(w=>(w.visible||[]).includes(me.uid)).map(w=>({...w,_w:true})))}),
     async addMessage(id,m){
@@ -965,7 +1010,7 @@ function makeLocal(){
     async deleteMessage(id,mid,isW){
       if(isW){db.whispers[id]=(db.whispers[id]||[]).filter(w=>w.id!==mid);write();emit();return}
       db.messages[id]=(db.messages[id]||[]).filter(m=>m.id!==mid);if(db.rooms[id])db.rooms[id].msgCount=db.messages[id].length;write();emit()},
-    async deleteRoom(id){const r=db.rooms[id];if(r&&r.code)delete db.codes[r.code];delete db.rooms[id];delete db.messages[id];delete db.chars[id];delete db.whispers[id];write();emit()},
+    async deleteRoom(id){const r=db.rooms[id];if(r&&r.code)delete db.codes[r.code];delete db.rooms[id];delete db.messages[id];delete db.chars[id];delete db.whispers[id];delete db.secrets[id];write();emit()},
     hasRooms:u=>Object.values(db.rooms).some(r=>(r.members||[]).includes(u))
   };
 }
@@ -1039,7 +1084,7 @@ async function makeFirebase(cfg){
         const r=d.data();
         if(r.ownerUid===uidv){await this.deleteRoom(d.id).catch(e=>console.error(e));continue}
         const cs=await fs.getDocs(fs.collection(db,'rooms',d.id,'chars')).catch(()=>null);
-        if(cs)for(const c of cs.docs){if(c.data().ownerUid===uidv)await fs.deleteDoc(c.ref).catch(()=>{})}
+        if(cs)for(const c of cs.docs){if(c.data().ownerUid===uidv){await fs.deleteDoc(fs.doc(db,'rooms',d.id,'secrets',c.id)).catch(()=>{});await fs.deleteDoc(c.ref).catch(()=>{})}}
         await fs.updateDoc(d.ref,{members:fs.arrayRemove(uidv),['memberNames.'+uidv]:fs.deleteField()}).catch(e=>console.error(e));
       }
       await fs.deleteDoc(fs.doc(db,'users',uidv));
@@ -1082,7 +1127,13 @@ async function makeFirebase(cfg){
     watchChars:(id,cb)=>fs.onSnapshot(fs.collection(db,'rooms',id,'chars'),s=>cb(s.docs.map(d=>({...d.data(),id:d.id}))),
       e=>{if(e.code!=='permission-denied')fail(e)}),
     saveChar:(id,c)=>fs.setDoc(fs.doc(db,'rooms',id,'chars',c.id),clone(c)),
-    deleteChar:(id,cid)=>fs.deleteDoc(fs.doc(db,'rooms',id,'chars',cid)),
+    async deleteChar(id,cid){
+      await fs.deleteDoc(fs.doc(db,'rooms',id,'secrets',cid)).catch(()=>{});
+      await fs.deleteDoc(fs.doc(db,'rooms',id,'chars',cid));
+    },
+    watchSecret:(id,cid,cb)=>fs.onSnapshot(fs.doc(db,'rooms',id,'secrets',cid),d=>cb(d.exists()?(d.data().text||''):''),
+      e=>{if(e.code==='permission-denied')cb(null);else fail(e)}),
+    saveSecret:(id,cid,text)=>fs.setDoc(fs.doc(db,'rooms',id,'secrets',cid),{text,ut:now()}),
     watchWhispers:(id,cb)=>fs.onSnapshot(fs.query(fs.collection(db,'rooms',id,'whispers'),fs.where('visible','array-contains',me.uid)),
       s=>cb(s.docs.map(d=>({id:d.id,...d.data(),_w:true}))),e=>{if(e.code!=='permission-denied')fail(e)}),
     async addMessage(id,m){
@@ -1103,8 +1154,9 @@ async function makeFirebase(cfg){
       const s=await fs.getDocs(fs.collection(db,'rooms',id,'messages'));
       const cs=await fs.getDocs(fs.collection(db,'rooms',id,'chars'));
       const ws=await fs.getDocs(fs.query(fs.collection(db,'rooms',id,'whispers'),fs.where('visible','array-contains',me.uid)));
+      const ss=await fs.getDocs(fs.collection(db,'rooms',id,'secrets')).catch(()=>({docs:[]}));
       let b=fs.writeBatch(db),n=0;
-      for(const d of [...s.docs,...cs.docs,...ws.docs]){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
+      for(const d of [...s.docs,...ss.docs,...cs.docs,...ws.docs]){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
       if(code)b.delete(fs.doc(db,'codes',code));
       b.delete(fs.doc(db,'rooms',id));await b.commit();
     },
@@ -1549,7 +1601,7 @@ function openRoom(id){
   },()=>{loaded=true;clearTimeout(timer);R=null;renderMissing()}));
   unsubRoom.push(B.watchChars(id,list=>{
     CH=list.sort((a,b)=>(b.gm?1:0)-(a.gm?1:0)||String(a.name).localeCompare(String(b.name),'ko'));
-    if(sheetDirty){const c=CH.find(c=>c.id===sheetDirty.cid);if(c){c.sheets=sheetDirty.sheets;c.sheetKind=sheetDirty.kind}}
+    if(sheetDirty){const c=CH.find(c=>c.id===sheetDirty.cid);if(c){c.sheets=sheetDirty.sheets;c.sheetKind=sheetDirty.kind;c.info=sheetDirty.info;c.story=sheetDirty.story;c.name=sheetDirty.name}}
     if(!R)return;R.chars=CH;fixSpeaker();renderRoom();renderLog(false);
     if(sheetCid&&!$('#sheet').contains(document.activeElement))renderSheet();
   }));
@@ -1848,29 +1900,50 @@ const SHEET_TPL={
         ['말재주',5],['매혹',15],['모국어',60],['법률',5],['변장',5],['사격(권총)',20],['사격(라이플/산탄총)',25],['설득',10],['손놀림',10],['수영',20],
         ['승마',5],['신용',0],['심리학',10],['역사',5],['열쇠공',1],['예술/공예',5],['오르기',20],['오컬트',5],['외국어',1],['운전(자동차)',20],
         ['위협',15],['은밀행동',20],['응급처치',30],['의료',1],['인류학',1],['자연',10],['전기수리',10],['정신분석',1],['중장비 조작',1],['추적',10],
-        ['컴퓨터 사용',5],['크툴루 신화',0],['투척',20],['회계',5],['회피',25]]},
+        ['컴퓨터 사용',5],['크툴루 신화',0],['투척',20],['회계',5],['회피',25]],
+    fav:['관찰력','듣기','도서관 이용','심리학','회피']},
   dnd:{name:'D&D 5e',
     ab:[['STR','근력',10],['DEX','민첩',10],['CON','건강',10],['INT','지능',10],['WIS','지혜',10],['CHA','매력',10]],
     res:[['체력',10,10,'#c94a6b'],['방어도',12,null,'']],
-    sk:[['이니셔티브',0],['운동',0],['곡예',0],['은신',0],['인지',0],['통찰',0],['설득',0],['기만',0],['비전',0]]},
+    sk:[['이니셔티브',0],['운동',0],['곡예',0],['은신',0],['인지',0],['통찰',0],['설득',0],['기만',0],['비전',0]],fav:['이니셔티브','인지']},
   free:{name:'자유',
     ab:[['A','능력 1',3],['B','능력 2',3],['C','능력 3',3]],
-    res:[['체력',10,10,'#c94a6b']],sk:[]}
+    res:[['체력',10,10,'#c94a6b']],sk:[],fav:[]}
+};
+/* 정보·서사 칸: [키, 이름, 'l'(긴 글) | 's'(한 줄), 반칸 여부] */
+const INFO_FIELDS={
+  coc:[['job','직업','s',1],['age','나이','s',1],['sex','성별','s',1],['home','거주지','s',1],['birth','출신지','s',1],['hobby','취미','s',1],
+       ['spend','소비 수준','s',1],['cash','현금','s',1],['assets','자산','l'],['items','소지품 · 장비','l']],
+  dnd:[['class','클래스','s',1],['level','레벨','s',1],['race','종족','s',1],['background','배경','s',1],['align','성향','s',1],['hobby','취미','s',1],
+       ['gold','소지금','s',1],['items','소지품 · 장비','l']],
+  free:[['job','직업 · 역할','s',1],['age','나이','s',1],['sex','성별','s',1],['hobby','취미','s',1],['items','소지품','l']]
+};
+const STORY_FIELDS={
+  coc:[['desc','개인 묘사'],['ideology','사상 · 신념'],['people','중요한 사람'],['places','의미 있는 장소'],['treasure','소중한 소지품'],['traits','특성'],
+       ['scars','부상과 흉터'],['phobia','공포증과 광기'],['tomes','신화 서적 · 주문 · 유물'],['encounters','조우한 기묘한 존재'],['story','서사']],
+  dnd:[['personality','성격'],['ideals','이상'],['bonds','유대'],['flaws','약점'],['story','배경 서사']],
+  free:[['story','서사']]
 };
 const FREE_RULES={d100:'1d100 이하 판정',d20:'1d20 + 값',r2d6:'2d6 + 값',nd6:'값만큼 d6'};
 const PB_COST={8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
-let sheetCid=null,sheetDirty=null,sheetT=null;
+let sheetCid=null,sheetDirty=null,sheetT=null,sheetTab='stat',skTab=null,skEdit=false,dragSk=null;
+let secretCid=null,secretText=null,secretUnsub=null,secretT=null,secretPending=null;
 function newSheet(kind){
   const t=SHEET_TPL[kind];
-  return {ab:t.ab.map(([k,label,v])=>({id:uid(),k,label,v})),res:t.res.map(([label,cur,max,color])=>({id:uid(),label,cur,max,color})),
-    sk:t.sk.map(([label,v])=>({id:uid(),label,v,b:v})),rule:'d100'};
+  const sh={ab:t.ab.map(([k,label,v])=>({id:uid(),k,label,v})),res:t.res.map(([label,cur,max,color])=>({id:uid(),label,cur,max,color})),
+    sk:t.sk.map(([label,v])=>({id:uid(),label,v,b:v,...((t.fav||[]).includes(label)?{fav:true}:{})})),rule:'d100'};
+  if(kind==='coc')sh.pf=[{k:'EDU',m:4},{k:'INT',m:2}];
+  return sh;
 }
 function defaultKind(){const s=R.system||'';return /CoC/i.test(s)?'coc':/D&D/i.test(s)?'dnd':'free'}
 function sheetOf(c){
   if(!c.sheetKind)c.sheetKind=defaultKind();
   c.sheets=c.sheets||{};
   if(!c.sheets[c.sheetKind])c.sheets[c.sheetKind]=newSheet(c.sheetKind);
-  return c.sheets[c.sheetKind];
+  const sh=c.sheets[c.sheetKind];
+  if(c.sheetKind==='coc'&&!Array.isArray(sh.pf))sh.pf=[{k:'EDU',m:4},{k:'INT',m:2}];
+  c.info=c.info||{};c.story=c.story||{};
+  return sh;
 }
 const sgn=n=>(n>=0?'+':'')+n;
 const dndMod=v=>Math.floor(((+v||0)-10)/2);
@@ -1896,13 +1969,15 @@ function rollSpec(kind,sh,item,isAb){
   if(r==='r2d6')return {f:'2d6'+sgn(v),label};
   return {f:Math.max(1,Math.min(100,v))+'d6',label};
 }
+const pfText=sh=>(sh.pf||[]).map(t=>`${t.k}×${t.m==null||t.m===''?'□':t.m}`).join(' + ');
 function summary(kind,sh){
   const abSum=sh.ab.reduce((a,x)=>a+(+x.v||0),0),skSum=sh.sk.reduce((a,x)=>a+(+x.v||0),0);
   if(kind==='coc'){
     const core=sh.ab.filter(a=>a.k!=='LUCK').reduce((a,x)=>a+(+x.v||0),0);
-    const g=k=>+(sh.ab.find(a=>a.k===k)||{}).v||0,avail=g('EDU')*4+g('INT')*2;
+    const g=k=>+(sh.ab.find(a=>a.k===k)||{}).v||0;
+    const avail=(sh.pf||[]).reduce((a,t)=>a+g(t.k)*(+t.m||0),0);
     const used=sh.sk.filter(x=>x.label!=='크툴루 신화').reduce((a,x)=>a+Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b)),0);
-    return {ab:`특성치 합계 <b>${core}</b>`,sk:`기능 포인트 <b class="${used>avail?'over':''}">${used}</b> / ${avail} <span title="직업 포인트 EDU×4 + 관심 포인트 INT×2 기준">(EDU×4+INT×2)</span>`};
+    return {ab:`특성치 합계 <b>${core}</b>`,sk:`기능 포인트 <b class="${used>avail?'over':''}">${used}</b> / ${avail}`};
   }
   if(kind==='dnd'){
     const vals=sh.ab.map(a=>+a.v||0),ok=vals.every(v=>v>=8&&v<=15);
@@ -1911,11 +1986,11 @@ function summary(kind,sh){
   }
   return {ab:`합계 <b>${abSum}</b>`,sk:sh.sk.length?`합계 <b>${skSum}</b>`:''};
 }
-function renderSheet(){
-  const el=$('#sheet');const c=R&&R.chars.find(x=>x.id===sheetCid);
-  if(!c){closeSheet();return}
-  const sh=sheetOf(c),kind=c.sheetKind,sum=summary(kind,sh),ro=!canEdit(c);
-  const ownerName=(R.memberNames||{})[ownerOf(c)]||'';
+const field=(f,k,label,val,type,half,ph='')=>type==='l'
+  ?`<label class="sf${half?'':' full'}"><span>${label}</span><textarea data-f="${f}:${k}" rows="3" maxlength="3000" placeholder="${esc(ph)}">${esc(val||'')}</textarea></label>`
+  :`<label class="sf${half?'':' full'}"><span>${label}</span><input data-f="${f}:${k}" value="${esc(val||'')}" maxlength="60" placeholder="${esc(ph)}"></label>`;
+function statTabHTML(c,sh,kind,ro){
+  const sum=summary(kind,sh);
   const resHTML=sh.res.map(r=>{
     if(r.max==null)return `<div class="res"><span class="res-k">${esc(r.label)}</span><span></span>
       <span class="res-num"><button class="step" data-sres="${r.id}:-1" aria-label="${esc(r.label)} 내리기">−</button><input class="num" data-f="rescur:${r.id}" value="${esc(r.cur)}" inputmode="numeric" aria-label="${esc(r.label)}"><button class="step" data-sres="${r.id}:1" aria-label="${esc(r.label)} 올리기">+</button></span></div>`;
@@ -1928,35 +2003,95 @@ function renderSheet(){
       <input data-f="ab:${a.id}" value="${esc(a.v)}" inputmode="numeric" aria-label="${esc(a.label)}">
       <span class="ab-sub" data-sub="ab:${a.id}">${esc(abSub(kind,sh,a))}</span>
       <button class="rollb" data-sroll="ab:${a.id}">🎲 굴림</button></div>`).join('');
-  const skHTML=sh.sk.map(s=>`<div class="sk${s.b!=null&&(+s.v||0)>(+s.b)?' up':''}" data-skrow="${esc(s.label)}"><input class="lbl" data-f="sklabel:${s.id}" value="${esc(s.label)}" aria-label="항목 이름" maxlength="20">
+  const favs=sh.sk.filter(s=>s.fav),tab=skTab||(favs.length?'fav':'all'),list=tab==='fav'?favs:sh.sk;
+  const skHTML=list.map(s=>`<div class="sk${s.b!=null&&(+s.v||0)>(+s.b)?' up':''}" data-skrow="${esc(s.label)}" data-skid="${s.id}"${skEdit&&!ro?' draggable="true"':''}>
+      ${skEdit&&!ro?'<span class="grip" title="끌어서 순서 바꾸기">⠿</span>':`<button class="star${s.fav?' on':''}" data-sfav="${s.id}" aria-pressed="${!!s.fav}" title="${s.fav?'자주 쓰는 항목에서 빼기':'자주 쓰는 항목에 넣기'}" aria-label="${esc(s.label)} 자주 쓰는 항목">★</button>`}
+      <input class="lbl" data-f="sklabel:${s.id}" value="${esc(s.label)}" aria-label="항목 이름" maxlength="20">
       <span class="sk-sub" data-sub="sk:${s.id}">${esc(skSub(kind,sh,s))}</span>
       <input class="num" data-f="sk:${s.id}" value="${esc(s.v)}" inputmode="numeric" aria-label="${esc(s.label)} 값">
-      <span style="display:flex;gap:2px"><button class="rollb" data-sroll="sk:${s.id}" aria-label="${esc(s.label)} 굴리기">🎲</button><button class="x" data-sdel="${s.id}" aria-label="${esc(s.label)} 삭제">×</button></span></div>`).join('');
-  el.innerHTML=`<div class="sheet-head" style="--cc:${esc(c.color)}">${dot(c)}<div class="sheet-title"><b>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
-      <button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
-    <div class="sheet-tabs">
+      <span class="sk-act">${skEdit&&!ro?`<button class="step" data-smove="${s.id}:-1" aria-label="${esc(s.label)} 위로">▲</button><button class="step" data-smove="${s.id}:1" aria-label="${esc(s.label)} 아래로">▼</button>`
+        :`<button class="rollb" data-sroll="sk:${s.id}" aria-label="${esc(s.label)} 굴리기">🎲</button><button class="x" data-sdel="${s.id}" aria-label="${esc(s.label)} 삭제">×</button>`}</span></div>`).join('');
+  const abOpts=k=>sh.ab.map(a=>`<option value="${esc(a.k)}"${a.k===k?' selected':''}>${esc(a.k)}</option>`).join('');
+  const pfHTML=kind==='coc'?`<div class="pf-row"><span class="pf-lbl">계산식</span>${sh.pf.map((t,i)=>`${i?'<span class="pf-op">+</span>':''}<span class="pf-term"><select data-pfk="${i}" aria-label="능력치">${abOpts(t.k)}</select><span class="pf-x">×</span><input class="num" data-f="pfm:${i}" value="${t.m==null?'':esc(t.m)}" inputmode="numeric" placeholder="" aria-label="${esc(t.k)}에 곱할 수">${sh.pf.length>1?`<button class="pf-del" data-pfdel="${i}" title="이 항목 빼기" aria-label="${esc(t.k)} 항목 빼기">−</button>`:''}</span>`).join('')}<button class="ghost pf-add" data-pfadd>+ 항목</button></div>`:'';
+  const emptyFav='<p class="sheet-foot" style="padding:8px 2px">자주 쓰는 기능이 없어요. 전체 항목에서 ★을 눌러 모아 보세요.</p>';
+  return `<div class="sheet-ctl">
       <select id="sheetKind" aria-label="시트 형식">${Object.entries(SHEET_TPL).map(([k,t])=>`<option value="${k}"${k===kind?' selected':''}>${t.name}</option>`).join('')}</select>
       ${kind==='free'?`<select id="sheetRule" aria-label="굴림 방식">${Object.entries(FREE_RULES).map(([k,v])=>`<option value="${k}"${k===(sh.rule||'d100')?' selected':''}>${v}</option>`).join('')}</select>`:''}
       ${kind!=='free'?`<button class="btn sm" data-srand>${kind==='coc'?'🎲 특성치 굴려 정하기':'🎲 4d6 굴려 정하기'}</button>`:''}
     </div>
+    <section><div class="sh-h"><h3>자원</h3></div><div class="res-list">${resHTML}</div></section>
+    <section><div class="sh-h"><h3>능력치</h3><span class="sh-sum" data-sum="ab">${sum.ab}</span></div><div class="ab-grid">${abHTML}</div></section>
+    <section><div class="sh-h"><h3>${kind==='coc'?'기능':kind==='dnd'?'기술 · 보너스':'항목'}</h3><span class="sh-sum" data-sum="sk">${sum.sk}</span></div>
+      ${pfHTML}
+      <div class="sk-tools"><div class="seg sk-tabs"><button data-sktab="fav" aria-pressed="${tab==='fav'}">★ 자주 쓰는 ${favs.length}</button><button data-sktab="all" aria-pressed="${tab==='all'}">전체 ${sh.sk.length}</button></div>
+        ${list.length>1?`<button class="ghost" data-sedit>${skEdit?'완료':'순서 바꾸기'}</button>`:''}</div>
+      ${tab==='all'&&sh.sk.length>12&&!skEdit?'<input class="sk-search" id="skSearch" placeholder="기능 찾기" aria-label="기능 찾기" autocomplete="off">':''}
+      <div class="sk-list">${skHTML||(tab==='fav'?emptyFav:'<p class="sheet-foot">굴릴 항목을 추가해 보세요.</p>')}</div>
+      ${skEdit?'':`<button class="ghost" data-sadd style="margin-top:6px">+ 항목 추가</button>`}</section>
+    <p class="sheet-foot">${kind==='coc'?'값을 누르면 바로 고칠 수 있어요. 굴림은 1d100이며 보통·어려운·극단적 성공을 자동으로 판정해요.':kind==='dnd'?'능력치 굴림은 1d20 + 수정치, 기술은 1d20 + 적은 보너스로 굴려요.':'능력치와 항목 모두 위에서 고른 방식으로 굴려요.'} 굴린 결과는 이 인물 이름으로 로그에 올라가요.</p>`;
+}
+function infoTabHTML(c,kind){
+  const player=(R.memberNames||{})[ownerOf(c)]||'';
+  return `<section><div class="sh-h"><h3>기본 정보</h3></div><div class="info-grid">
+      <label class="sf"><span>이름</span><input data-f="name" value="${esc(c.name)}" maxlength="20"></label>
+      <label class="sf"><span>플레이어</span><input value="${esc(player)}" readonly tabindex="-1" class="ro-in"></label>
+      ${INFO_FIELDS[kind].map(([k,l,t,h])=>field('info',k,l,c.info[k],t,h)).join('')}
+    </div></section>`;
+}
+function storyTabHTML(c,kind){
+  return `<section><div class="sh-h"><h3>${kind==='coc'?'배경 이야기':'서사'}</h3></div><div class="info-grid">
+      ${STORY_FIELDS[kind].map(([k,l])=>field('story',k,l,c.story[k],'l',0)).join('')}
+    </div></section>`;
+}
+function secretTabHTML(c){
+  const gmOnly=ownerOf(c)===R.ownerUid;
+  const val=secretText==null?'':secretText;
+  return `<section class="secret-box"><div class="sh-h"><h3>🔒 비밀 메모</h3></div>
+      <p class="sheet-foot" style="margin:0 0 8px">${gmOnly?'방장만 볼 수 있어요.':'이 캐릭터의 주인과 방장만 볼 수 있어요. 다른 참가자에게는 이 칸이 보이지 않아요.'}</p>
+      <label class="sf full"><span class="sr-only">비밀 메모</span><textarea data-f="secret" rows="10" maxlength="10000" placeholder="${secretText==null?'불러오는 중…':'HO 비밀, 숨겨진 과거, 방장에게만 알릴 내용 등을 적어 주세요.'}"${secretText==null?' disabled':''}>${esc(val)}</textarea></label>
+    </section>`;
+}
+function watchSecretFor(c){
+  if(secretCid===c.id)return;
+  flushSecret();if(secretUnsub){secretUnsub();secretUnsub=null}
+  secretCid=c.id;secretText=null;
+  secretUnsub=B.watchSecret(roomId,c.id,t=>{
+    secretText=t==null?'':t;
+    const ta=$('#sheet').querySelector('[data-f="secret"]');
+    if(ta&&document.activeElement!==ta&&secretPending==null){ta.value=secretText;ta.disabled=false;ta.placeholder='HO 비밀, 숨겨진 과거, 방장에게만 알릴 내용 등을 적어 주세요.'}
+  });
+}
+function flushSecret(){
+  clearTimeout(secretT);if(secretPending==null||!secretCid)return;
+  const text=secretPending,cid=secretCid;secretPending=null;
+  B.saveSecret(roomId,cid,text).catch(x=>toast('비밀 메모를 저장하지 못했어요. '+errText(x)));
+}
+function renderSheet(){
+  const el=$('#sheet');const c=R&&R.chars.find(x=>x.id===sheetCid);
+  if(!c){closeSheet();return}
+  const sh=sheetOf(c),kind=c.sheetKind,ro=!canEdit(c);
+  const ownerName=(R.memberNames||{})[ownerOf(c)]||'';
+  if(!ro)watchSecretFor(c);
+  if(sheetTab==='secret'&&ro)sheetTab='stat';
+  const tabs=[['stat','능력치'],['info','정보'],['story','서사'],...(ro?[]:[['secret','🔒 비밀']])];
+  const body=sheetTab==='info'?infoTabHTML(c,kind):sheetTab==='story'?storyTabHTML(c,kind):sheetTab==='secret'?secretTabHTML(c):statTabHTML(c,sh,kind,ro);
+  const scroll=el.querySelector('.sheet-body')?.scrollTop||0;
+  el.innerHTML=`<div class="sheet-head" style="--cc:${esc(c.color)}">${dot(c)}<div class="sheet-title"><b data-stitle>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
+      <button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
+    <div class="sheet-nav"><div class="seg">${tabs.map(([k,l])=>`<button data-stab="${k}" aria-pressed="${k===sheetTab}">${l}</button>`).join('')}</div></div>
     <div class="sheet-body">
       ${ro?'<p class="ro-note">다른 사람의 캐릭터라 보기만 할 수 있어요. 고치거나 굴리는 건 주인과 방장만 할 수 있어요.</p>':''}
-      <section><div class="sh-h"><h3>자원</h3></div><div class="res-list">${resHTML}</div></section>
-      <section><div class="sh-h"><h3>능력치</h3><span class="sh-sum" data-sum="ab">${sum.ab}</span></div><div class="ab-grid">${abHTML}</div></section>
-      <section><div class="sh-h"><h3>${kind==='coc'?'기능':kind==='dnd'?'기술 · 보너스':'항목'}</h3><span class="sh-sum" data-sum="sk">${sum.sk}</span></div>
-        ${sh.sk.length>12?'<input class="sk-search" id="skSearch" placeholder="기능 찾기" aria-label="기능 찾기" autocomplete="off">':''}
-        <div class="sk-list">${skHTML||'<p class="sheet-foot">굴릴 항목을 추가해 보세요.</p>'}</div>
-        <button class="ghost" data-sadd style="margin-top:6px">+ 항목 추가</button></section>
-      <p class="sheet-foot">${kind==='coc'?'값을 누르면 바로 고칠 수 있어요. 굴림은 1d100이며 보통·어려운·극단적 성공을 자동으로 판정해요.':kind==='dnd'?'능력치 굴림은 1d20 + 수정치, 기술은 1d20 + 적은 보너스로 굴려요.':'능력치와 항목 모두 위에서 고른 방식으로 굴려요.'} 굴린 결과는 이 인물 이름으로 로그에 올라가요.</p>
+      ${body}
     </div>`;
   el.classList.toggle('ro',ro);
-  if(ro){el.querySelectorAll('input:not(#skSearch)').forEach(i=>i.readOnly=true);el.querySelectorAll('select').forEach(x=>x.disabled=true)}
+  if(ro){el.querySelectorAll('input:not(#skSearch),textarea').forEach(i=>i.readOnly=true);el.querySelectorAll('.sheet-body select').forEach(x=>x.disabled=true)}
   el.hidden=false;
+  const nb=el.querySelector('.sheet-body');if(nb&&scroll)nb.scrollTop=scroll;
 }
-function openSheet(cid){sheetCid=cid;renderSheet();}
-function closeSheet(){flushSheet();sheetCid=null;const el=$('#sheet');if(el){el.hidden=true;el.innerHTML=''}}
+function openSheet(cid){if(sheetCid!==cid){sheetTab='stat';skTab=null;skEdit=false}sheetCid=cid;renderSheet();}
+function closeSheet(){flushSheet();flushSecret();if(secretUnsub){secretUnsub();secretUnsub=null}secretCid=null;secretText=null;sheetCid=null;skEdit=false;const el=$('#sheet');if(el){el.hidden=true;el.innerHTML=''}}
 function markSheet(c){
-  sheetDirty={cid:c.id,sheets:c.sheets,kind:c.sheetKind};
+  sheetDirty={cid:c.id,sheets:c.sheets,kind:c.sheetKind,info:c.info,story:c.story,name:c.name};
   clearTimeout(sheetT);sheetT=setTimeout(flushSheet,500);
 }
 function flushSheet(){
@@ -1969,31 +2104,52 @@ function refreshDerived(c){
   sh.ab.forEach(a=>{const s=el.querySelector(`[data-sub="ab:${a.id}"]`);if(s)s.textContent=abSub(kind,sh,a)});
   sh.sk.forEach(x=>{const s=el.querySelector(`[data-sub="sk:${x.id}"]`);if(s)s.textContent=skSub(kind,sh,x)});
   sh.res.forEach(r=>{const b=el.querySelector(`[data-bar="${r.id}"]`);if(b)b.style.width=Math.max(0,Math.min(100,(+r.cur||0)/(+r.max||1)*100))+'%'});
-  const sum=summary(kind,sh);el.querySelector('[data-sum="ab"]').innerHTML=sum.ab;el.querySelector('[data-sum="sk"]').innerHTML=sum.sk;
+  const sum=summary(kind,sh),sa=el.querySelector('[data-sum="ab"]'),ss=el.querySelector('[data-sum="sk"]');
+  if(sa)sa.innerHTML=sum.ab;if(ss)ss.innerHTML=sum.sk;
 }
 const toNum=v=>{const n=parseInt(String(v).replace(/[^\d-]/g,''),10);return isNaN(n)?0:n};
 $('#sheet').addEventListener('input',e=>{
   if(e.target.id==='skSearch'){const q=e.target.value.trim();$('#sheet').querySelectorAll('[data-skrow]').forEach(r=>r.hidden=!!q&&!r.dataset.skrow.includes(q));return}
   const f=e.target.dataset.f;if(!f)return;
-  const c=R.chars.find(x=>x.id===sheetCid);if(!canEdit(c))return;const sh=sheetOf(c);const [k,id]=f.split(':');
-  if(k==='ab')sh.ab.find(a=>a.id===id).v=toNum(e.target.value);
-  else if(k==='sk')sh.sk.find(a=>a.id===id).v=toNum(e.target.value);
-  else if(k==='sklabel')sh.sk.find(a=>a.id===id).label=e.target.value;
-  else if(k==='rescur')sh.res.find(r=>r.id===id).cur=toNum(e.target.value);
-  else if(k==='resmax')sh.res.find(r=>r.id===id).max=Math.max(1,toNum(e.target.value));
+  const c=R.chars.find(x=>x.id===sheetCid);if(!canEdit(c))return;const sh=sheetOf(c);
+  const i=f.indexOf(':'),k=i<0?f:f.slice(0,i),id=i<0?'':f.slice(i+1),v=e.target.value;
+  if(k==='secret'){secretPending=v;secretText=v;clearTimeout(secretT);secretT=setTimeout(flushSecret,700);return}
+  if(k==='ab')sh.ab.find(a=>a.id===id).v=toNum(v);
+  else if(k==='sk')sh.sk.find(a=>a.id===id).v=toNum(v);
+  else if(k==='sklabel')sh.sk.find(a=>a.id===id).label=v;
+  else if(k==='rescur')sh.res.find(r=>r.id===id).cur=toNum(v);
+  else if(k==='resmax')sh.res.find(r=>r.id===id).max=Math.max(1,toNum(v));
+  else if(k==='pfm'){const t=sh.pf[+id];if(t)t.m=v.trim()===''?null:Math.max(0,toNum(v))}
+  else if(k==='info')c.info[id]=v;
+  else if(k==='story')c.story[id]=v;
+  else if(k==='name'){const n=v.trim();if(!n)return;c.name=n;const t=$('#sheet').querySelector('[data-stitle]');if(t)t.textContent=n}
   refreshDerived(c);markSheet(c);
 });
-$('#sheet').addEventListener('focusout',()=>setTimeout(()=>{if(sheetCid&&!$('#sheet').contains(document.activeElement)&&!($('#skSearch')&&$('#skSearch').value))renderSheet()},0));
+$('#sheet').addEventListener('focusout',()=>setTimeout(()=>{if(sheetCid&&!$('#sheet').contains(document.activeElement)&&!($('#skSearch')&&$('#skSearch').value)){flushSecret();renderSheet();if(R)renderRoom()}},0));
 $('#sheet').addEventListener('change',e=>{
   const c=R.chars.find(x=>x.id===sheetCid);if(!c||!canEdit(c))return;
-  if(e.target.id==='sheetKind'){c.sheetKind=e.target.value;sheetOf(c);markSheet(c);renderSheet();toast(`${SHEET_TPL[c.sheetKind].name} 시트로 바꿨어요. 다른 형식에 적은 값도 그대로 남아 있어요`)}
-  if(e.target.id==='sheetRule'){sheetOf(c).rule=e.target.value;markSheet(c);renderSheet()}
+  if(e.target.id==='sheetKind'){c.sheetKind=e.target.value;skTab=null;sheetOf(c);markSheet(c);renderSheet();toast(`${SHEET_TPL[c.sheetKind].name} 시트로 바꿨어요. 다른 형식에 적은 값도 그대로 남아 있어요`);return}
+  if(e.target.id==='sheetRule'){sheetOf(c).rule=e.target.value;markSheet(c);renderSheet();return}
+  if(e.target.dataset.pfk!=null){const sh=sheetOf(c),t=sh.pf[+e.target.dataset.pfk];if(t){t.k=e.target.value;markSheet(c);refreshDerived(c)}}
 });
 $('#sheet').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;e.stopPropagation();
   const c=R.chars.find(x=>x.id===sheetCid);if(!c)return;const sh=sheetOf(c),kind=c.sheetKind,d=b.dataset;
   if('sclose' in d){closeSheet();return}
+  if(d.stab){flushSecret();sheetTab=d.stab;skEdit=false;renderSheet();$('#sheet .sheet-body').scrollTop=0;return}
+  if(d.sktab){skTab=d.sktab;skEdit=false;renderSheet();return}
   if(!canEdit(c))return;
+  if('sedit' in d){skEdit=!skEdit;renderSheet();return}
+  if(d.sfav){const s=sh.sk.find(x=>x.id===d.sfav);if(!s)return;if(s.fav)delete s.fav;else s.fav=true;markSheet(c);renderSheet();return}
+  if(d.smove){
+    const [id,dir]=d.smove.split(':'),favs=sh.sk.filter(s=>s.fav),tab=skTab||(favs.length?'fav':'all'),list=tab==='fav'?favs:sh.sk;
+    const i=list.findIndex(s=>s.id===id),j=i+(+dir);if(i<0||j<0||j>=list.length)return;
+    const a=sh.sk.indexOf(list[i]),z=sh.sk.indexOf(list[j]);[sh.sk[a],sh.sk[z]]=[sh.sk[z],sh.sk[a]];
+    markSheet(c);renderSheet();const nb=$('#sheet').querySelector(`[data-smove="${id}:${dir}"]`);if(nb)nb.focus();return;
+  }
+  if(d.pfdel!=null){sh.pf.splice(+d.pfdel,1);markSheet(c);renderSheet();return}
+  if('pfadd' in d){const used=new Set(sh.pf.map(t=>t.k)),next=sh.ab.find(a=>!used.has(a.k))||sh.ab[0];sh.pf.push({k:next.k,m:null});markSheet(c);renderSheet();
+    const ins=$('#sheet').querySelectorAll('[data-f^="pfm:"]');const last=ins[ins.length-1];if(last)last.focus();return}
   if(d.sroll){
     const [k,id]=d.sroll.split(':');const item=(k==='ab'?sh.ab:sh.sk).find(x=>x.id===id);if(!item)return;
     if(R.status==='ended'){toast('종료된 세션에서는 굴릴 수 없어요');return}
@@ -2003,7 +2159,8 @@ $('#sheet').addEventListener('click',e=>{
   }
   if(d.sres){const [id,dlt]=d.sres.split(':');const r=sh.res.find(x=>x.id===id);r.cur=(+r.cur||0)+(+dlt);markSheet(c);renderSheet();return}
   if(d.sdel){sh.sk=sh.sk.filter(x=>x.id!==d.sdel);markSheet(c);renderSheet();return}
-  if('sadd' in d){const v0=kind==='coc'?1:kind==='dnd'?0:3;sh.sk.push({id:uid(),label:'새 항목',v:v0,b:v0});markSheet(c);renderSheet();
+  if('sadd' in d){const v0=kind==='coc'?1:kind==='dnd'?0:3,favs=sh.sk.filter(s=>s.fav),tab=skTab||(favs.length?'fav':'all');
+    sh.sk.push({id:uid(),label:'새 항목',v:v0,b:v0,...(tab==='fav'?{fav:true}:{})});markSheet(c);renderSheet();
     const ins=$('#sheet').querySelectorAll('.sk .lbl');const last=ins[ins.length-1];if(last){last.focus();last.select()}return}
   if('srand' in d){
     if(!b.classList.contains('warn')){b.classList.add('warn');b.textContent='한 번 더 누르면 능력치를 새로 굴려요';setTimeout(()=>{if(b.isConnected){b.classList.remove('warn');b.textContent=kind==='coc'?'🎲 특성치 굴려 정하기':'🎲 4d6 굴려 정하기'}},3000);return}
@@ -2021,6 +2178,16 @@ $('#sheet').addEventListener('click',e=>{
     }
     markSheet(c);renderSheet();toast('능력치를 새로 굴렸어요');return;
   }
+});
+/* 순서 바꾸기: 끌어다 놓기 (PC) */
+$('#sheet').addEventListener('dragstart',e=>{const r=e.target.closest('.sk[draggable]');if(!r)return;dragSk=r.dataset.skid;r.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',dragSk)}catch(x){}});
+$('#sheet').addEventListener('dragend',e=>{dragSk=null;$('#sheet').querySelectorAll('.dragging,.drop-over').forEach(x=>x.classList.remove('dragging','drop-over'))});
+$('#sheet').addEventListener('dragover',e=>{const r=e.target.closest('.sk[draggable]');if(!r||!dragSk)return;e.preventDefault();$('#sheet').querySelectorAll('.drop-over').forEach(x=>x!==r&&x.classList.remove('drop-over'));r.classList.add('drop-over')});
+$('#sheet').addEventListener('drop',e=>{
+  const r=e.target.closest('.sk[draggable]');if(!r||!dragSk)return;e.preventDefault();
+  const c=R.chars.find(x=>x.id===sheetCid);if(!canEdit(c))return;const sh=sheetOf(c);
+  const from=sh.sk.findIndex(s=>s.id===dragSk),to=sh.sk.findIndex(s=>s.id===r.dataset.skid);if(from<0||to<0||from===to)return;
+  const [it]=sh.sk.splice(from,1);sh.sk.splice(to,0,it);dragSk=null;markSheet(c);renderSheet();
 });
 
 /* ---------------- Export ---------------- */

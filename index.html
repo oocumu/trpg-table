@@ -562,6 +562,23 @@ html.has-sys body{padding-top:38px}
 .icon-btn{width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sheet);border-radius:10px;font-size:15px;line-height:1;display:grid;place-items:center}
 .icon-btn:hover{border-color:var(--accent)}
 .tool-btns{display:flex;gap:4px;flex-wrap:wrap}
+.lib-save{font-size:16px!important;width:32px;height:32px}
+.lib-pick{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lib-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 4px 2px 10px;font-weight:600}
+.lib-chip button{border:0;background:none;color:inherit;font-size:14px;width:20px;height:20px;border-radius:50%}
+.lib-menu{list-style:none;margin:0;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--sheet);max-height:220px;overflow-y:auto;box-shadow:var(--shadow)}
+.lib-menu li button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:6px 8px;border-radius:8px;text-align:left;font-size:14px;color:var(--ink)}
+.lib-menu li button:hover{background:var(--accent-soft)}
+.lib-menu small,.lib-list small{color:var(--muted);font-size:11.5px}
+.lib-menu .empty-li{padding:10px;font-size:13px;color:var(--muted)}
+.lib-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.lib-list li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.lib-list li:last-child{border-bottom:0}
+.lib-list .lib-info{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.35}
+.lib-list .lib-info b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lib-list .x{opacity:1}
+.lib-list .x.armed{width:auto;padding:0 8px;font-size:11.5px;background:var(--rose-soft);color:var(--rose);border-radius:999px}
+.lib-list .empty-li{justify-content:center;color:var(--muted);font-size:13px;padding:18px}
 .tool-btns .btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .char .x.edit.on{opacity:1;background:var(--accent-soft);border-radius:6px}
 /* 떠 있는 창: 크기를 줄여도 안 깨지게 */
@@ -626,7 +643,8 @@ select option{font-family:var(--f-body);background:var(--sheet);color:var(--ink)
 .sw-pick{position:relative;overflow:hidden;background:conic-gradient(#e44,#ec4,#4c4,#4cc,#44e,#c4c,#e44)!important}
 .sw-pick input{position:absolute;inset:-6px;opacity:0;cursor:pointer;width:200%;height:200%}
 .hide-row{display:flex;align-items:flex-start;gap:8px;font-size:13.5px;cursor:pointer;padding:6px 2px}
-.hide-row input{margin:3px 0 0;accent-color:var(--accent)}
+.hide-row input{margin:3px 0 0!important;accent-color:var(--accent);width:16px!important;height:16px!important;flex:none!important;padding:0!important;min-width:0!important}
+.hide-row>span{flex:1;text-align:left}
 .hide-row small{display:block;font-size:11.5px;color:var(--muted)}
 .char.hid .char-pick{opacity:.6}
 .char{gap:2px}.char .x{min-width:22px}
@@ -1015,6 +1033,12 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
       </form>
     </section>
 
+    <section class="new-card" id="libSec">
+      <h2>내 캐릭터 보관함</h2>
+      <p class="pf-hint">세션의 캐릭터 시트에서 📥를 누르면 여기 저장돼요. 새 세션에서 캐릭터를 만들 때 불러와서 시트·정보·서사를 그대로 쓸 수 있어요. 나만 볼 수 있어요.</p>
+      <ul class="lib-list" id="libList"></ul>
+    </section>
+
     <section class="new-card danger">
       <h2>회원 탈퇴</h2>
       <p class="pf-hint" style="font-size:13.5px;color:var(--ink)">탈퇴하면 계정이 바로 삭제되고 되돌릴 수 없어요.</p>
@@ -1126,6 +1150,8 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
           </div>
           <div class="seg" id="charKindSeg" hidden style="width:100%"><button type="button" data-kind="npc" aria-pressed="true" style="flex:1">NPC</button><button type="button" data-kind="kpc" aria-pressed="false" style="flex:1">KPC (내 캐릭터)</button></div>
           <label class="role-row" id="charRoleRow" hidden><span>구분</span><select id="charRole" aria-label="캐릭터 구분"><option value="PC">PC</option><option value="HO1">HO1</option><option value="HO2">HO2</option><option value="HO3">HO3</option><option value="HO4">HO4</option><option value="HO5">HO5</option><option value="HO6">HO6</option><option value="HO7">HO7</option><option value="HO8">HO8</option></select></label>
+          <div class="lib-pick" id="libPickRow" hidden><button type="button" class="btn sm" id="libPickBtn">📂 보관함에서 불러오기</button><span class="lib-chip" id="libChip" hidden></span></div>
+          <ul class="lib-menu" id="libMenu" hidden></ul>
           <input id="charName" placeholder="이름 (예: 한서윤)" maxlength="20" autocomplete="off">
           <input id="charNote" placeholder="한 줄 소개 (예: 탐사자 · 사진기자)" maxlength="30" autocomplete="off">
           <div class="swatches" id="charSwatches"></div>
@@ -1354,7 +1380,7 @@ function b64ToUrl(b64,mime){const bin=atob(b64),u=new Uint8Array(bin.length);for
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};db.inquiries=db.inquiries||[];db.shows=db.shows||{};db.tracks=db.tracks||{};db.memos=db.memos||{};db.config=db.config||{};db.ooc=db.ooc||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};db.inquiries=db.inquiries||[];db.shows=db.shows||{};db.tracks=db.tracks||{};db.memos=db.memos||{};db.config=db.config||{};db.ooc=db.ooc||{};db.library=db.library||{};
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
@@ -1400,6 +1426,7 @@ function makeLocal(){
     async deleteAccount(pw){
       const k=me.email.toLowerCase(),a=db.accounts[k],u=me.uid;
       if(a.hash!==await hashPw(k,pw))throw new AppError('auth/invalid-credential');
+      delete db.library[u];
       Object.values(db.rooms).forEach(r=>{
         if(!(r.members||[]).includes(u))return;
         if(r.ownerUid===u){if(r.code)delete db.codes[r.code];delete db.rooms[r.id];delete db.messages[r.id];delete db.chars[r.id];delete db.whispers[r.id]}
@@ -1488,6 +1515,9 @@ function makeLocal(){
       if(!m||m.uid!==me.uid)throw new AppError('permission-denied');m.text=text;m.edited=now();write();emit()},
     watchConfig:(cb)=>sub(()=>cb({...(db.config||{})})),
     async setConfig(v){if(!me||!me.admin)throw new AppError('permission-denied');db.config={...v,ut:now()};write();emit()},
+    async listLibrary(){return Object.values(db.library[me.uid]||{}).map(clone)},
+    async saveLibrary(it){const l=db.library[me.uid]||(db.library[me.uid]={});l[it.id]={...clone(it),ut:now()};if(!write()){delete l[it.id];throw new AppError('quota')}},
+    async deleteLibrary(id){if(db.library[me.uid])delete db.library[me.uid][id];write()},
     async getMemo(rid){return (db.memos[me.uid+'|'+rid]||{}).text||''},
     async saveMemo(rid,text){db.memos[me.uid+'|'+rid]={text,ut:now()};if(!write())throw new AppError('quota')},
     async deleteMessage(id,mid,isW){
@@ -1575,6 +1605,8 @@ async function makeFirebase(cfg){
       for(const q of iq.docs)if(!q.data().userDeleted)await fs.updateDoc(q.ref,{userDeleted:true,userDeletedAt:now(),withdrawn:true}).catch(()=>{});
       const ms=await fs.getDocs(fs.collection(db,'users',uidv,'memos')).catch(()=>({docs:[]}));
       for(const m of ms.docs)await fs.deleteDoc(m.ref).catch(()=>{});
+      const lb=await fs.getDocs(fs.collection(db,'users',uidv,'library')).catch(()=>({docs:[]}));
+      for(const m of lb.docs)await fs.deleteDoc(m.ref).catch(()=>{});
       await fs.deleteDoc(fs.doc(db,'users',uidv));
       await A.deleteUser(u);
     },
@@ -1676,6 +1708,9 @@ async function makeFirebase(cfg){
     watchConfig:(cb,onMeta)=>fs.onSnapshot(fs.doc(db,'config','site'),{includeMetadataChanges:true},
       d=>{onMeta&&onMeta(d.metadata.fromCache);cb(d.exists()?d.data():{})},e=>{console.error(e);onMeta&&onMeta(true)}),
     setConfig:v=>fs.setDoc(fs.doc(db,'config','site'),{...v,ut:now(),by:me.uid}),
+    async listLibrary(){const s=await fs.getDocs(fs.collection(db,'users',me.uid,'library'));return s.docs.map(d=>({...d.data(),id:d.id}))},
+    saveLibrary:it=>{const d=clone(it);delete d.id;return fs.setDoc(fs.doc(db,'users',me.uid,'library',it.id),{...d,ut:now()})},
+    deleteLibrary:id=>fs.deleteDoc(fs.doc(db,'users',me.uid,'library',id)),
     async getMemo(rid){const d=await fs.getDoc(fs.doc(db,'users',me.uid,'memos',rid));return d.exists()?String(d.data().text||''):''},
     saveMemo:(rid,text)=>fs.setDoc(fs.doc(db,'users',me.uid,'memos',rid),{text,ut:now()}),
     async deleteMessage(id,mid,isW){
@@ -2220,7 +2255,7 @@ function showProfile(){
   $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#adminView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';syncFab();
   $('#pfNickNow').textContent=me.nick;$('#pfEmail').textContent=me.email||'';$('#pfDot').innerHTML=initial(me.nick);
   $('#pfNick').value=me.nick;['#pfNickErr','#pfPwErr','#pfDelErr'].forEach(x=>$(x).hidden=true);
-  renderImpact();window.scrollTo(0,0);
+  renderImpact();renderLibList();window.scrollTo(0,0);
 }
 function renderImpact(){
   if($('#profileView').hidden||!me)return;
@@ -2669,7 +2704,7 @@ function swatches(){const custom=!COLORS.includes(pickColor);$('#charSwatches').
   `<label class="sw sw-pick" title="색 직접 고르기" aria-pressed="${custom}" style="${custom?`background:${safeColor(pickColor)}!important`:''}"><input type="color" id="swPick" value="${/^#[0-9a-f]{6}$/i.test(pickColor||'')?pickColor:'#6b47dc'}" aria-label="캐릭터 색 직접 고르기"></label>`}
 function avPreview(){const el=$('#avPrev');el.style.setProperty('--cc',pickColor);el.innerHTML=pickAv?`<img src="${safeImg(pickAv)}" alt="">`:initial($('#charName').value||'?');$('#avClear').hidden=!pickAv}
 function openCharForm(c){
-  editing=c?c.id:null;
+  editing=c?c.id:null;libPick=null;renderLibChip();$('#libMenu').hidden=true;$('#libPickRow').hidden=!!c;
   $('#charName').value=c?c.name:'';$('#charNote').value=c&&c.note||'';
   pickColor=c?c.color:COLORS[R.chars.length%6];pickAv=c&&c.avatar||null;
   const kpcOk=!c&&isGM()&&!hasKpc();
@@ -2704,10 +2739,11 @@ $('#charForm').addEventListener('submit',async e=>{e.preventDefault();
     if(!isGM()&&mine().length){toast('이 방에서는 캐릭터를 하나만 만들 수 있어요');return}
     const asKpc=isGM()&&charKind==='kpc'&&!hasKpc();
     c={...(role?{role}:{}),id:isGM()&&!asKpc?uid():me.uid,ownerUid:me.uid,name:n,note,color:pickColor,avatar:pickAv,sheetKind:defaultKind()};
+    if(libPick){const L=libPick;c.sheetKind=L.sheetKind||c.sheetKind;c.sheets=JSON.parse(JSON.stringify(L.sheets||{}));c.info=JSON.parse(JSON.stringify(L.info||{}));c.story=JSON.parse(JSON.stringify(L.story||{}))}
     if(wantHide&&!asKpc)c.hidden=true;
   }
   editing=null;$('#charForm').hidden=true;
-  try{await B.saveChar(roomId,c,prevHidden);if(isNew){speakerId=c.id;remember();toast(`${c.name}${isGM()?(c.id===me.uid?'(KPC)':'(NPC)'):''} 등장! 📜 시트에서 능력치를 정해 보세요`)}else toast('프로필을 저장했어요')}
+  try{await B.saveChar(roomId,c,prevHidden);if(isNew){speakerId=c.id;remember();toast(`${c.name}${isGM()?(c.id===me.uid?'(KPC)':'(NPC)'):''} 등장! ${libPick?'보관함의 시트를 그대로 불러왔어요':'📜 시트에서 능력치를 정해 보세요'}`)}else toast('프로필을 저장했어요')}
   catch(x){toast(errText(x))}
 });
 
@@ -2898,7 +2934,7 @@ function renderSheet(){
   const body=sheetTab==='info'?infoTabHTML(c,kind):sheetTab==='story'?storyTabHTML(c,kind):sheetTab==='secret'?secretTabHTML(c):statTabHTML(c,sh,kind,ro);
   const scroll=el.querySelector('.sheet-body')?.scrollTop||0;
   el.innerHTML=`<div class="sheet-head" style="--cc:${safeColor(c.color)}">${dot(c)}<div class="sheet-title"><b data-stitle>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
-      <span class="sheet-grip" aria-hidden="true">⠿ 끌어서 이동</span><button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
+      <span class="sheet-grip" aria-hidden="true">⠿ 끌어서 이동</span>${ownerOf(c)===me.uid?`<button class="x lib-save" data-slib style="opacity:1" title="내 캐릭터 보관함에 저장 (다른 세션에서 불러올 수 있어요)" aria-label="보관함에 저장">📥</button>`:''}<button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
     <div class="sheet-nav"><div class="seg">${tabs.map(([k,l])=>`<button data-stab="${k}" aria-pressed="${k===sheetTab}">${l}</button>`).join('')}</div></div>
     <div class="sheet-body">
       ${ro?'<p class="ro-note">다른 사람의 캐릭터라 보기만 할 수 있어요. 고치거나 굴리는 건 주인과 방장만 할 수 있어요.</p>':''}
@@ -3367,7 +3403,45 @@ function syncToolBtns(){
 }
 new MutationObserver(syncToolBtns).observe($('#sheets'),{childList:true});
 
+
+/* ---------------- 내 캐릭터 보관함 ---------------- */
+let LIB=null,libPick=null,libArm=null;
+async function loadLib(force){if(LIB&&!force)return LIB;try{LIB=(await B.listLibrary()).sort((a,b)=>(b.ut||0)-(a.ut||0))}catch(e){LIB=LIB||[];toast('보관함을 불러오지 못했어요')}return LIB}
+const KIND_NAME=k=>(SHEET_TPL[k]&&SHEET_TPL[k].name)||'시트';
+async function saveToLib(c){
+  if(!c||ownerOf(c)!==me.uid)return;
+  await loadLib();
+  const src=roomId+'/'+c.id,ex=LIB.find(x=>x.src===src);
+  const it={id:ex?ex.id:uid(),src,name:String(c.name).slice(0,20),note:String(c.note||'').slice(0,30),color:c.color,avatar:c.avatar||null,role:c.role||null,
+    sheetKind:c.sheetKind||defaultKind(),sheets:JSON.parse(JSON.stringify(c.sheets||{})),info:JSON.parse(JSON.stringify(c.info||{})),story:JSON.parse(JSON.stringify(c.story||{})),from:String(R.name||'').slice(0,60)};
+  try{await B.saveLibrary(it);it.ut=now();LIB=[it,...LIB.filter(x=>x.id!==it.id)];toast(ex?`보관함의 ${it.name}을(를) 최신 시트로 덮어썼어요`:`${it.name}을(를) 보관함에 저장했어요`)}
+  catch(e){toast('저장하지 못했어요. 잠시 뒤 다시 해 주세요')}
+}
+function libAv(x){return dot({name:x.name,color:x.color,avatar:x.avatar})}
+function renderLibChip(){const ch=$('#libChip');ch.hidden=!libPick;if(libPick)ch.innerHTML=`${esc(libPick.name)} · 시트 포함<button type="button" id="libUnpick" aria-label="불러오기 취소">×</button>`}
+$('#libPickBtn').onclick=async()=>{
+  const m=$('#libMenu');if(!m.hidden){m.hidden=true;return}
+  m.hidden=false;m.innerHTML='<li class="empty-li">불러오는 중…</li>';await loadLib(true);
+  m.innerHTML=LIB.length?LIB.map(x=>`<li><button type="button" data-libuse="${esc(x.id)}">${libAv(x)}<span style="flex:1;min-width:0"><b>${esc(x.name)}</b><br><small>${esc(KIND_NAME(x.sheetKind))}${x.from?' · '+esc(x.from):''}</small></span></button></li>`).join('')
+    :'<li class="empty-li">아직 저장한 캐릭터가 없어요. 세션의 캐릭터 시트에서 📥를 눌러 저장해 보세요.</li>';
+};
+$('#libMenu').addEventListener('click',e=>{const b=e.target.closest('[data-libuse]');if(!b)return;const x=(LIB||[]).find(v=>v.id===b.dataset.libuse);if(!x)return;
+  libPick=x;$('#charName').value=x.name;$('#charNote').value=x.note||'';pickColor=x.color||pickColor;pickAv=x.avatar||null;
+  if(x.role&&!$('#charRoleRow').hidden)$('#charRole').value=x.role;
+  swatches();avPreview();renderLibChip();$('#libMenu').hidden=true;
+  if(x.sheetKind&&x.sheetKind!==defaultKind())toast(`${KIND_NAME(x.sheetKind)} 시트로 불러와요. 시트에서 형식을 바꿀 수 있어요`)});
+$('#libChip').addEventListener('click',e=>{if(e.target.id==='libUnpick'){libPick=null;renderLibChip()}});
+async function renderLibList(){
+  const ul=$('#libList');ul.innerHTML='<li class="empty-li">불러오는 중…</li>';await loadLib(true);
+  ul.innerHTML=LIB.length?LIB.map(x=>`<li>${libAv(x)}<span class="lib-info"><b>${esc(x.name)}</b><small>${esc(KIND_NAME(x.sheetKind))}${x.from?' · '+esc(x.from)+'에서 저장':''}${x.ut?' · '+ymd(x.ut):''}</small></span><button class="x${libArm===x.id?' armed':''}" data-libdel="${esc(x.id)}" aria-label="${esc(x.name)} 삭제">${libArm===x.id?'삭제':'×'}</button></li>`).join('')
+    :'<li class="empty-li">아직 저장한 캐릭터가 없어요.</li>';
+}
+$('#libList').addEventListener('click',async e=>{const b=e.target.closest('[data-libdel]');if(!b)return;const id=b.dataset.libdel;
+  if(libArm!==id){libArm=id;b.classList.add('armed');b.textContent='삭제';setTimeout(()=>{if(libArm===id){libArm=null;if(b.isConnected){b.classList.remove('armed');b.textContent='×'}}},3000);return}
+  libArm=null;try{await B.deleteLibrary(id);LIB=(LIB||[]).filter(x=>x.id!==id);renderLibList();toast('보관함에서 지웠어요')}catch(x){toast('지우지 못했어요')}});
+
 function onSheet(type,fn){$('#sheets').addEventListener(type,e=>{const el=e.target.closest('.sheet[data-cid]');if(!el||!useWin(el.dataset.cid))return;try{fn(e)}finally{stashWin()}})}
+onSheet('click',e=>{if(!e.target.closest('[data-slib]'))return;flushSheet();const c=R&&R.chars.find(x=>x.id===sheetCid);saveToLib(c)});
 function markSheet(c){
   dirtyMap[c.id]={cid:c.id,sheets:c.sheets,kind:c.sheetKind,info:c.info,story:c.story,name:c.name};
   clearTimeout(sheetT);sheetT=setTimeout(flushSheet,500);

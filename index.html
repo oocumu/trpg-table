@@ -557,8 +557,8 @@ h1,h2{text-wrap:balance}
 #log .narr.na-r{text-align:right!important}
 .narr.na-l::before,.narr.na-l::after{margin-left:0!important}
 .narr.na-r::before,.narr.na-r::after{margin-right:0!important}
-#log.tpl-chat .narr.na-l{align-self:flex-start}
-#log.tpl-chat .narr.na-r{align-self:flex-end}
+#log .narr.na-l{align-self:flex-start}
+#log .narr.na-r{align-self:flex-end}
 #log .narr.na-r.ns-accent{border-left:0;border-right:3px solid var(--accent);border-radius:10px 4px 4px 10px}
 .na-seg button{padding:4px 8px!important;display:grid;place-items:center}
 .al{display:block;width:14px;height:10px;background:linear-gradient(currentColor,currentColor) 0 0/100% 2px no-repeat,linear-gradient(currentColor,currentColor) var(--ax) 4px/60% 2px no-repeat,linear-gradient(currentColor,currentColor) 0 8px/100% 2px no-repeat}
@@ -570,17 +570,15 @@ h1,h2{text-wrap:balance}
 #log.tpl-coco .say>.dot,#log.tpl-coco .whisper>.dot{width:46px;height:46px;border-radius:8px;font-size:18px}
 #log.tpl-coco .bubble{background:none;border:0;padding:0;margin-top:2px;border-radius:0;width:auto}
 #log.tpl-coco .whisper .bubble{border:0}
-#log.tpl-coco .narr{align-self:stretch;max-width:none;margin:0;padding:12px 62px;border-bottom:1px solid var(--line)}
-#log.tpl-coco .narr.ns-box,#log.tpl-coco .narr.ns-accent{margin:8px 0;width:auto;box-sizing:border-box;padding:10px 16px;border-bottom-width:1px}
-#log.tpl-coco .narr.ns-line::before,#log.tpl-coco .narr.ns-line::after,#log.tpl-coco .narr.ns-serif::before,#log.tpl-coco .narr.ns-serif::after{margin-top:4px;margin-bottom:4px}
-#log.tpl-coco .dice-row{align-self:stretch;justify-content:flex-start;padding:8px 4px 8px 62px;border-bottom:1px solid var(--line)}
-#log.tpl-coco .dice{background:none;border:0;padding:0}
-#log.tpl-coco .daymark{padding:10px 0 6px}
 #log.tpl-coco .msg .del{top:2px;right:2px}
 /* 채팅 형식: 표 (Roll20) */
 #log.tpl-table{gap:0;padding:10px 12px}
 #log.tpl-table .msg{max-width:none}
-#log.tpl-table>.msg:nth-of-type(even){background:var(--sunk)}
+#log.tpl-table>.say:nth-of-type(even),#log.tpl-table>.whisper:nth-of-type(even){background:var(--sunk)}
+/* 코코포리아·표에서도 지문·주사위·날짜는 채팅 형식과 똑같이 가운데 */
+#log.tpl-coco .narr,#log.tpl-table .narr{max-width:560px;margin:14px 0}
+#log.tpl-coco .dice-row,#log.tpl-table .dice-row{max-width:none;margin:12px 0}
+#log.tpl-coco .daymark,#log.tpl-table .daymark{margin:8px 0}
 #log.tpl-table .say,#log.tpl-table .whisper{grid-template-columns:22px minmax(0,1fr);gap:8px;padding:5px 8px;border-bottom:1px solid var(--line);align-items:start}
 #log.tpl-table .say>.dot,#log.tpl-table .whisper>.dot{width:22px;height:22px;font-size:10px;margin-top:1px}
 #log.tpl-table .say>div,#log.tpl-table .whisper>div{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:6px}
@@ -589,14 +587,6 @@ h1,h2{text-wrap:balance}
 #log.tpl-table .who::after{content:":";color:var(--muted);font-weight:400;margin-left:1px}
 #log.tpl-table .say>div,#log.tpl-table .whisper>div{column-gap:4px}
 #log.tpl-table .bubble{background:none;border:0;padding:0;margin:0;border-radius:0;width:auto;flex:1 1 200px;min-width:0}
-#log.tpl-table .narr{align-self:stretch;max-width:none;margin:0;padding:7px 38px;border-bottom:1px solid var(--line);font-style:italic}
-#log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{padding:7px 16px;margin:0;width:auto;box-sizing:border-box}
-#log.tpl-table .narr::before,#log.tpl-table .narr::after{display:none}
-#log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{border-radius:0;border-left-width:3px}
-#log.tpl-table .dice-row{align-self:stretch;justify-content:flex-start;padding:5px 8px 5px 38px;border-bottom:1px solid var(--line)}
-#log.tpl-table .dice{background:none;border:0;padding:0;gap:10px}
-#log.tpl-table .die{width:26px;height:26px;font-size:12px;border-radius:6px;transform:none}
-#log.tpl-table .daymark{align-self:stretch;text-align:left;padding:6px 8px;font-weight:600;border-bottom:1px solid var(--line)}
 #log.tpl-table .msg .del{top:3px;right:4px}
 #log.tpl-table .mimg{max-height:220px}
 /* 떠 있는 창 공통 */

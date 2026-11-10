@@ -547,10 +547,22 @@ h1,h2{text-wrap:balance}
 /* 지문 스타일 */
 .narr{font-family:var(--f-body)!important;font-size:15px!important;line-height:1.75!important}
 .narr.ns-plain::before,.narr.ns-plain::after,.narr.ns-box::before,.narr.ns-box::after,.narr.ns-accent::before,.narr.ns-accent::after,.narr.ns-quiet::before,.narr.ns-quiet::after{display:none}
-.narr.ns-box{border:1px solid var(--line);background:var(--sunk);border-radius:12px;padding:10px 16px;text-align:left}
-.narr.ns-accent{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:4px 10px 10px 4px;padding:10px 16px;text-align:left;font-weight:500}
+.narr.ns-box{border:1px solid var(--line);background:var(--sunk);border-radius:12px;padding:10px 16px}
+.narr.ns-accent{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:4px 10px 10px 4px;padding:10px 16px;font-weight:500}
 .narr.ns-serif{font-family:var(--f-narr)!important;font-size:16.5px!important;line-height:1.85!important}
 .narr.ns-quiet{font-size:13px!important;color:var(--muted);font-style:italic}
+/* 지문 정렬 */
+#log .narr.na-l{text-align:left!important}
+#log .narr.na-c{text-align:center!important}
+#log .narr.na-r{text-align:right!important}
+.narr.na-l::before,.narr.na-l::after{margin-left:0!important}
+.narr.na-r::before,.narr.na-r::after{margin-right:0!important}
+#log.tpl-chat .narr.na-l{align-self:flex-start}
+#log.tpl-chat .narr.na-r{align-self:flex-end}
+#log .narr.na-r.ns-accent{border-left:0;border-right:3px solid var(--accent);border-radius:10px 4px 4px 10px}
+.na-seg button{padding:4px 8px!important;display:grid;place-items:center}
+.al{display:block;width:14px;height:10px;background:linear-gradient(currentColor,currentColor) 0 0/100% 2px no-repeat,linear-gradient(currentColor,currentColor) var(--ax) 4px/60% 2px no-repeat,linear-gradient(currentColor,currentColor) 0 8px/100% 2px no-repeat}
+.al-l{--ax:0}.al-c{--ax:50%}.al-r{--ax:100%}
 /* 채팅 형식: 코코포리아 */
 #log.tpl-coco{gap:0;padding:12px 16px}
 #log.tpl-coco .msg{max-width:none}
@@ -558,9 +570,9 @@ h1,h2{text-wrap:balance}
 #log.tpl-coco .say>.dot,#log.tpl-coco .whisper>.dot{width:46px;height:46px;border-radius:8px;font-size:18px}
 #log.tpl-coco .bubble{background:none;border:0;padding:0;margin-top:2px;border-radius:0;width:auto}
 #log.tpl-coco .whisper .bubble{border:0}
-#log.tpl-coco .narr{align-self:stretch;max-width:none;margin:0;padding:10px 4px 10px 62px;border-bottom:1px solid var(--line)}
-#log.tpl-coco .narr{text-align:left!important}
-#log.tpl-coco .narr.ns-line::before,#log.tpl-coco .narr.ns-line::after,#log.tpl-coco .narr.ns-serif::before,#log.tpl-coco .narr.ns-serif::after{display:none}
+#log.tpl-coco .narr{align-self:stretch;max-width:none;margin:0;padding:12px 62px;border-bottom:1px solid var(--line)}
+#log.tpl-coco .narr.ns-box,#log.tpl-coco .narr.ns-accent{margin:8px 0;width:auto;box-sizing:border-box;padding:10px 16px;border-bottom-width:1px}
+#log.tpl-coco .narr.ns-line::before,#log.tpl-coco .narr.ns-line::after,#log.tpl-coco .narr.ns-serif::before,#log.tpl-coco .narr.ns-serif::after{margin-top:4px;margin-bottom:4px}
 #log.tpl-coco .dice-row{align-self:stretch;justify-content:flex-start;padding:8px 4px 8px 62px;border-bottom:1px solid var(--line)}
 #log.tpl-coco .dice{background:none;border:0;padding:0}
 #log.tpl-coco .daymark{padding:10px 0 6px}
@@ -577,7 +589,8 @@ h1,h2{text-wrap:balance}
 #log.tpl-table .who::after{content:":";color:var(--muted);font-weight:400;margin-left:1px}
 #log.tpl-table .say>div,#log.tpl-table .whisper>div{column-gap:4px}
 #log.tpl-table .bubble{background:none;border:0;padding:0;margin:0;border-radius:0;width:auto;flex:1 1 200px;min-width:0}
-#log.tpl-table .narr{align-self:stretch;max-width:none;margin:0;padding:6px 8px 6px 38px;border-bottom:1px solid var(--line);text-align:left!important;font-style:italic}
+#log.tpl-table .narr{align-self:stretch;max-width:none;margin:0;padding:7px 38px;border-bottom:1px solid var(--line);font-style:italic}
+#log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{padding:7px 16px;margin:0;width:auto;box-sizing:border-box}
 #log.tpl-table .narr::before,#log.tpl-table .narr::after{display:none}
 #log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{border-radius:0;border-left-width:3px}
 #log.tpl-table .dice-row{align-self:stretch;justify-content:flex-start;padding:5px 8px 5px 38px;border-bottom:1px solid var(--line)}
@@ -948,7 +961,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
         </div>
         </div>
       </div>
-      <div class="ns-row" id="nsRow" hidden><span>지문 스타일</span><div class="seg" id="nsSeg"><button data-ns="line">기본</button><button data-ns="plain">줄 없음</button><button data-ns="box">상자</button><button data-ns="accent">강조</button><button data-ns="serif">명조</button><button data-ns="quiet">속삭임</button></div></div>
+      <div class="ns-row" id="nsRow" hidden><span>지문 스타일</span><div class="seg" id="nsSeg"><button data-ns="line">기본</button><button data-ns="plain">줄 없음</button><button data-ns="box">상자</button><button data-ns="accent">강조</button><button data-ns="serif">명조</button><button data-ns="quiet">속삭임</button></div><span style="margin-left:6px">정렬</span><div class="seg na-seg" id="naSeg"><button data-na="l" title="왼쪽 정렬" aria-label="왼쪽 정렬"><i class="al al-l"></i></button><button data-na="c" title="가운데 정렬" aria-label="가운데 정렬"><i class="al al-c"></i></button><button data-na="r" title="오른쪽 정렬" aria-label="오른쪽 정렬"><i class="al al-r"></i></button></div></div>
       <div class="box" id="box">
         <div class="tools">
           <button class="tb" data-wrap="**" title="굵게 (Ctrl+B)"><b>B</b></button>
@@ -1921,7 +1934,7 @@ function openRoom(id){
   const merge=()=>{M=[...MP,...MW].sort((a,b)=>(a.ct||0)-(b.ct||0));if(R)renderLog(true)};
   unsubRoom.push(B.watchMessages(id,list=>{MP=list;merge()}));
   unsubRoom.push(B.watchWhispers(id,list=>{MW=list;merge()}));
-  shows=[];showsInit=false;tracks=[];bgmKey='';nsCur=lsGet('bt-ns-'+id)||'line';
+  shows=[];showsInit=false;tracks=[];bgmKey='';nsCur=lsGet('bt-ns-'+id)||'line';naCur=lsGet('bt-na-'+id)||'c';
   unsubRoom.push(B.watchShows(id,onShows));
   unsubRoom.push(B.watchTracks(id,list=>{tracks=list;bgmApply();renderBgmWin()}));
   whTo=(lsGet('bt-room-'+id,{})||{}).whTo||null;
@@ -1980,7 +1993,7 @@ function msgHTML(m,opts={}){
   const player=!opts.export&&R&&m.uid&&(R.members||[]).length>1&&R.memberNames?R.memberNames[m.uid]:'';
   const cls=opts.isNew?' new':'';
   const img=m.img?`<img class="mimg" src="${safeImg(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
-  if(m.type==='narr')return `<div class="msg narr ns-${NS[m.ns]?m.ns:'line'}${cls}">${del}${img}${fmt(m.text)}</div>`;
+  if(m.type==='narr')return `<div class="msg narr ns-${NS[m.ns]?m.ns:'line'} na-${NA[m.na]?m.na:'c'}${cls}">${del}${img}${fmt(m.text)}</div>`;
   if(m.type==='dice')return `<div class="msg dice-row${cls}" style="--cc:${safeColor(m.color)}">${del}<div class="dice"><div class="die">${esc(m.total)}</div><div class="dice-meta">
     <div class="dice-top"><b>${esc(m.name)}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${m.verdict?`<span class="verdict ${esc(m.vc)}">${esc(m.verdict)}</span>`:''}</div>
     <div class="dice-f">${esc(m.f)} → ${esc(m.detail)}</div></div></div></div>`;
@@ -2044,7 +2057,7 @@ async function send(){
     const toUid=ownerOf(tc);extra={toCid:tc.id,toName:tc.name,toUid,visible:[...new Set([me.uid,toUid,R.ownerUid])]};
   }
   sending=true;$('#sendBtn').disabled=true;
-  const ok=await push({type:mode,text,...extra,...(mode==='narr'?{ns:nsCur}:{}),...(pendingImg?{img:pendingImg}:{})});
+  const ok=await push({type:mode,text,...extra,...(mode==='narr'?{ns:nsCur,na:naCur}:{}),...(pendingImg?{img:pendingImg}:{})});
   sending=false;$('#sendBtn').disabled=false;
   if(ok){ta.value='';pendingImg=null;showAttach();autoGrow()}
   ta.focus();
@@ -2446,8 +2459,8 @@ function closeTopSheet(){const all=$$('#sheets .sheet');if(!all.length)return fa
 })();
 
 /* ---------------- 방 공지 · 채팅 형식 · 지문 스타일 ---------------- */
-const NS={line:1,plain:1,box:1,accent:1,serif:1,quiet:1},TPLS={chat:1,coco:1,table:1};
-let nsCur='line',shows=[],showsInit=false,tracks=[],bgmKey='';
+const NS={line:1,plain:1,box:1,accent:1,serif:1,quiet:1},NA={l:1,c:1,r:1},TPLS={chat:1,coco:1,table:1};
+let naCur='c',nsCur='line',shows=[],showsInit=false,tracks=[],bgmKey='';
 function renderRoomExtras(){
   if(!R)return;
   const tpl=TPLS[R.tpl]?R.tpl:'chat',log=$('#log'),gm=isGM();
@@ -2459,6 +2472,8 @@ function renderRoomExtras(){
   if(!NS[nsCur])nsCur='line';
   $('#nsRow').hidden=mode!=='narr';
   $$('#nsSeg [data-ns]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ns===nsCur));
+  if(!NA[naCur])naCur='c';
+  $$('#naSeg [data-na]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.na===naCur));
   renderNotice();
 }
 function noticeState(){const n=R&&R.notice;if(!n||!n.text)return null;const st=lsGet('bt-notice-'+roomId)||{};return st.ct===n.ct&&['open','fold','hide'].includes(st.s)?st.s:'open'}
@@ -2478,6 +2493,7 @@ $('#noticeSave').onclick=async()=>{if(!isGM())return;const t=$('#noticeIn').valu
 $('#noticeDel').onclick=async()=>{if(!isGM())return;await saveRoom({notice:null});$('#noticeIn').value='';renderRoomExtras();toast('공지를 내렸어요')};
 $('#tplSeg').addEventListener('click',e=>{const b=e.target.closest('[data-tpl]');if(!b||!isGM()||!TPLS[b.dataset.tpl])return;
   const L=$('#log'),bottom=L.scrollHeight-L.scrollTop-L.clientHeight<40;saveRoom({tpl:b.dataset.tpl});renderRoomExtras();if(bottom)L.scrollTop=L.scrollHeight});
+$('#naSeg').addEventListener('click',e=>{const b=e.target.closest('[data-na]');if(!b||!NA[b.dataset.na])return;naCur=b.dataset.na;lsSet('bt-na-'+roomId,naCur);renderRoomExtras();$('#msg').focus()});
 $('#nsSeg').addEventListener('click',e=>{const b=e.target.closest('[data-ns]');if(!b||!NS[b.dataset.ns])return;nsCur=b.dataset.ns;lsSet('bt-ns-'+roomId,nsCur);renderRoomExtras();$('#msg').focus()});
 
 /* ---------------- 떠 있는 창 (이미지·플레이리스트) ---------------- */

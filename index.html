@@ -3632,7 +3632,7 @@ function exportHeader(){
 const EXPORT_EXTRA=`.ex-wrap{max-width:760px;margin:0 auto;padding:40px 20px 60px}
 .ex-head{text-align:center;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .ex-head h1{font-family:var(--f-display);font-size:32px;margin:0 0 6px}.ex-head .eyebrow{margin:0 0 8px}
-.ex-meta{color:var(--muted);font-size:13.5px;margin:0}.ex-log{display:flex;flex-direction:column;gap:14px}
+.ex-meta{color:var(--muted);font-size:13.5px;margin:0}.ex-wrap #log{flex:none;height:auto;min-height:0;overflow-y:visible}
 html,body{height:auto!important;overflow:auto!important}`;
 async function doExport(kind){
   if(!R)return;
@@ -3642,7 +3642,9 @@ async function doExport(kind){
 }
 function doExportNow(kind){
   if(kind==='text'){copyText(plainLog(),'텍스트 로그를 복사했어요');return}
-  const body=`<div class="ex-wrap">${exportHeader()}<div class="ex-log">${logBody(M,{export:true})}</div></div>`;
+  // HTML 파일은 사이트 CSS를 그대로 쓰니까, 세션 화면과 같은 채팅 형식·구분선 설정을 붙여요
+  const tpl=TPLS[R.tpl]?R.tpl:'chat';
+  const body=`<div class="ex-wrap">${exportHeader()}<div class="log tpl-${tpl}${R.tplLines===false?' no-lines':''}" id="log">${logBody(M,{export:true})}</div></div>`;
   if(kind==='file'){
     const XV=exFileVars();
     const doc=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -3751,51 +3753,62 @@ function inlineLog(withStyle){
   let out=`<div class="btl" style="max-width:720px;margin:0 auto;padding:24px 16px;background:#ffffff;color:${EXC.ink};font-family:${F.body};font-size:15px;line-height:1.7;text-align:left">`;
   out+=`<div style="text-align:center;margin:0 0 24px;padding:0 0 18px;border-bottom:1px solid ${EXC.line}"><p style="margin:0 0 6px;font-size:12px;letter-spacing:.12em;color:${EXC.muted}">${esc(R.system||'TRPG')} · 세션 로그</p><p style="margin:0 0 6px;font-size:26px;font-weight:700;font-family:${F.body}">${esc(R.name)}</p><p style="margin:0;font-size:13px;color:${EXC.muted}">${R.chars.filter(c=>!c.hidden).map(c=>esc(c.name)).join(' · ')}${first?` — ${ymd(first)}${last&&ymd(last)!==ymd(first)?' ~ '+ymd(last):''}`:''}</p></div>`;
   const rowLine=lines?`border-top:1px solid ${EXC.line};`:'';
-  let day='';
+  // 표 형식에서 상자·강조·캡슐·주사위 위에 들어가는 가로줄 (사이트와 같게)
+  const sepLine=tpl==='table'&&lines?`<div style="height:0;border-top:1px solid ${EXC.line};margin:0"></div>`:'';
+  let day='',prev='';
   for(const m of M){
-    const d=ymd(m.ct);if(d!==day){day=d;out+=`<p style="text-align:center;margin:20px 0 12px;font-size:12px;letter-spacing:.06em;color:${EXC.muted}">${d}</p>`}
+    const d=ymd(m.ct);if(d!==day){day=d;prev='day';out+=`<p style="text-align:center;margin:${tpl==='table'?'0;padding:10px 0 6px':tpl==='coco'?'8px 0':'18px 0 12px'};font-size:11.5px;letter-spacing:.06em;color:${EXC.muted}">${d}</p>`}
+    const kind=m.type==='dice'?'dice':m.type==='narr'?'narr':'say',after=prev;prev=kind;
     const c=R.chars.find(x=>x.id===m.cid),name=esc(c?c.name:m.name),col=safeColor(c?c.color:m.color);
     const img=m.img?`<br><img src="${safeImg(m.img)}" alt="" style="max-width:100%;max-height:420px;border-radius:10px;margin-top:6px">`:'';
     if(m.type==='dice'){
-      const bad=m.vc==='fail'||m.vc==='fumble';
-      const v=m.verdict?`<span style="display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;background:${bad?'#f9e3ea':EXC.soft};color:${bad?'#c4466a':EXC.accent}">${esc(m.verdict)}</span>`:'';
-      const bp=m.bp?`<span style="display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;background:#f6ecd6;color:#a8771c">${+m.bp>0?'보너스':'패널티'} ${Math.abs(+m.bp)}</span>`:'';
-      const left=tpl==='coco';
-      out+=`<div style="text-align:${left?'left':'center'};margin:${left?'0':'14px 0'};${left?`padding:10px 0 10px 58px;border-bottom:${lines?`1px solid ${EXC.line}`:'0'};`:''}"><table style="display:inline-table;border-collapse:separate;border:1px solid ${EXC.line};${left?`border-left:3px solid ${col};`:''}border-radius:12px;background:${EXC.sunk};text-align:left;margin:0"><tr>
-<td style="padding:10px 0 10px 14px;border:0;vertical-align:middle"><div style="width:40px;height:40px;line-height:40px;text-align:center;border-radius:9px;background:${col};color:#fff;font-weight:700;font-size:16px;font-family:${F.mono}">${esc(m.total)}</div></td>
-<td style="padding:10px 16px 10px 12px;border:0;vertical-align:middle;font-size:14px"><b>${name}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${bp}${v}<br><span style="font-size:12px;color:${EXC.muted};font-family:${F.mono}">${esc(m.f)} → ${esc(m.detail)}</span></td></tr></table></div>`;
+      // 판정 배지 색은 사이트와 같아요: 성공=테마색, 실패=흰 바탕 회색, 대성공=금색, 대실패=빨강
+      const vst={fail:`background:#ffffff;color:${EXC.muted};border:1px solid ${EXC.line};`,crit:'background:#a8771c;color:#ffffff;',fumble:'background:#c4466a;color:#ffffff;'}[m.vc]||`background:${EXC.soft};color:${EXC.accent};`;
+      const v=m.verdict?`<span style="display:inline-block;margin-left:6px;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:600;${vst}">${esc(m.verdict)}</span>`:'';
+      const bp=m.bp?`<span style="display:inline-block;margin-left:6px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:600;background:#f6ecd6;color:#a8771c">${+m.bp>0?'보너스':'패널티'} ${Math.abs(+m.bp)}</span>`:'';
+      const left=tpl==='coco',dz=left?36:46;
+      const wrap=left?`text-align:left;margin:0;padding:10px 4px 10px 62px;${lines?`border-bottom:1px solid ${EXC.line};`:''}`:tpl==='table'?'text-align:center;margin:0;padding:12px 0;':'text-align:center;margin:14px 0;';
+      out+=`${tpl==='table'?sepLine:''}<div style="${wrap}"><table style="display:inline-table;border-collapse:separate;border:1px solid ${EXC.line};${left?`border-left:3px solid ${col};border-radius:6px 12px 12px 6px;`:'border-radius:12px;'}background:${EXC.sunk};text-align:left;margin:0"><tr>
+<td style="padding:${left?'8px 0 8px 14px':'12px 0 12px 16px'};border:0;vertical-align:middle"><div style="width:${dz}px;height:${dz}px;line-height:${dz}px;text-align:center;border-radius:${left?8:11}px;background:${col};color:#fff;font-weight:600;font-size:${left?15:18}px;font-family:${F.mono};${left?'':'transform:rotate(-4deg);'}">${esc(m.total)}</div></td>
+<td style="padding:${left?'8px 14px 8px 12px':'12px 16px 12px 14px'};border:0;vertical-align:middle;font-size:13px;color:${EXC.muted}"><b style="color:${EXC.ink};font-weight:600">${name}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${bp}${v}<br><span style="font-size:12.5px;color:${EXC.muted};font-family:${F.mono}">${esc(m.f)} → ${esc(m.detail)}</span></td></tr></table></div>`;
       continue;
     }
     if(m.type==='narr'){
       const ns=NS[m.ns]?m.ns:'line',al={l:'left',c:'center',r:'right'}[NA[m.na]?m.na:'c'];
       const body=inlineText(m.text)+img;
-      if(ns==='chapter'){out+=`<div style="text-align:${al};margin:22px 0"><span style="display:inline-block;max-width:92%;background:${EXC.soft};border:1px solid ${EXC.ring};color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.6;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
-      const tbl=tpl==='table'&&['line','plain','serif'].includes(ns);
+      if(ns==='chapter'){out+=`${sepLine}<div style="text-align:${al};margin:${tpl==='table'?'14px':'20px 0'}"><span style="display:inline-block;max-width:92%;background:${EXC.soft};border:1px solid ${EXC.ring};color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.6;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
+      const tbl=tpl==='table'&&['line','plain','serif','quiet'].includes(ns);
       const shortLine=`<div style="width:36px;height:1px;background:${EXC.line};margin:8px ${al==='left'?'0':'auto'} 8px ${al==='right'?'auto':al==='left'?'0':'auto'}"></div>`;
       const mg=tbl?'0':al==='left'?'16px auto 16px 0':al==='right'?'16px 0 16px auto':'16px auto';
-      const base=`margin:${mg};max-width:${tbl?'none':'560px'};text-align:${al};line-height:1.75;font-size:15px;${tbl?`padding:8px 40px;${rowLine}font-weight:700;font-style:italic;`:''}`;
+      const base=`margin:${mg};max-width:${tbl?'none':'560px'};text-align:${al};line-height:1.75;font-size:15px;${tbl?`padding:8px 40px;${rowLine}${ns==='quiet'?'':'font-weight:700;'}`:''}`;
       const sty={line:'padding:4px 20px;',plain:'padding:4px 20px;',
         box:`border:1px solid ${EXC.line};background:${EXC.sunk};border-radius:12px;padding:10px 16px;`,
-        accent:`background:${EXC.soft};border-left:3px solid ${EXC.accent};border-radius:4px 10px 10px 4px;padding:10px 16px;font-weight:500;`,
+        accent:`background:${EXC.soft};${al==='right'?`border-right:3px solid ${EXC.accent};border-radius:10px 4px 4px 10px;`:`border-left:3px solid ${EXC.accent};border-radius:4px 10px 10px 4px;`}padding:10px 16px;font-weight:500;`,
         serif:`font-family:${F.serif};font-size:16.5px;line-height:1.85;padding:4px 20px;`,
         quiet:`font-size:13px;color:${EXC.muted};font-style:italic;padding:2px 20px;`}[ns];
-      if(tbl)out+=`<div style="${base}${ns==='serif'?`font-family:${F.serif};`:''}">${body}</div>`;
+      if(tbl)out+=`<div style="${base}${ns==='serif'?`font-family:${F.serif};`:ns==='quiet'?`font-size:13px;color:${EXC.muted};font-style:italic;`:''}">${body}</div>`;
+      else if(tpl==='table'&&(ns==='box'||ns==='accent'))out+=`${sepLine}<div style="margin:10px ${al==='right'?'14px':'auto'} 10px ${al==='left'?'14px':'auto'};max-width:min(560px,92%);text-align:${al};line-height:1.75;font-size:15px;${sty}">${body}</div>`;
+      else if(tpl==='coco')out+=`<div style="${base.replace(/margin:[^;]*;/,`margin:14px ${al==='right'?'0 14px auto':al==='left'?'auto 14px 0':'auto'};`)}${sty}">${ns==='line'||ns==='serif'?shortLine:''}${body}${ns==='line'||ns==='serif'?shortLine:''}</div>`;
       else out+=`<div style="${base}${sty}">${ns==='line'||ns==='serif'?shortLine:''}${body}${ns==='line'||ns==='serif'?shortLine:''}</div>`;
       continue;
     }
-    const wh=m.type==='whisper'?`<span style="margin-left:6px;font-size:11.5px;color:${EXC.muted}">🔒 ${esc(m.toName||'')}에게 귓속말</span>`:'';
+    const isWh=m.type==='whisper';
+    const wh=isWh?`<span style="display:inline-block;margin-left:${tpl==='table'?6:8}px;border:1px dashed ${EXC.line};border-radius:999px;font-weight:500;color:${EXC.muted};white-space:nowrap;${tpl==='table'?`padding:1px 7px;font-size:11px;background:${EXC.sunk};vertical-align:1px;`:'padding:0 8px;font-size:11.5px;'}">🔒 ${esc(m.toName||'')}에게 귓속말</span>`:'';
+    const whTxt=isWh?`color:${EXC.muted};font-style:italic;`:'';
     const text=inlineText(m.text)+img;
     if(tpl==='table'){
       out+=`<table style="border-collapse:collapse;border:0;margin:0;width:100%"><tr style="${rowLine}"><td style="width:42px;vertical-align:top;padding:6px 10px 6px 14px;border:0">${avatar(c,m,30,'5px')}</td>
-<td style="vertical-align:top;padding:9px 14px 6px 0;border:0;font-size:14.5px;line-height:1.65"><b>${name}</b>${wh}<b style="font-weight:400;color:${EXC.muted}">:</b> ${text}</td></tr></table>`;
+<td style="vertical-align:top;padding:9px 14px 6px 0;border:0;font-size:14.5px;line-height:1.65"><b style="font-weight:700;color:${EXC.ink}">${name}</b>${wh}<b style="font-weight:700;color:${EXC.ink}">:</b> <span style="${whTxt}">${text}</span></td></tr></table>`;
     }else if(tpl==='coco'){
-      out+=`<table style="border-collapse:collapse;border:0;margin:0;width:100%"><tr><td style="width:58px;vertical-align:top;padding:10px 12px 10px 4px;border:0;${lines?`border-bottom:1px solid ${EXC.line};`:''}">${avatar(c,m,46,'8px')}</td>
-<td style="vertical-align:top;padding:10px 4px;border:0;${lines?`border-bottom:1px solid ${EXC.line};`:''}"><div style="font-size:13.5px;margin:0 0 2px"><b style="color:${col}">${name}</b><span style="margin-left:6px;font-size:11.5px;color:${EXC.muted}">${hhmm(m.ct)}</span>${wh}</div><div style="font-size:15px;line-height:1.65">${text}</div></td></tr></table>`;
+      // 지문·주사위·날짜 바로 다음 대사는 위에도 줄이 있어요 (사이트와 같게)
+      const bd=lines?`border-bottom:1px solid ${EXC.line};${after&&after!=='say'?`border-top:1px solid ${EXC.line};`:''}`:'';const pd=lines?'10px':'7px';
+      out+=`<table style="border-collapse:collapse;border:0;margin:0;width:100%"><tr><td style="width:62px;vertical-align:top;padding:${pd} 12px ${pd} 4px;border:0;${bd}">${avatar(c,m,46,'8px')}</td>
+<td style="vertical-align:top;padding:${pd} 4px;border:0;${bd}"><div style="font-size:14px;margin:0 0 2px"><b style="color:${col};font-weight:600">${name}</b><span style="margin-left:8px;font-size:11.5px;color:${EXC.muted}">${hhmm(m.ct)}</span>${wh}</div><div style="font-size:15px;line-height:1.65;${whTxt}">${text}</div></td></tr></table>`;
     }else{
       out+=`<table style="border-collapse:collapse;border:0;margin:0 0 12px;width:100%"><tr>
-<td style="width:46px;vertical-align:top;padding:2px 10px 0 0;border:0">${avatar(c,m,36,'50%')}</td>
-<td style="vertical-align:top;padding:0;border:0"><div style="font-size:13px;margin:0 0 3px"><b style="color:${col}">${name}</b><span style="margin-left:6px;font-size:11.5px;color:${EXC.muted}">${hhmm(m.ct)}</span>${wh}</div>
-<div style="display:inline-block;max-width:100%;background:${m.type==='whisper'?'#ffffff':EXC.bubble};${m.type==='whisper'?`border:1px dashed ${EXC.line};`:''}border-radius:4px 14px 14px 14px;padding:8px 13px;font-size:15px;line-height:1.65">${text}</div></td></tr></table>`;
+<td style="width:44px;vertical-align:top;padding:0 10px 0 0;border:0">${avatar(c,m,34,'50%')}</td>
+<td style="vertical-align:top;padding:0;border:0"><div style="font-size:14px;margin:0 0 3px"><b style="color:${col};font-weight:600">${name}</b><span style="margin-left:8px;font-size:11.5px;color:${EXC.muted}">${hhmm(m.ct)}</span>${wh}</div>
+<div style="display:inline-block;max-width:100%;background:${isWh?'transparent':EXC.sunk};border:1px ${isWh?'dashed':'solid'} ${EXC.line};border-radius:4px 14px 14px 14px;padding:9px 14px;font-size:15px;line-height:1.65;${whTxt}">${text}</div></td></tr></table>`;
     }
   }
   out+='</div>';

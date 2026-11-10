@@ -1206,6 +1206,10 @@ async function hashPw(email,pw){
 }
 const clone=o=>JSON.parse(JSON.stringify(o));
 
+/* 서버가 받은 시각(st)으로 순서를 정해요. 아직 전송 중인 내 메시지는 맨 아래에 둬요. */
+function msgDoc(d){const x=d.data({serverTimestamps:'estimate'});const st=x.st&&typeof x.st.toMillis==='function'?x.st.toMillis():0;
+  return {id:d.id,...x,st,_pend:d.metadata.hasPendingWrites}}
+const msgKey=m=>m._pend?9e15+(m.ct||0):(m.st||m.ct||0);
 const localBlobs={},CHUNK=700000,MAX_AUDIO=8*1024*1024;
 function b64ToUrl(b64,mime){const bin=atob(b64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
   return URL.createObjectURL(new Blob([u],{type:/^audio\/[\w.+-]+$/.test(mime||'')?mime:'audio/mpeg'}))}
@@ -1456,7 +1460,7 @@ async function makeFirebase(cfg){
     watchRoom:(id,cb,onDenied)=>fs.onSnapshot(fs.doc(db,'rooms',id),d=>d.exists()?cb({id:d.id,...d.data()}):onDenied(),
       e=>{if(e.code==='permission-denied')onDenied();else fail(e)}),
     watchMessages:(id,cb)=>fs.onSnapshot(fs.query(fs.collection(db,'rooms',id,'messages'),fs.orderBy('ct'),fs.limit(5000)),
-      s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),e=>{if(e.code!=='permission-denied')fail(e)}),
+      s=>cb(s.docs.map(msgDoc)),e=>{if(e.code!=='permission-denied')fail(e)}),
     async createRoom(data){
       for(let i=0;;i++){
         const ref=fs.doc(fs.collection(db,'rooms')),code=makeCode(),b=fs.writeBatch(db);
@@ -1496,8 +1500,9 @@ async function makeFirebase(cfg){
     async deleteTrack(id,tid){const cs=await fs.getDocs(fs.collection(db,'rooms',id,'tracks',tid,'chunks')).catch(()=>({docs:[]}));for(const c of cs.docs)await fs.deleteDoc(c.ref).catch(()=>{});await fs.deleteDoc(fs.doc(db,'rooms',id,'tracks',tid))},
     async trackUrl(id,t){const cs=await fs.getDocs(fs.collection(db,'rooms',id,'tracks',t.id,'chunks'));const b64=cs.docs.sort((a,b)=>a.id<b.id?-1:1).map(d=>d.data().d||'').join('');return b64?b64ToUrl(b64,t.mime):null},
     watchWhispers:(id,cb)=>fs.onSnapshot(fs.query(fs.collection(db,'rooms',id,'whispers'),fs.where('visible','array-contains',me.uid)),
-      s=>cb(s.docs.map(d=>({id:d.id,...d.data(),_w:true}))),e=>{if(e.code!=='permission-denied')fail(e)}),
+      s=>cb(s.docs.map(d=>({...msgDoc(d),_w:true}))),e=>{if(e.code!=='permission-denied')fail(e)}),
     async addMessage(id,m){
+      m={...m,st:fs.serverTimestamp()};
       if(m.type==='whisper'){
         await fs.addDoc(fs.collection(db,'rooms',id,'whispers'),m);
         await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct}).catch(()=>{});return;
@@ -2105,7 +2110,7 @@ function openRoom(id){
     if(!R)return;R.chars=CH;fixSpeaker();renderRoom();renderLog(false);
     renderAllSheets();
   }));
-  const merge=()=>{M=[...MP,...MW].sort((a,b)=>(a.ct||0)-(b.ct||0));if(R)renderLog(true)};
+  const merge=()=>{M=[...MP,...MW].sort((a,b)=>msgKey(a)-msgKey(b)||(a.ct||0)-(b.ct||0));if(R)renderLog(true)};
   unsubRoom.push(B.watchMessages(id,list=>{MP=list;merge()}));
   unsubRoom.push(B.watchWhispers(id,list=>{MW=list;merge()}));
   shows=[];showsInit=false;tracks=[];bgmKey='';nsCur=lsGet('bt-ns-'+id)||'line';naCur=lsGet('bt-na-'+id)||'c';
@@ -2238,11 +2243,11 @@ async function send(){
     if(!tc){toast('귓속말을 받을 사람을 골라 주세요');return}
     const toUid=ownerOf(tc);extra={toCid:tc.id,toName:tc.name,toUid,visible:[...new Set([me.uid,toUid,R.ownerUid])]};
   }
-  sending=true;$('#sendBtn').disabled=true;
-  const ok=await push({type:mode,text,...extra,...(mode==='narr'?{ns:nsCur,na:naCur}:{}),...(pendingImg?{img:pendingImg}:{})});
-  sending=false;$('#sendBtn').disabled=false;
-  if(ok){ta.value='';pendingImg=null;showAttach();autoGrow()}
-  ta.focus();
+  // 보내는 즉시 입력창을 비워서 바로 다음 말을 칠 수 있게 해요. 실패하면 글을 되돌려 놓아요.
+  const img=pendingImg,ns={...(mode==='narr'?{ns:nsCur,na:naCur}:{})};
+  ta.value='';pendingImg=null;showAttach();autoGrow();ta.focus();
+  const ok=await push({type:mode,text,...extra,...ns,...(img?{img}:{})});
+  if(!ok){if(!ta.value.trim())ta.value=text;else ta.value=text+'\n'+ta.value;if(!pendingImg)pendingImg=img;showAttach();autoGrow()}
 }
 function autoGrow(){const t=$('#msg');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,180)+'px'}
 function wrap(open,close=open){

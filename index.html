@@ -465,6 +465,33 @@ h1,h2{text-wrap:balance}
 .nt-meta{margin-top:6px;font-size:12px;color:var(--muted)}
 .notice .x{position:absolute;top:8px;right:8px;opacity:1}
 .notice .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
+.sys-bar{position:fixed;top:0;left:0;right:0;z-index:2300;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 44px 8px 16px;font-size:13.5px;font-weight:500;line-height:1.45;text-align:center;background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(30,20,60,.18);animation:sysIn .25s ease}
+.sys-bar.warn{background:#b4573a}
+.sys-bar.ok{background:#2f8a5b}
+.sys-bar.info{background:var(--ink);color:var(--paper)}
+.sys-btn{border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.14);color:inherit;border-radius:999px;padding:2px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.sys-btn:hover{background:rgba(255,255,255,.28)}
+.sys-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;color:inherit;font-size:18px;width:28px;height:28px;border-radius:6px;opacity:.85}
+.sys-x:hover{background:rgba(255,255,255,.18)}
+@keyframes sysIn{from{transform:translateY(-100%)}to{transform:none}}
+html.has-sys body{padding-top:38px}
+.maint-page{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
+.maint-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px 16px 56px;text-align:center;max-width:460px;margin:0 auto;width:100%;box-sizing:border-box}
+.maint-ic{font-size:44px;width:88px;height:88px;border-radius:24px;display:grid;place-items:center;background:var(--accent-soft);margin-top:18px}
+.maint-h1{margin:6px 0 0;font-size:clamp(24px,6vw,30px);letter-spacing:-.02em}
+.maint-sub{margin:0;color:var(--muted);white-space:pre-line;overflow-wrap:anywhere}
+.maint-until{margin:0;font-size:13.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:4px 12px;border-radius:999px}
+.maint-note{margin:0;font-size:12.5px;color:var(--muted)}
+.maint-admin{margin-top:22px;width:100%;font-size:13px;color:var(--muted)}
+.maint-admin summary{cursor:pointer;list-style:none;width:fit-content;margin:0 auto;padding:4px 10px;border-radius:8px}
+.maint-admin summary::-webkit-details-marker{display:none}
+.maint-admin summary:hover{color:var(--accent)}
+.maint-admin form{margin-top:10px;text-align:left}
+.maint-me{margin:10px 0 0}
+.maint-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--sunk);font-weight:600;cursor:pointer;margin:6px 0 4px}
+.maint-toggle input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+#admMaint{display:flex;flex-direction:column;gap:10px}
+#admMaint textarea{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);resize:vertical}
 .auth-page{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 .auth-top{display:flex;justify-content:flex-end;padding-block:16px 0;max-width:1180px;width:100%;margin:0 auto}
 .auth-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding-block:20px 64px;text-align:center}
@@ -720,12 +747,40 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   .hint{display:none}
   .send-row{justify-content:flex-end}
   .top-actions .btn span{display:none}
+  .tool-btns .tl{display:none}
+  .tool-btns .btn{padding-inline:9px}
+  html.has-sys .app{height:calc(100% - 38px)}
 }
 @media (max-width:480px){.new-row{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
 <!-- ================= AUTH ================= -->
+<div class="sys-bar" id="sysBar" role="status" aria-live="polite" hidden><span class="sys-ic" id="sysIc"></span><span class="sys-text" id="sysText"></span><button class="sys-btn" id="sysBtn" hidden></button><button class="sys-x" id="sysX" aria-label="알림 닫기" hidden>×</button></div>
+
+<div class="maint-page" id="maintView" hidden>
+  <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
+  <div class="maint-center">
+    <div class="auth-brand"><span class="brand-mark">d20</span><b>TRPG 번개탁 용도</b></div>
+    <div class="maint-ic" aria-hidden="true">🛠</div>
+    <h1 class="maint-h1">지금은 점검 중이에요</h1>
+    <p class="maint-sub" id="maintMsg">더 좋은 모습으로 돌아올게요. 잠시 후 다시 들어와 주세요.</p>
+    <p class="maint-until" id="maintUntil" hidden></p>
+    <button class="btn primary" id="maintRetry" style="padding:10px 20px">다시 확인하기</button>
+    <p class="maint-note">점검이 끝나면 이 화면에서 자동으로 사이트가 열려요.</p>
+    <details class="maint-admin" id="maintAdmin">
+      <summary>관리자 로그인</summary>
+      <form class="new-card" id="maintForm" novalidate>
+        <label class="field">이메일<input id="mtEmail" type="email" autocomplete="email"></label>
+        <label class="field">비밀번호<input id="mtPw" type="password" autocomplete="current-password"></label>
+        <p class="err" id="mtErr" hidden></p>
+        <button class="btn primary" type="submit">로그인</button>
+      </form>
+      <p class="maint-me" id="maintMe" hidden></p>
+    </details>
+  </div>
+</div>
+
 <div class="auth-page" id="authView" hidden>
   <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
   <div class="auth-center">
@@ -861,13 +916,22 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   <div class="pf-wrap">
     <button class="back" id="admBack"><span class="brand-mark">d20</span>세션 목록으로</button>
     <h1 class="pf-title" style="display:flex;align-items:center;gap:10px">관리자 <span class="admin-tag">관리자 전용</span></h1>
-    <div class="seg adm-tabs" id="admTabs"><button data-adm="inv" aria-pressed="true">추천 코드</button><button data-adm="users" aria-pressed="false">회원</button><button data-adm="notice" aria-pressed="false">공지 · 패치</button><button data-adm="inq" aria-pressed="false">문의함<span class="tab-badge" id="admInqBadge" hidden></span></button></div>
+    <div class="seg adm-tabs" id="admTabs"><button data-adm="inv" aria-pressed="true">추천 코드</button><button data-adm="users" aria-pressed="false">회원</button><button data-adm="notice" aria-pressed="false">공지 · 패치</button><button data-adm="inq" aria-pressed="false">문의함<span class="tab-badge" id="admInqBadge" hidden></span></button><button data-adm="maint" aria-pressed="false">점검</button></div>
 
     <section class="new-card" id="admInv">
       <h2>추천 코드 발급</h2>
       <p class="pf-hint">코드 하나로 한 명만 가입할 수 있어요. 메모를 남겨 두면 누구에게 준 코드인지 알 수 있어요.</p>
       <form class="inv-new" id="invForm"><input id="invNote" maxlength="30" placeholder="누구에게 줄 코드인지 메모 (선택)" autocomplete="off"><button class="btn primary" type="submit">코드 발급</button></form>
       <ul class="inv-list" id="invList"></ul>
+    </section>
+
+    <section class="new-card" id="admMaint" hidden>
+      <h2>사이트 점검</h2>
+      <p class="pf-hint">점검 모드를 켜면 관리자를 뺀 모든 사람에게 점검 안내 화면만 보이고, 사이트와 데이터에 접근할 수 없어요. 이미 들어와 있던 사람도 바로 안내 화면으로 바뀌어요.</p>
+      <label class="maint-toggle"><input type="checkbox" id="mtOn"><span>점검 모드 켜기</span></label>
+      <label class="field">안내 문구 (선택)<textarea id="mtMsg" rows="3" maxlength="300" placeholder="예) 새 기능을 넣는 중이에요. 오후 9시까지 점검해요."></textarea></label>
+      <label class="field">예상 종료 시각 (선택)<input id="mtUntil" type="datetime-local"></label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="mtSave" type="button">저장하기</button><span class="pf-hint" id="mtState" style="margin:0"></span></div>
     </section>
 
     <section class="new-card" id="admUsers" hidden>
@@ -1001,7 +1065,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
         <div class="speakers" id="speakers"></div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button class="np-pill" id="npPill" hidden></button>
-        <div class="tool-btns"><button class="btn sm" id="memoBtn" title="나만 보는 메모 (방장도 볼 수 없어요)">📝 메모</button><button class="btn sm" id="galBtn" title="방장이 띄운 이미지 모아보기">🖼 이미지</button><button class="btn sm" id="bgmBtn" title="플레이리스트">🎵 음악</button><button class="btn sm" id="sheetBtn" title="지금 고른 인물의 캐릭터 시트">📜 시트</button></div>
+        <div class="tool-btns"><button class="btn sm" id="memoBtn" title="나만 보는 메모 (방장도 볼 수 없어요)" aria-label="내 메모">📝<span class="tl"> 메모</span></button><button class="btn sm" id="galBtn" title="방장이 띄운 이미지 모아보기" aria-label="이미지 모아보기">🖼<span class="tl"> 이미지</span></button><button class="btn sm" id="bgmBtn" title="플레이리스트" aria-label="플레이리스트">🎵<span class="tl"> 음악</span></button><button class="btn sm" id="sheetBtn" title="지금 고른 인물의 캐릭터 시트" aria-label="캐릭터 시트">📜<span class="tl"> 시트</span></button></div>
         <div class="seg" id="modes">
           <button data-mode="say">대사</button><button data-mode="narr">지문</button><button data-mode="whisper">귓속말</button>
         </div>
@@ -1108,6 +1172,8 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
+/* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
+if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
 const COLORS=['#c94a6b','#2a8a80','#b8862a','#5268d0','#8758c4','#5e8f3e','#6c6680'];
 const PRESET_MACROS={
@@ -1146,7 +1212,7 @@ function b64ToUrl(b64,mime){const bin=atob(b64),u=new Uint8Array(bin.length);for
 /* 혼자 모드: 계정·방·코드를 이 브라우저에만 저장 (같은 브라우저의 다른 탭에서 다른 계정으로 참가 연습 가능) */
 function makeLocal(){
   let db=lsGet(LS_KEY)||{};
-  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};db.inquiries=db.inquiries||[];db.shows=db.shows||{};db.tracks=db.tracks||{};db.memos=db.memos||{};
+  db.rooms=db.rooms||{};db.messages=db.messages||{};db.accounts=db.accounts||{};db.codes=db.codes||{};db.chars=db.chars||{};db.invites=db.invites||{};db.notices=db.notices||[];db.whispers=db.whispers||{};db.secrets=db.secrets||{};db.inquiries=db.inquiries||[];db.shows=db.shows||{};db.tracks=db.tracks||{};db.memos=db.memos||{};db.config=db.config||{};
   const subs=new Set(),authSubs=new Set();let me=null;
   const emit=()=>subs.forEach(f=>f());
   const write=()=>{if(lsSet(LS_KEY,db))return true;toast('브라우저 저장 공간이 가득 찼어요. 이미지가 많은 방을 지워 주세요');return false};
@@ -1272,6 +1338,8 @@ function makeLocal(){
     },
     async editMessage(id,mid,isW,text){const l=isW?(db.whispers[id]||[]):(db.messages[id]||[]),m=l.find(x=>x.id===mid);
       if(!m||m.uid!==me.uid)throw new AppError('permission-denied');m.text=text;m.edited=now();write();emit()},
+    watchConfig:(cb)=>sub(()=>cb({...(db.config||{})})),
+    async setConfig(v){if(!me||!me.admin)throw new AppError('permission-denied');db.config={...v,ut:now()};write();emit()},
     async getMemo(rid){return (db.memos[me.uid+'|'+rid]||{}).text||''},
     async saveMemo(rid,text){db.memos[me.uid+'|'+rid]={text,ut:now()};if(!write())throw new AppError('quota')},
     async deleteMessage(id,mid,isW){
@@ -1310,7 +1378,7 @@ async function makeFirebase(cfg){
     onAuth(cb){authSubs.add(cb);if(resolved)queueMicrotask(()=>cb(me));return()=>authSubs.delete(cb)},
     async signUp(email,pw,nick,invite){
       const code=normCode(invite);if(!code)throw new AppError('invite/missing');
-      const inv=await fs.getDoc(fs.doc(db,'invites',code));
+      let inv;try{inv=await fs.getDoc(fs.doc(db,'invites',code))}catch(e){if(e&&e.code==='permission-denied')throw new AppError('invite/used');throw e}
       if(!inv.exists())throw new AppError('invite/invalid');
       if(inv.data().used)throw new AppError('invite/used');
       signingUp=true;
@@ -1438,6 +1506,9 @@ async function makeFirebase(cfg){
       await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct,msgCount:fs.increment(1)});
     },
     editMessage:(id,mid,isW,text)=>fs.updateDoc(fs.doc(db,'rooms',id,isW?'whispers':'messages',mid),{text,edited:now()}),
+    watchConfig:(cb,onMeta)=>fs.onSnapshot(fs.doc(db,'config','site'),{includeMetadataChanges:true},
+      d=>{onMeta&&onMeta(d.metadata.fromCache);cb(d.exists()?d.data():{})},e=>{console.error(e);onMeta&&onMeta(true)}),
+    setConfig:v=>fs.setDoc(fs.doc(db,'config','site'),{...v,ut:now(),by:me.uid}),
     async getMemo(rid){const d=await fs.getDoc(fs.doc(db,'users',me.uid,'memos',rid));return d.exists()?String(d.data().text||''):''},
     saveMemo:(rid,text)=>fs.setDoc(fs.doc(db,'users',me.uid,'memos',rid),{text,ut:now()}),
     async deleteMessage(id,mid,isW){
@@ -1613,6 +1684,9 @@ let roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null
 let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
+  if(maintOn()){showMaint();return}
+  $('#maintView').hidden=true;
+  syncSys();
   if(location.hash==='#profile'){if(me)showProfile();else{location.hash='';showHome()}return}
   if(location.hash==='#admin'){if(me&&me.admin)showAdmin();else{location.hash='';showHome()}return}
   const m=location.hash.match(/^#room-([A-Za-z0-9_-]+)$/);
@@ -1623,6 +1697,7 @@ addEventListener('hashchange',route);
 
 /* ---------------- Home ---------------- */
 function showHome(){
+  if(maintOn()){showMaint();return}
   closeRoom();
   document.documentElement.classList.remove('in-room');
   $('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title='TRPG 번개탁 용도';syncFab();
@@ -1920,11 +1995,12 @@ function syncFab(){
 }
 function showAdmin(){
   closeRoom();document.documentElement.classList.remove('in-room');
-  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=false;
-  document.title='관리자 · TRPG 번개탁 용도';syncFab();setAdmTab(admTab);renderInvites();renderAdminNotices();renderUsers();renderAdminInq();window.scrollTo(0,0);
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=false;$('#maintView').hidden=true;
+  document.title='관리자 · TRPG 번개탁 용도';syncFab();setAdmTab(admTab);renderMaintAdmin();renderInvites();renderAdminNotices();renderUsers();renderAdminInq();window.scrollTo(0,0);
 }
 function setAdmTab(t){
   admTab=t;$$('#admTabs [data-adm]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.adm===t));
+  $('#admMaint').hidden=t!=='maint';if(t==='maint')renderMaintAdmin();
   $('#admInv').hidden=t!=='inv';$('#admNotice').hidden=t!=='notice';$('#admUsers').hidden=t!=='users';$('#admInq').hidden=t!=='inq';
   if(t==='users')renderUsers();if(t==='inq')renderAdminInq();
 }
@@ -2269,7 +2345,7 @@ $('#coverBox').addEventListener('click',e=>{const i=e.target.closest('img');if(i
 /* character form */
 let pickColor=COLORS[2],editing=null,pickAv=null;
 function swatches(){$('#charSwatches').innerHTML=COLORS.map(c=>`<button type="button" class="sw" style="--c:${c}" data-sw="${c}" aria-pressed="${c===pickColor}" aria-label="색상"></button>`).join('')}
-function avPreview(){const el=$('#avPrev');el.style.setProperty('--cc',pickColor);el.innerHTML=pickAv?`<img src="${pickAv}" alt="">`:initial($('#charName').value||'?');$('#avClear').hidden=!pickAv}
+function avPreview(){const el=$('#avPrev');el.style.setProperty('--cc',pickColor);el.innerHTML=pickAv?`<img src="${safeImg(pickAv)}" alt="">`:initial($('#charName').value||'?');$('#avClear').hidden=!pickAv}
 function openCharForm(c){
   editing=c?c.id:null;
   $('#charName').value=c?c.name:'';$('#charNote').value=c&&c.note||'';
@@ -3127,6 +3203,83 @@ $$('.theme-btn').forEach(b=>b.addEventListener('click',()=>{const next=isDark()?
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncThemeBtns)}catch(e){}
 
 /* ---------------- Boot ---------------- */
+
+/* ---------------- 점검 모드 · 상단 알림 ---------------- */
+let siteCfg={},netCache=false,netBad=false,netT=null,deployState='',sysDismissed='';
+const maintOn=()=>siteCfg.maintenance===true&&!(me&&me.admin);
+function showMaint(){
+  closeRoom();closeMail&&closeMail();document.documentElement.classList.remove('in-room');
+  ['#homeView','#roomView','#profileView','#adminView','#authView'].forEach(k=>$(k).hidden=true);
+  $('#adminFab').hidden=true;$('#maintView').hidden=false;document.title='점검 중 · TRPG 번개탁 용도';
+  const msg=String(siteCfg.message||'').trim().slice(0,300);
+  $('#maintMsg').textContent=msg||'더 좋은 모습으로 돌아올게요. 잠시 후 다시 들어와 주세요.';
+  const u=+siteCfg.until||0,uEl=$('#maintUntil');
+  uEl.hidden=!(u>Date.now());if(u>Date.now())uEl.textContent='예상 종료 · '+new Date(u).toLocaleString('ko-KR',{month:'long',day:'numeric',weekday:'short',hour:'numeric',minute:'2-digit'});
+  const mm=$('#maintMe');mm.hidden=!me;if(me)mm.innerHTML=`${esc(me.nick)}님으로 로그인되어 있어요. 관리자만 들어갈 수 있어요. <button class="ghost" id="mtOut" type="button">로그아웃</button>`;
+  $('#maintForm').hidden=!!me;
+  syncSys();
+}
+$('#maintRetry').onclick=()=>location.reload();
+$('#maintView').addEventListener('click',async e=>{if(e.target.id==='mtOut'){try{await B.signOut()}catch(x){}}});
+$('#maintForm').addEventListener('submit',async e=>{
+  e.preventDefault();const er=$('#mtErr');er.hidden=true;
+  const em=$('#mtEmail').value.trim(),pw=$('#mtPw').value;if(!em||!pw){er.textContent='이메일과 비밀번호를 입력하세요';er.hidden=false;return}
+  try{await B.signIn(em,pw);$('#mtPw').value=''}catch(x){er.textContent='이메일 또는 비밀번호를 확인해 주세요';er.hidden=false}
+});
+function renderMaintAdmin(){
+  if(!me||!me.admin)return;
+  const on=siteCfg.maintenance===true;
+  if(document.activeElement!==$('#mtMsg'))$('#mtMsg').value=siteCfg.message||'';
+  $('#mtOn').checked=on;
+  const u=+siteCfg.until||0;
+  if(document.activeElement!==$('#mtUntil')){if(u){const d=new Date(u-new Date(u).getTimezoneOffset()*60000);$('#mtUntil').value=d.toISOString().slice(0,16)}else $('#mtUntil').value=''}
+  $('#mtState').textContent=on?'지금 점검 중이에요 · 관리자만 들어올 수 있어요':'지금은 누구나 들어올 수 있어요';
+}
+$('#mtSave').onclick=async()=>{
+  if(!me||!me.admin)return;
+  const on=$('#mtOn').checked,message=$('#mtMsg').value.trim().slice(0,300),uv=$('#mtUntil').value,until=uv?new Date(uv).getTime()||0:0;
+  try{await B.setConfig({maintenance:on,message,until});siteCfg={...siteCfg,maintenance:on,message,until};renderMaintAdmin();syncSys();toast(on?'점검 모드를 켰어요':'점검 모드를 껐어요')}
+  catch(x){toast('저장하지 못했어요. 잠시 뒤 다시 해 주세요')}
+};
+function showSys(kind,ic,text,btn,onBtn,closable){
+  const bar=$('#sysBar');bar.className='sys-bar '+(kind||'');$('#sysIc').textContent=ic||'';$('#sysText').textContent=text;
+  const b=$('#sysBtn');b.hidden=!btn;if(btn){b.textContent=btn;b.onclick=onBtn}
+  $('#sysX').hidden=!closable;bar.hidden=false;document.documentElement.classList.add('has-sys');
+}
+function hideSys(){$('#sysBar').hidden=true;document.documentElement.classList.remove('has-sys')}
+$('#sysX').onclick=()=>{sysDismissed=$('#sysText').textContent;hideSys()};
+function syncSys(){
+  const off=!navigator.onLine;
+  let st=null;
+  if(off)st=['warn','⚠','인터넷 연결이 끊겼어요. 다시 연결되면 자동으로 이어져요.'];
+  else if(deployState==='loading')st=['info','⟳','사이트를 새로 불러오는 중이에요. 잠시 후 새로고침해 주세요.','새로고침',()=>location.reload()];
+  else if(deployState==='new')st=['','✨','사이트가 업데이트됐어요. 새로고침하면 새 버전으로 바뀌어요.','새로고침',()=>location.reload(),true];
+  else if(netBad)st=['warn','⚠','서버와 연결이 원활하지 않아요. 잠시만 기다려 주세요.'];
+  else if(me&&me.admin&&siteCfg.maintenance===true)st=['info','🛠','점검 모드가 켜져 있어요. 지금은 관리자만 사이트에 들어올 수 있어요.','점검 설정',()=>{location.hash='admin';setTimeout(()=>setAdmTab('maint'),0)}];
+  if(!st){hideSys();return}
+  if(st[5]&&sysDismissed===st[2])return;
+  showSys(...st);
+}
+addEventListener('offline',syncSys);
+addEventListener('online',()=>{syncSys();if(!$('#sysBar').hidden)return;showSys('ok','✓','다시 연결됐어요.');setTimeout(syncSys,2500)});
+/* 서버 연결 상태: 온라인인데 오래 캐시에만 머물면 알려요 */
+setInterval(()=>{const bad=B&&B.kind==='online'&&navigator.onLine&&netCache;if(bad){if(!netT)netT=Date.now()}else netT=null;
+  const nb=!!(netT&&Date.now()-netT>8000);if(nb!==netBad){netBad=nb;syncSys()}},2000);
+/* 배포 감지: 새 버전이 올라왔거나 페이지를 다시 올리는 중인지 확인해요 (배포 사이트에서만) */
+let pageSig=null;
+async function checkDeploy(){
+  if(!FIREBASE_CONFIG||!/^https?:$/.test(location.protocol)||!navigator.onLine)return;
+  try{
+    const r=await fetch(location.pathname+'?_v='+Date.now(),{cache:'no-store'});
+    if(!r.ok){deployState='loading';syncSys();return}
+    const t=await r.text();let h=0;for(let i=0;i<t.length;i+=7)h=(h*31+t.charCodeAt(i))|0;const sig=t.length+':'+h;
+    if(pageSig==null)pageSig=sig;
+    const ns=sig!==pageSig?'new':'';if(ns!==deployState){deployState=ns;syncSys()}
+  }catch(e){/* 잠깐의 네트워크 오류는 넘어가요 */}
+}
+setTimeout(checkDeploy,3000);setInterval(checkDeploy,90000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeploy()});
+
 function showOffline(){
   $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#authView').hidden=false;$('#adminFab').hidden=true;
   $('#authForm').hidden=true;$('#authNote').textContent='';
@@ -3152,6 +3305,16 @@ async function boot(){
   $('#modeNote').textContent=online
     ?'로그인하면 휴대폰이든 컴퓨터든 내 방을 그대로 이어서 볼 수 있어요.'
     :'지금은 혼자 모드라 이 브라우저에만 저장돼요. 친구와 함께 하려면 README를 따라 Firebase를 연결한 뒤 올려 주세요. (탭을 하나 더 열어 다른 계정으로 가입하면 코드 참가를 연습해 볼 수 있어요)';
+  let gotCfg=false;
+  B.watchConfig(c=>{
+    const was=maintOn();siteCfg=c||{};const now_=maintOn();
+    if(!gotCfg){gotCfg=true;return}
+    if(was&&!now_){showSys('ok','✓','점검이 끝났어요. 사이트를 다시 불러올게요.');setTimeout(()=>location.reload(),1200);return}
+    if(!was&&now_){route();return}
+    if(now_)showMaint();
+    if(me&&me.admin){renderMaintAdmin();syncSys()}
+  },online?(cached=>{netCache=cached;syncSys()}):null);
+  await new Promise(r=>{const t0=Date.now();(function w(){if(gotCfg||Date.now()-t0>4000)r();else setTimeout(w,40)})()});
   let first=true;
   B.onAuth(async u=>{
     const changed=(me&&me.uid)!==(u&&u.uid);me=u;

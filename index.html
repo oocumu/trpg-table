@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ko">
-<title>TRPG 번개탁 용도</title>
+<title>TRPG 번개탁</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%236b47dc%27/%3E%3Cpath d=%27M17.6 4.5 8.4 17.4c-.4.5 0 1.1.6 1.1h5.6l-1.6 8.8c-.1.7.8 1.1 1.2.5l9.6-13.3c.4-.5 0-1.1-.6-1.1h-5.7l1.3-8.4c.1-.7-.8-1.1-1.2-.5z%27 fill=%27white%27/%3E%3C/svg%3E">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta charset="utf-8">
@@ -481,11 +482,9 @@ html.has-sys body{padding-top:38px}
 .maint-sub{margin:0;color:var(--muted);white-space:pre-line;overflow-wrap:anywhere}
 .maint-until{margin:0;font-size:13.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:4px 12px;border-radius:999px}
 .maint-note{margin:0;font-size:12.5px;color:var(--muted)}
-.maint-admin{margin-top:22px;width:100%;font-size:13px;color:var(--muted)}
-.maint-admin summary{cursor:pointer;list-style:none;width:fit-content;margin:0 auto;padding:4px 10px;border-radius:8px}
-.maint-admin summary::-webkit-details-marker{display:none}
-.maint-admin summary:hover{color:var(--accent)}
-.maint-admin form{margin-top:10px;text-align:left}
+.mt-x{margin-top:22px;width:100%;font-size:13px;color:var(--muted)}
+.mt-x:empty{display:none}
+.mt-x form{text-align:left}
 .maint-me{margin:10px 0 0}
 .maint-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--sunk);font-weight:600;cursor:pointer;margin:6px 0 4px}
 .maint-toggle input{width:18px;height:18px;accent-color:var(--accent);margin:0}
@@ -562,6 +561,28 @@ html.has-sys body{padding-top:38px}
 .icon-btn{width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sheet);border-radius:10px;font-size:15px;line-height:1;display:grid;place-items:center}
 .icon-btn:hover{border-color:var(--accent)}
 .tool-btns{display:flex;gap:4px;flex-wrap:wrap}
+.more-log{text-align:center;padding:6px 0 10px;align-self:stretch}
+.brand-mark svg{width:58%;height:58%;display:block}
+.inq-reply{position:relative}
+.inq-reply .rp-del{position:absolute;top:6px;right:6px;opacity:.6}
+.inq-reply .rp-del:hover{opacity:1;color:var(--rose)}
+.inq-reply .rp-del.armed{opacity:1;width:auto;padding:0 8px;font-size:11.5px;background:var(--rose-soft);color:var(--rose);border-radius:999px}
+.nt-ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:var(--accent-soft);color:var(--accent);vertical-align:1px;font-family:var(--f-mono)}
+.patch-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.patch-item{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--sheet);padding:18px 20px}
+.patch-item.latest{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:var(--shadow)}
+.patch-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.patch-head .pv{font-family:var(--f-mono);font-weight:700;font-size:15px;color:var(--accent);background:var(--accent-soft);padding:2px 10px;border-radius:999px}
+.patch-head b{font-size:17px;font-family:var(--f-display)}
+.patch-head time{margin-left:auto;font-size:12.5px;color:var(--muted);padding-right:22px}
+.patch-body{font-size:14.5px;line-height:1.75;overflow-wrap:anywhere}
+.patch-new{font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:999px;padding:1px 8px}
+.patch-pop{position:fixed;right:18px;bottom:18px;z-index:1900;width:min(340px,calc(100vw - 32px));background:var(--sheet);border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:14px;box-shadow:0 14px 40px rgba(30,20,60,.2);padding:14px 16px;display:flex;flex-direction:column;gap:8px;animation:pop .2s ease-out}
+.patch-pop b{font-size:14.5px}
+.patch-pop p{margin:0;font-size:13px;color:var(--muted)}
+.patch-pop .row{display:flex;gap:6px;justify-content:flex-end}
+.patch-link{border:0;background:none;color:var(--accent);font-size:12.5px;font-weight:600;padding:2px 4px;cursor:pointer}
+.patch-link:hover{text-decoration:underline}
 .lib-save{font-size:16px!important;width:32px;height:32px}
 .lib-pick{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .lib-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 4px 2px 10px;font-weight:600}
@@ -896,35 +917,27 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   <div class="vp-sec"><b>채팅 글자 크기</b><div class="seg" id="vpSize"><button data-size="s">작게</button><button data-size="m">보통</button><button data-size="l">크게</button><button data-size="xl">아주 크게</button></div></div>
   <button class="ghost vp-reset" id="vpReset" type="button">기본으로 되돌리기</button>
 </div>
+<div class="patch-pop" id="patchPop" hidden role="status"><b id="ppTitle"></b><p id="ppSub"></p><div class="row"><button class="btn sm" id="ppLater" type="button">나중에</button><button class="btn primary sm" id="ppGo" type="button">패치 노트 보기</button></div></div>
 <div class="sys-bar" id="sysBar" role="status" aria-live="polite" hidden><span class="sys-ic" id="sysIc"></span><span class="sys-text" id="sysText"></span><button class="sys-btn" id="sysBtn" hidden></button><button class="sys-x" id="sysX" aria-label="알림 닫기" hidden>×</button></div>
 
 <div class="maint-page" id="maintView" hidden>
   <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
   <div class="maint-center">
-    <div class="auth-brand"><span class="brand-mark">d20</span><b>TRPG 번개탁 용도</b></div>
+    <div class="auth-brand"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span><b>TRPG 번개탁</b></div>
     <div class="maint-ic" aria-hidden="true">🛠</div>
-    <h1 class="maint-h1">지금은 점검 중이에요</h1>
+    <h1 class="maint-h1">지금은 점검중이에요.</h1>
     <p class="maint-sub" id="maintMsg">더 좋은 모습으로 돌아올게요. 잠시 후 다시 들어와 주세요.</p>
+    <p class="maint-sub">점검이 끝나면 이 화면에서 자동으로 사이트가 열려요.</p>
     <p class="maint-until" id="maintUntil" hidden></p>
-    <button class="btn primary" id="maintRetry" style="padding:10px 20px">다시 확인하기</button>
-    <p class="maint-note">점검이 끝나면 이 화면에서 자동으로 사이트가 열려요.</p>
-    <details class="maint-admin" id="maintAdmin">
-      <summary>관리자 로그인</summary>
-      <form class="new-card" id="maintForm" novalidate>
-        <label class="field">이메일<input id="mtEmail" type="email" autocomplete="email"></label>
-        <label class="field">비밀번호<input id="mtPw" type="password" autocomplete="current-password"></label>
-        <p class="err" id="mtErr" hidden></p>
-        <button class="btn primary" type="submit">로그인</button>
-      </form>
-      <p class="maint-me" id="maintMe" hidden></p>
-    </details>
+    <button class="btn primary" id="maintRetry" style="padding:10px 22px;margin-top:22px">다시 확인하기</button>
+    <div class="mt-x" id="mtX"></div>
   </div>
 </div>
 
 <div class="auth-page" id="authView" hidden>
   <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
   <div class="auth-center">
-    <div class="auth-brand"><span class="brand-mark">d20</span><b>TRPG 번개탁 용도</b></div>
+    <div class="auth-brand"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span><b>TRPG 번개탁</b></div>
     <h1 class="auth-h1">TRPG<br><em>빠르게 준비해요</em></h1>
     <p class="auth-sub" id="authSub">쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.</p>
     <form class="new-card" id="authForm" novalidate>
@@ -946,9 +959,10 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <!-- ================= HOME ================= -->
 <div class="home" id="homeView">
   <header class="home-top">
-    <div class="brand"><div class="brand-mark">d20</div><div><b>TRPG 번개탁 용도</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
+    <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></div><div><b>TRPG 번개탁</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
     <div class="home-right">
       <div class="modebadge" id="modeBadge"><i></i><span>불러오는 중</span></div>
+      <button class="patch-link" type="button" data-gopatch title="사이트 업데이트 소식">🛠 패치 노트</button>
       <button class="mail-btn" hidden aria-label="우편함" title="우편함">📮<span class="mail-badge" hidden></span></button>
       <button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button>
       <div class="userchip" id="userChip" hidden><span class="dot" id="userDot" style="--cc:var(--accent)"></span><button id="userNick" title="내 프로필"></button><button class="ghost" id="profileBtn">내 정보</button><button class="ghost" id="logoutBtn">로그아웃</button></div>
@@ -1002,14 +1016,28 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   </div>
 </div>
 
-<!-- ================= PROFILE ================= -->
-<div class="home" id="profileView" hidden>
+<!-- ================= PATCH NOTES ================= -->
+<div class="home" id="patchView" hidden>
   <header class="home-top">
-    <div class="brand"><div class="brand-mark">d20</div><div><b>TRPG 번개탁 용도</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
+    <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></div><div><b>TRPG 번개탁</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
     <div class="home-right"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
   </header>
   <div class="pf-wrap">
-    <button class="back" id="pfBack"><span class="brand-mark">d20</span>세션 목록으로</button>
+    <button class="back" id="ptBack"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span>세션 목록으로</button>
+    <h1 class="pf-title">패치 노트</h1>
+    <p class="pf-hint" id="ptSub" style="margin:-6px 0 6px">사이트가 어떻게 바뀌어 왔는지 볼 수 있어요.</p>
+    <ul class="patch-list" id="patchList"></ul>
+  </div>
+</div>
+
+<!-- ================= PROFILE ================= -->
+<div class="home" id="profileView" hidden>
+  <header class="home-top">
+    <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></div><div><b>TRPG 번개탁</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
+    <div class="home-right"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
+  </header>
+  <div class="pf-wrap">
+    <button class="back" id="pfBack"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span>세션 목록으로</button>
     <h1 class="pf-title">내 프로필</h1>
 
     <section class="new-card">
@@ -1056,11 +1084,11 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <!-- ================= ADMIN ================= -->
 <div class="home" id="adminView" hidden>
   <header class="home-top">
-    <div class="brand"><div class="brand-mark">d20</div><div><b>TRPG 번개탁 용도</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
+    <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></div><div><b>TRPG 번개탁</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
     <div class="home-right"><button class="mail-btn" hidden aria-label="우편함" title="우편함">📮<span class="mail-badge" hidden></span></button><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
   </header>
   <div class="pf-wrap">
-    <button class="back" id="admBack"><span class="brand-mark">d20</span>세션 목록으로</button>
+    <button class="back" id="admBack"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span>세션 목록으로</button>
     <h1 class="pf-title" style="display:flex;align-items:center;gap:10px">관리자 <span class="admin-tag">관리자 전용</span></h1>
     <div class="seg adm-tabs" id="admTabs"><button data-adm="inv" aria-pressed="true">추천 코드</button><button data-adm="users" aria-pressed="false">회원</button><button data-adm="notice" aria-pressed="false">공지 · 패치</button><button data-adm="inq" aria-pressed="false">문의함<span class="tab-badge" id="admInqBadge" hidden></span></button><button data-adm="maint" aria-pressed="false">점검</button></div>
 
@@ -1096,6 +1124,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
       <h2>전체 공지 · 패치 노트 보내기</h2>
       <form class="pf-form" id="admNoticeForm">
         <div class="seg nt-kind" id="admNtKind"><button type="button" data-ntk="notice" aria-pressed="true">📢 공지</button><button type="button" data-ntk="patch" aria-pressed="false">🛠 패치 노트</button></div>
+        <label class="field" id="admNtVerRow" hidden>버전<input id="admNtVer" maxlength="20" autocomplete="off" placeholder="예: v1.4.0"></label>
         <label class="field">제목<input id="admNtTitle" maxlength="80" autocomplete="off" placeholder="예: 11월 정기 점검 안내"></label>
         <label class="field">내용<textarea id="admNtBody" rows="6" maxlength="4000" placeholder="모든 회원의 우편함에 도착할 내용이에요. 글 꾸밈 문법도 쓸 수 있어요." class="adm-ta"></textarea></label>
         <p class="err" id="admNtErr" hidden></p>
@@ -1112,7 +1141,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <div class="app" id="roomView" hidden>
   <aside class="side" id="side" aria-label="세션 시트">
     <div class="side-scroll">
-      <div class="side-top"><button class="back" id="backBtn"><span class="brand-mark">d20</span>세션 목록으로</button><button class="side-fold" id="sideFold" type="button" aria-label="사이드바 접기" title="사이드바 접기">⇤</button></div>
+      <div class="side-top"><button class="back" id="backBtn"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span>세션 목록으로</button><button class="side-fold" id="sideFold" type="button" aria-label="사이드바 접기" title="사이드바 접기">⇤</button></div>
 
       <section id="roomSetSec" hidden>
         <div class="sec-h"><h2>방 설정</h2></div>
@@ -1293,7 +1322,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <div class="modal-back" id="mailModal" hidden>
   <section class="modal" role="dialog" aria-modal="true" aria-labelledby="mailTitle">
     <header class="modal-h"><h2 id="mailTitle">📮 우편함</h2><button class="x" id="mailClose" style="opacity:1;font-size:18px;width:32px;height:32px" aria-label="우편함 닫기">×</button></header>
-    <div class="mail-tabs"><div class="seg"><button data-mtab="notice" aria-pressed="true">공지사항<span class="tab-badge" id="mtNoticeBadge" hidden></span></button><button data-mtab="inq" aria-pressed="false">문의 · 건의<span class="tab-badge" id="mtInqBadge" hidden></span></button></div></div>
+    <div class="mail-tabs"><button class="patch-link" id="mailPatch" type="button" style="float:right;margin-top:6px">🛠 패치 노트 전체 보기</button><div class="seg"><button data-mtab="notice" aria-pressed="true">공지사항<span class="tab-badge" id="mtNoticeBadge" hidden></span></button><button data-mtab="inq" aria-pressed="false">문의 · 건의<span class="tab-badge" id="mtInqBadge" hidden></span></button></div></div>
     <div class="modal-body">
       <form class="notice-form" id="noticeForm" hidden>
         <b style="font-size:13.5px">전체 공지 보내기 <span class="admin-tag">관리자</span></b>
@@ -1438,6 +1467,7 @@ function makeLocal(){
     watchMyInquiries:cb=>sub(()=>cb(me?db.inquiries.filter(q=>q.uid===me.uid).map(clone):[])),
     watchAllInquiries:cb=>sub(()=>cb(me&&me.admin?db.inquiries.map(clone):[])),
     async createInquiry(q){const t=now();db.inquiries.push({id:'q'+uid(),...q,uid:me.uid,nick:me.nick,email:me.email,ct:t,status:'open',replies:[],lastReplyAt:0,userSeen:t});write();emit()},
+    async deleteReply(id,i){if(!me.admin)throw new AppError('permission-denied');const q=db.inquiries.find(x=>x.id===id);if(!q)return;q.replies.splice(i,1);const last=q.replies[q.replies.length-1];q.lastReplyAt=last?last.ct:0;if(!last)q.status='open';write();emit()},
     async replyInquiry(id,text){if(!me.admin)throw new AppError('permission-denied');const q=db.inquiries.find(x=>x.id===id);const t=now();q.replies.push({by:'admin',nick:me.nick,text,ct:t});q.status='answered';q.lastReplyAt=t;write();emit()},
     async markInquirySeen(id,ts){const q=db.inquiries.find(x=>x.id===id);if(q&&q.uid===me.uid){q.userSeen=ts;write();emit()}},
     async withdrawInquiry(id){const q=db.inquiries.find(x=>x.id===id);if(!q||q.uid!==me.uid)throw new AppError('permission-denied');q.userDeleted=true;q.userDeletedAt=now();write();emit()},
@@ -1454,8 +1484,11 @@ function makeLocal(){
     async resetPw(){throw new AppError('local/no-reset')},
     listRooms:cb=>sub(()=>cb(Object.values(db.rooms).filter(isMember).map(clone))),
     watchRoom:(id,cb,onDenied)=>sub(()=>{const r=db.rooms[id];if(!r||!isMember(r)){onDenied();return}cb(clone(r))}),
-    watchMessages:(id,cb)=>sub(()=>{if(isMember(db.rooms[id]))cb((db.messages[id]||[]).map(m=>({...m})))}),
+    watchMessages:(id,cb,lim)=>sub(()=>{if(isMember(db.rooms[id]))cb((db.messages[id]||[]).slice(-(lim||300)).map(m=>({...m})))}),
+    async getAllMessages(id){return (db.messages[id]||[]).map(m=>({...m}))},
+    flushRoomMeta(){},
     async createRoom(data){
+      if(!me.admin&&Object.values(db.rooms).filter(r=>r.ownerUid===me.uid).length>=ROOM_LIMIT)throw new AppError('room/limit');
       const id='r'+uid();let code;do code=makeCode();while(db.codes[code]);
       db.rooms[id]={...data,id,code};db.codes[code]=id;db.messages[id]=[];write();emit();return {id,code};
     },
@@ -1551,6 +1584,15 @@ async function makeFirebase(cfg){
     me=prof;notify();
     if(u.email&&prof.email!==undefined)fs.getDoc(fs.doc(db,'users',u.uid)).then(d=>{if(d.exists()&&d.data().email!==u.email)fs.updateDoc(d.ref,{email:u.email}).catch(()=>{})}).catch(()=>{});
   });
+  /* 방 정보(갱신 시각·메시지 수)는 메시지마다 고치지 않고 2분에 한 번 모아서 고쳐요.
+     방 정보가 바뀔 때마다 방 안의 모든 사람과 홈 화면이 다시 읽어서, 이렇게 하면 읽기 사용량이 크게 줄어요. */
+  const roomMeta={};
+  function flushRoom(id){const r=roomMeta[id];if(!r||(!r.n&&!r.ct))return;clearTimeout(r.timer);r.timer=null;
+    const p={updatedAt:r.ct||now()};if(r.n)p.msgCount=fs.increment(r.n);r.n=0;r.ct=0;r.last=Date.now();fs.updateDoc(fs.doc(db,'rooms',id),p).catch(()=>{})}
+  function bumpRoom(id,ct,inc){const r=roomMeta[id]||(roomMeta[id]={n:0,ct:0,last:0,timer:null});r.n+=inc;r.ct=Math.max(r.ct,ct||0);
+    const gap=Date.now()-r.last;if(gap>120000)flushRoom(id);else if(!r.timer)r.timer=setTimeout(()=>flushRoom(id),120000-gap)}
+  addEventListener('pagehide',()=>Object.keys(roomMeta).forEach(flushRoom));
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)Object.keys(roomMeta).forEach(flushRoom)});
   return {
     kind:'online',
     onAuth(cb){authSubs.add(cb);if(resolved)queueMicrotask(()=>cb(me));return()=>authSubs.delete(cb)},
@@ -1615,6 +1657,8 @@ async function makeFirebase(cfg){
       e=>{if(e.code!=='permission-denied')fail(e)}):(cb([]),()=>{}),
     watchAllInquiries:cb=>me&&me.admin?fs.onSnapshot(fs.query(fs.collection(db,'inquiries'),fs.orderBy('ct','desc'),fs.limit(300)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),fail):(cb([]),()=>{}),
     async createInquiry(q){const t=now();await fs.addDoc(fs.collection(db,'inquiries'),{...q,uid:me.uid,nick:me.nick,email:me.email||'',ct:t,status:'open',replies:[],lastReplyAt:0,userSeen:t})},
+    async deleteReply(id,i){const ref=fs.doc(db,'inquiries',id),d=await fs.getDoc(ref);if(!d.exists())return;const rs=(d.data().replies||[]).slice();rs.splice(i,1);const last=rs[rs.length-1];
+      await fs.updateDoc(ref,{replies:rs,lastReplyAt:last?last.ct:0,status:last?'answered':'open'})},
     async replyInquiry(id,text){const t=now();await fs.updateDoc(fs.doc(db,'inquiries',id),{replies:fs.arrayUnion({by:'admin',nick:me.nick,text,ct:t}),status:'answered',lastReplyAt:t})},
     markInquirySeen:(id,ts)=>fs.updateDoc(fs.doc(db,'inquiries',id),{userSeen:ts}),
     withdrawInquiry:id=>fs.updateDoc(fs.doc(db,'inquiries',id),{userDeleted:true,userDeletedAt:now()}),
@@ -1635,12 +1679,15 @@ async function makeFirebase(cfg){
       s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),fail):(cb([]),()=>{}),
     watchRoom:(id,cb,onDenied)=>fs.onSnapshot(fs.doc(db,'rooms',id),d=>d.exists()?cb({id:d.id,...d.data()}):onDenied(),
       e=>{if(e.code==='permission-denied')onDenied();else fail(e)}),
-    watchMessages:(id,cb)=>fs.onSnapshot(fs.query(fs.collection(db,'rooms',id,'messages'),fs.orderBy('ct'),fs.limit(5000)),
+    // 방에 들어올 때는 최근 메시지만 불러와요 (이전 대화는 '더 보기'로)
+    watchMessages:(id,cb,lim)=>fs.onSnapshot(fs.query(fs.collection(db,'rooms',id,'messages'),fs.orderBy('ct'),fs.limitToLast(lim||300)),
       s=>cb(s.docs.map(msgDoc)),e=>{if(e.code!=='permission-denied')fail(e)}),
     async createRoom(data){
       for(let i=0;;i++){
         const ref=fs.doc(fs.collection(db,'rooms')),code=makeCode(),b=fs.writeBatch(db);
         b.set(ref,{...data,code});b.set(fs.doc(db,'codes',code),{roomId:ref.id,createdAt:now()});
+        // 방 개수(최대 5개)는 회원 정보의 roomCount로 서버가 함께 확인해요
+        b.update(fs.doc(db,'users',me.uid),{roomCount:fs.increment(1),lastRoom:ref.id});
         try{await b.commit();return {id:ref.id,code}}catch(e){if(e.code!=='permission-denied'||i>=4)throw e}
       }
     },
@@ -1697,13 +1744,11 @@ async function makeFirebase(cfg){
       s=>cb(s.docs.map(d=>({...msgDoc(d),_w:true}))),e=>{if(e.code!=='permission-denied')fail(e)}),
     async addMessage(id,m){
       m={...m,st:fs.serverTimestamp()};
-      if(m.type==='whisper'){
-        await fs.addDoc(fs.collection(db,'rooms',id,'whispers'),m);
-        await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct}).catch(()=>{});return;
-      }
-      await fs.addDoc(fs.collection(db,'rooms',id,'messages'),m);
-      await fs.updateDoc(fs.doc(db,'rooms',id),{updatedAt:m.ct,msgCount:fs.increment(1)});
+      if(m.type==='whisper'){await fs.addDoc(fs.collection(db,'rooms',id,'whispers'),m);bumpRoom(id,m.ct,0);return}
+      await fs.addDoc(fs.collection(db,'rooms',id,'messages'),m);bumpRoom(id,m.ct,1);
     },
+    flushRoomMeta:id=>flushRoom(id),
+    async getAllMessages(id){const s=await fs.getDocs(fs.query(fs.collection(db,'rooms',id,'messages'),fs.orderBy('ct')));return s.docs.map(msgDoc)},
     editMessage:(id,mid,isW,text)=>fs.updateDoc(fs.doc(db,'rooms',id,isW?'whispers':'messages',mid),{text,edited:now()}),
     watchConfig:(cb,onMeta)=>fs.onSnapshot(fs.doc(db,'config','site'),{includeMetadataChanges:true},
       d=>{onMeta&&onMeta(d.metadata.fromCache);cb(d.exists()?d.data():{})},e=>{console.error(e);onMeta&&onMeta(true)}),
@@ -1732,12 +1777,16 @@ async function makeFirebase(cfg){
       let b=fs.writeBatch(db),n=0;
       for(const d of [...s.docs,...ss.docs,...shs.docs,...trs.docs,...hcs.docs,...ocs.docs,...cs.docs,...ws.docs]){b.delete(d.ref);if(++n%400===0){await b.commit();b=fs.writeBatch(db)}}
       if(code)b.delete(fs.doc(db,'codes',code));
+      if(room.exists()&&room.data().ownerUid===me.uid){const u=await fs.getDoc(fs.doc(db,'users',me.uid)).catch(()=>null);
+        if(u&&u.exists()&&(u.data().roomCount||0)>0)b.update(fs.doc(db,'users',me.uid),{roomCount:fs.increment(-1),lastRoom:id})}
       b.delete(fs.doc(db,'rooms',id));await b.commit();
     },
     hasRooms:()=>true
   };
 }
+const ROOM_LIMIT=5;
 const ERR_MSG={
+  'room/limit':'방은 한 사람당 5개까지 만들 수 있어요. 쓰지 않는 방을 지운 뒤 다시 만들어 주세요.',
   'auth/email-already-in-use':'이미 가입된 이메일이에요. 같은 이메일로는 다시 가입할 수 없어요. 비밀번호를 입력해 로그인해 주세요.',
 
   'auth/invalid-email':'이메일 형식을 확인해 주세요.',
@@ -1895,15 +1944,17 @@ function fastImg(v){
 const dot=(c,cls='',raw=false)=>{const av=raw?safeImg(c.avatar):fastImg(c.avatar);return `<span class="dot ${cls}" style="--cc:${safeColor(c.color)}">${av?`<img src="${av}" alt="">`:initial(c.name)}</span>`};
 
 /* ---------------- App state ---------------- */
+const SITE='TRPG 번개탁';
 let B=null,me=null,rooms=[],filter='all',unsubHome=null;
-let lastLogHTML='',roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null;
+let msgLim=300,unsubMsgs=null,logAnchor=null,lastLogHTML='',roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null;
 let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
   if(maintOn()){showMaint();return}
-  $('#maintView').hidden=true;
+  $('#maintView').hidden=true;$('#patchView').hidden=true;$('#viewPop').hidden=true;
   syncSys();
   if(location.hash==='#profile'){if(me)showProfile();else{location.hash='';showHome()}return}
+  if(location.hash==='#patch'){if(me)showPatch();else{location.hash='';showHome()}return}
   if(location.hash==='#admin'){if(me&&me.admin)showAdmin();else{location.hash='';showHome()}return}
   const m=location.hash.match(/^#room-([A-Za-z0-9_-]+)$/);
   if(m&&!me){toast('로그인하면 그 방으로 바로 들어가요');showHome();return}
@@ -1916,7 +1967,7 @@ function showHome(){
   if(maintOn()){showMaint();return}
   closeRoom();
   document.documentElement.classList.remove('in-room');
-  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title='TRPG 번개탁 용도';syncFab();
+  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#patchView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title=SITE;syncFab();
   $('#authForm').hidden=!!me;$('#userArea').hidden=!me;$('#userChip').hidden=!me;
   $('#hello').innerHTML=me?`${esc(me.nick)}님,<br><em>오늘은 뭘 굴려 볼까요?</em>`:'TRPG<br><em>빠르게 준비해요</em>';
   $('#helloSub').textContent=me?'코드를 받았다면 아래에 입력하고, 직접 진행한다면 새 방을 파 보세요.':'쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.';
@@ -2051,6 +2102,7 @@ $('#newRoomForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const name=$('#nrName').value.trim(),err=$('#nrErr');
   if(!name){err.textContent='방 이름을 먼저 정해 주세요.';err.hidden=false;$('#nrName').focus();return}
+  if(!me.admin&&rooms.filter(r=>r.ownerUid===me.uid).length>=ROOM_LIMIT){err.textContent='방은 한 사람당 5개까지 만들 수 있어요. 쓰지 않는 방을 지운 뒤 다시 만들어 주세요.';err.hidden=false;return}
   err.hidden=true;
   const sys=$('#nrSys').value,gm=$('#nrGm').value.trim()||'키퍼',t=now();
   const room={name,system:sys,desc:$('#nrDesc').value.trim(),status:'live',createdAt:t,updatedAt:t,msgCount:0,
@@ -2071,8 +2123,8 @@ function subscribeNotices(){
   if(me)unsubNotice=B.watchNotices(list=>{
     const fresh=!noticeFirst&&list.find(n=>!notices.some(o=>o.id===n.id)&&n.authorUid!==me.uid);
     notices=list;noticeFirst=false;
-    if(fresh)toast(`📮 ${fresh.kind==='patch'?'새 패치 노트':'새 공지'}가 도착했어요: ${fresh.title}`);
-    renderMailBadge();if(!$('#mailModal').hidden)renderNotices();renderAdminNotices();
+    if(fresh&&fresh.kind!=='patch')toast(`📮 새 공지가 도착했어요: ${fresh.title}`);
+    renderMailBadge();checkPatchPop();if(!$('#patchView').hidden)renderPatch();if(!$('#mailModal').hidden)renderNotices();renderAdminNotices();
   });
   renderMailBadge();
 }
@@ -2105,7 +2157,7 @@ const inqCard=(q,admin)=>`<li class="inq${!admin&&inqUnread(q)?' unread':''}${ad
     <div class="inq-top"><span class="inq-st ${q.status==='answered'?'answered':'open'}">${q.status==='answered'?'답변 완료':'답변 대기'}</span><span class="inq-cat">${esc(q.cat||'문의')}</span><b>${esc(q.title)}</b></div>
     <div class="inq-meta">${admin?`${esc(q.nick||'')} · ${esc(q.email||'')} · `:''}${ymd(q.ct)} ${hhmm(q.ct)}</div>
     <div class="inq-body">${fmt(q.body||'')}</div>
-    ${(q.replies||[]).map(r=>`<div class="inq-reply"><small>관리자 답변 · ${ymd(r.ct)} ${hhmm(r.ct)}</small>${fmt(r.text||'')}</div>`).join('')}
+    ${(q.replies||[]).map((r,i)=>`<div class="inq-reply"><small>관리자 답변 · ${ymd(r.ct)} ${hhmm(r.ct)}</small>${fmt(r.text||'')}${admin?`<button class="x rp-del" data-rpdel="${esc(q.id)}" data-rpi="${i}" aria-label="이 답변 삭제" title="이 답변 삭제 (회원 우편함에서도 사라져요)">×</button>`:''}</div>`).join('')}
     ${admin&&!q.userDeleted?`<form class="inq-form" data-inqform=""${esc(q.id)}"><textarea maxlength="4000" placeholder="${esc(q.nick||'')}님에게만 보내는 답장이에요" aria-label="답장"></textarea><button class="btn primary sm" type="submit" style="align-self:flex-end;padding:6px 14px">답장 보내기</button></form>`:''}
     <button class="x" data-inqdel="${esc(q.id)}" aria-label="문의 삭제" title="${admin?'문의 완전히 삭제':'문의 삭제'}">×</button></li>`;
 function renderMyInq(){
@@ -2115,7 +2167,7 @@ function renderNotices(){
   const seen=me.noticeSeen||0;
   $('#noticeForm').hidden=!me.admin||mailTab!=='notice';
   $('#noticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice${n.ct>seen&&n.authorUid!==me.uid?' unread':''}">
-    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
+    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}${n.ver?`<span class="nt-ver">${esc(n.ver)}</span>`:''}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
     <div class="nt-body">${fmt(n.body||'')}</div>
     <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}</div>
     ${me.admin?`<button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button>`:''}</li>`).join('')
@@ -2180,6 +2232,11 @@ function renderUsers(){
   $('#admUserList').innerHTML=list.length?list.map(u=>`<tr><td><b>${esc(u.nick||'')}</b>${u.admin?' <span class="admin-tag">관리자</span>':''}</td><td>${u.email?esc(u.email):'<span class="pf-hint">기록 전</span>'}</td><td class="mono">${u.createdAt?ymd(u.createdAt):'-'}</td><td class="mono">${esc(u.invite||'-')}</td></tr>`).join('')
     :`<tr><td colspan="4" class="pf-hint" style="padding:14px 10px">${q?'찾는 회원이 없어요.':'아직 회원이 없어요.'}</td></tr>`;
 }
+$('#admInqList').addEventListener('click',async e=>{
+  const d=e.target.closest('[data-rpdel]');if(!d)return;e.stopPropagation();
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='답변 삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{await B.deleteReply(d.dataset.rpdel,+d.dataset.rpi);toast('답변을 지웠어요. 회원의 우편함에서도 사라졌어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
+},true);
 function renderAdminInq(){
   const open=allInq.filter(q=>q.status!=='answered'&&!q.userDeleted).length,bd=$('#admInqBadge');bd.hidden=!open;bd.textContent=open;
   if($('#adminView').hidden)return;
@@ -2212,7 +2269,7 @@ function syncFab(){
 function showAdmin(){
   closeRoom();document.documentElement.classList.remove('in-room');
   $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=false;$('#maintView').hidden=true;
-  document.title='관리자 · TRPG 번개탁 용도';syncFab();setAdmTab(admTab);renderMaintAdmin();renderInvites();renderAdminNotices();renderUsers();renderAdminInq();window.scrollTo(0,0);
+  document.title=SITE;syncFab();setAdmTab(admTab);renderMaintAdmin();renderInvites();renderAdminNotices();renderUsers();renderAdminInq();window.scrollTo(0,0);
 }
 function setAdmTab(t){
   admTab=t;$$('#admTabs [data-adm]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.adm===t));
@@ -2226,7 +2283,7 @@ $('#admBack').onclick=()=>{location.hash=''};
 function renderAdminNotices(){
   if($('#adminView').hidden)return;
   $('#admNoticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice">
-    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
+    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}${n.ver?`<span class="nt-ver">${esc(n.ver)}</span>`:''}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
     <div class="nt-body">${fmt(n.body||'')}</div>
     <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}</div>
     <button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button></li>`).join('')
@@ -2237,12 +2294,15 @@ $('#admNoticeForm').addEventListener('submit',async e=>{
   if(!title){err.textContent='공지 제목을 입력해 주세요.';err.hidden=false;return}
   if(!body){err.textContent='공지 내용을 입력해 주세요.';err.hidden=false;return}
   err.hidden=true;
-  try{await B.sendNotice({title,body,kind:admNtKind});e.target.reset();toast(admNtKind==='patch'?'패치 노트를 모든 회원에게 보냈어요':'전체 회원에게 공지를 보냈어요')}
+  const ver=admNtKind==='patch'?$('#admNtVer').value.trim().slice(0,20):'';
+  if(admNtKind==='patch'&&!ver){err.textContent='패치 버전을 입력해 주세요. 예: v1.4.0';err.hidden=false;return}
+  try{await B.sendNotice({title,body,kind:admNtKind,...(ver?{ver}:{})});e.target.reset();$('#admNtVer').value='';toast(admNtKind==='patch'?`${ver} 패치 노트를 올리고 모든 회원에게 알렸어요`:'전체 회원에게 공지를 보냈어요')}
   catch(x){err.textContent='보내지 못했어요. '+errText(x);err.hidden=false}
 });
 let admNtKind='notice';
 $('#admNtKind').addEventListener('click',e=>{const b=e.target.closest('[data-ntk]');if(!b)return;admNtKind=b.dataset.ntk;$$('#admNtKind [data-ntk]').forEach(x=>x.setAttribute('aria-pressed',x===b));
-  $('#admNtTitle').placeholder=admNtKind==='patch'?'예: v1.2 패치 노트':'예: 11월 정기 점검 안내'});
+  $('#admNtTitle').placeholder=admNtKind==='patch'?'예: 사담 탭과 캐릭터 보관함이 생겼어요':'예: 11월 정기 점검 안내';$('#admNtVerRow').hidden=admNtKind!=='patch';
+  if(admNtKind==='patch'&&!$('#admNtVer').value){const lp=notices.find(n=>n.kind==='patch'&&n.ver);if(lp)$('#admNtVer').placeholder='지난 버전: '+lp.ver}});
 $('#admNoticeList').addEventListener('click',async e=>{
   const d=e.target.closest('[data-ntdel]');if(!d)return;
   if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
@@ -2252,7 +2312,7 @@ $('#admNoticeList').addEventListener('click',async e=>{
 /* ---------------- Profile ---------------- */
 function showProfile(){
   closeRoom();document.documentElement.classList.remove('in-room');
-  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#adminView').hidden=true;$('#profileView').hidden=false;document.title='내 프로필 · TRPG 번개탁 용도';syncFab();
+  $('#homeView').hidden=true;$('#authView').hidden=true;$('#roomView').hidden=true;$('#adminView').hidden=true;$('#profileView').hidden=false;document.title=SITE;syncFab();
   $('#pfNickNow').textContent=me.nick;$('#pfEmail').textContent=me.email||'';$('#pfDot').innerHTML=initial(me.nick);
   $('#pfNick').value=me.nick;['#pfNickErr','#pfPwErr','#pfDelErr'].forEach(x=>$(x).hidden=true);
   renderImpact();renderLibList();window.scrollTo(0,0);
@@ -2300,7 +2360,7 @@ $('#pfDelForm').addEventListener('submit',async e=>{
 });
 
 /* ---------------- Room ---------------- */
-function closeRoom(){flushMemo();lastLogHTML='';OOC=[];chTab='main';memoText=null;msgEdit=null;closeAllSheets();bgmStop();shows=[];tracks=[];unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];MP=[];MW=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
+function closeRoom(){flushMemo();if(roomId&&B&&B.flushRoomMeta)B.flushRoomMeta(roomId);if(unsubMsgs){unsubMsgs();unsubMsgs=null}lastLogHTML='';OOC=[];chTab='main';memoText=null;msgEdit=null;closeAllSheets();bgmStop();shows=[];tracks=[];unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];MP=[];MW=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
 function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
@@ -2322,7 +2382,8 @@ function openRoom(id){
     renderAllSheets();
   }));
   const merge=()=>{M=[...MP,...MW].sort((a,b)=>msgKey(a)-msgKey(b)||(a.ct||0)-(b.ct||0));if(R)renderLog(true)};
-  unsubRoom.push(B.watchMessages(id,list=>{MP=list;merge()}));
+  mergeFn=merge;
+  msgLim=300;subMsgs();
   unsubRoom.push(B.watchWhispers(id,list=>{MW=list;merge()}));
   shows=[];showsInit=false;tracks=[];bgmKey='';nsCur=lsGet('bt-ns-'+id)||'line';naCur=lsGet('bt-na-'+id)||'c';
   unsubRoom.push(B.watchShows(id,onShows));
@@ -2347,7 +2408,7 @@ function setCharKind(k){charKind=k;$$('#charKindSeg [data-kind]').forEach(b=>b.s
 const speaker=()=>R.chars.find(c=>c.id===speakerId&&ownerOf(c)===me.uid);
 function fixSpeaker(){const m=mine();if(!m.some(c=>c.id===speakerId))speakerId=((m.find(c=>!c.gm)||m[0])||{}).id||null}
 function renderRoom(){
-  document.title=(R.name||'세션')+' · TRPG 번개탁 용도';
+  document.title=SITE;
   if(document.activeElement!==$('#roomName'))$('#roomName').value=R.name||'';
   const rn=$('#roomName');rn.readOnly=!isGM();rn.title=isGM()?'눌러서 세션 이름 바꾸기':'';rn.tabIndex=isGM()?0:-1;
   const st=R.status||'live',sel=$('#statusSel');sel.value=st;sel.className='pill status-sel st-'+st;
@@ -2410,16 +2471,20 @@ function logBody(list,opts={}){
   list.forEach((m,i)=>{const d=ymd(m.ct);if(d!==day){day=d;out+=`<div class="daymark">${d}</div>`}out+=msgHTML(m,{...opts,isNew:opts.newFrom!=null&&i>=opts.newFrom})});
   return out;
 }
+let mergeFn=()=>{};
+function subMsgs(){if(unsubMsgs)unsubMsgs();const id=roomId;unsubMsgs=B.watchMessages(id,list=>{if(roomId!==id)return;MP=list;mergeFn()},msgLim)}
+const moreLog=()=>MP.length>=msgLim;
 function renderLog(fromMessages){
   const el=$('#log');
   const nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<120;
   const newFrom=fromMessages&&lastCount&&M.length>lastCount?lastCount:null;
   const ta=el.querySelector('[data-editin]'),sel=ta&&document.activeElement===ta?[ta.selectionStart,ta.selectionEnd]:null;
   if(msgEdit&&!M.some(x=>x.id===msgEdit.id))msgEdit=null;
-  const html=M.length?logBody(M,{newFrom}):'<div class="empty"><b>테이블이 비어 있어요</b>캐릭터를 고르고 첫 지문을 남겨 보세요. 초대 링크로 친구를 부를 수 있어요.</div>';
+  const html=M.length?(moreLog()?`<div class="more-log"><button class="btn sm" data-morelog>이전 대화 더 보기</button></div>`:'')+logBody(M,{newFrom}):'<div class="empty"><b>테이블이 비어 있어요</b>캐릭터를 고르고 첫 지문을 남겨 보세요. 초대 링크로 친구를 부를 수 있어요.</div>';
   // 바뀐 게 없으면 다시 그리지 않아요 (스크롤·선택이 튀지 않게)
   if(html===lastLogHTML&&el.childElementCount){lastCount=M.length;return}
   lastLogHTML=html;el.innerHTML=html;
+  if(logAnchor){el.scrollTop=el.scrollHeight-logAnchor.h+logAnchor.t;logAnchor=null;lastCount=M.length;return}
   if(nearBottom||!lastCount)el.scrollTop=el.scrollHeight;
   lastCount=M.length;
   const nt=el.querySelector('[data-editin]');if(nt){nt.value=msgEdit.text;if(sel){nt.focus();nt.setSelectionRange(sel[0],sel[1])}}
@@ -3351,6 +3416,7 @@ async function saveEdit(){
   try{await B.editMessage(roomId,e.id,e.w,text);toast('메시지를 고쳤어요')}catch(err){toast('고치지 못했어요. 연결을 확인해 주세요')}
 }
 $('#log').addEventListener('click',e=>{
+  if(e.target.closest('[data-morelog]')){const el=$('#log');logAnchor={h:el.scrollHeight,t:el.scrollTop};msgLim+=300;subMsgs();return}
   const b=e.target.closest('[data-editmsg]');if(b){e.stopPropagation();startEdit(b.dataset.editmsg,b.dataset.w);return}
   if(e.target.closest('[data-editsave]')){e.stopPropagation();saveEdit();return}
   if(e.target.closest('[data-editcancel]')){e.stopPropagation();cancelEdit();return}
@@ -3569,8 +3635,13 @@ const EXPORT_EXTRA=`.ex-wrap{max-width:760px;margin:0 auto;padding:40px 20px 60p
 .ex-head h1{font-family:var(--f-display);font-size:32px;margin:0 0 6px}.ex-head .eyebrow{margin:0 0 8px}
 .ex-meta{color:var(--muted);font-size:13.5px;margin:0}.ex-log{display:flex;flex-direction:column;gap:14px}
 html,body{height:auto!important;overflow:auto!important}`;
-function doExport(kind){
+async function doExport(kind){
   if(!R)return;
+  // 화면에는 최근 대화만 불러와 있으니, 내보낼 때는 전체 로그를 한 번 불러와요
+  if(moreLog()){try{toast('전체 로그를 불러오는 중…');const all=await B.getAllMessages(roomId);const saved=M;M=[...all,...MW].sort((a,b)=>msgKey(a)-msgKey(b)||(a.ct||0)-(b.ct||0));try{doExportNow(kind)}finally{M=saved}}catch(e){toast('전체 로그를 불러오지 못했어요')}return}
+  doExportNow(kind);
+}
+function doExportNow(kind){
   if(kind==='text'){copyText(plainLog(),'텍스트 로그를 복사했어요');return}
   const body=`<div class="ex-wrap">${exportHeader()}<div class="ex-log">${logBody(M,{export:true})}</div></div>`;
   if(kind==='file'){
@@ -3783,8 +3854,10 @@ const FONTS=[['기본','IBM Plex Sans KR',''],['본고딕','Noto Sans KR','Noto+
 function hexMix(a,b,t){const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));const x=p(a),y=p(b);return '#'+x.map((v,i)=>Math.round(v*(1-t)+y[i]*t).toString(16).padStart(2,'0')).join('')}
 function applyView(){
   const r=document.documentElement,ac=/^#[0-9a-f]{6}$/i.test(view.accent||'')?view.accent:null;
-  if(ac&&ac.toLowerCase()!=='#6b47dc'){const d=isDark();r.style.setProperty('--accent',d?hexMix(ac,'#ffffff',.38):ac);r.style.setProperty('--accent-soft',d?hexMix(ac,'#17131f',.78):hexMix(ac,'#ffffff',.9))}
-  else{r.style.removeProperty('--accent');r.style.removeProperty('--accent-soft')}
+  if(ac&&ac.toLowerCase()!=='#6b47dc'){const d=isDark();r.style.setProperty('--accent',d?hexMix(ac,'#ffffff',.38):ac);r.style.setProperty('--accent-soft',d?hexMix(ac,'#17131f',.78):hexMix(ac,'#ffffff',.9));
+    // 말풍선·상자 지문·주사위 카드 같은 옅은 배경과 테두리도 테마 색을 따라가요
+    r.style.setProperty('--sunk',d?hexMix(ac,'#141318',.93):hexMix(ac,'#ffffff',.965));r.style.setProperty('--line',d?hexMix(ac,'#2a2932',.86):hexMix(ac,'#e9e8ee',.84))}
+  else{['--accent','--accent-soft','--sunk','--line'].forEach(k=>r.style.removeProperty(k))}
   const f=FONTS.find(x=>x[1]===view.font);
   if(f&&f[2]&&!document.getElementById('font-'+f[1].replace(/\s/g,''))){const l=document.createElement('link');l.rel='stylesheet';l.id='font-'+f[1].replace(/\s/g,'');l.href='https://fonts.googleapis.com/css2?family='+f[2]+'&display=swap';document.head.appendChild(l)}
   if(f&&f[0]!=='기본'){const st=`"${f[1]}","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif`;r.style.setProperty('--f-body',st);r.style.setProperty('--f-display',st)}
@@ -3832,27 +3905,76 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncThe
 
 /* ---------------- Boot ---------------- */
 
+
+/* ---------------- 패치 노트 페이지 · 업데이트 알림 ---------------- */
+const PATCH_KEY=()=>'bt-patch-seen-'+(me?me.uid:'');
+function showPatch(){
+  closeRoom();document.documentElement.classList.remove('in-room');
+  ['#homeView','#authView','#roomView','#adminView','#profileView','#maintView'].forEach(k=>$(k).hidden=true);$('#patchView').hidden=false;document.title=SITE;syncFab();
+  renderPatch();markPatchSeen();window.scrollTo(0,0);
+}
+function renderPatch(){
+  const ps=notices.filter(n=>n.kind==='patch'),seen=+(lsGet(PATCH_KEY())||0);
+  $('#ptSub').textContent=ps.length?`지금 버전 ${ps.find(n=>n.ver)?.ver||''} · 지금까지 ${ps.length}번 바뀌었어요`.replace('지금 버전  · ',''):'사이트가 어떻게 바뀌어 왔는지 볼 수 있어요.';
+  $('#patchList').innerHTML=ps.length?ps.map((n,i)=>`<li class="patch-item${i===0?' latest':''}"><div class="patch-head">${n.ver?`<span class="pv">${esc(n.ver)}</span>`:''}<b>${esc(n.title)}</b>${n.ct>seen&&i<3?'<span class="patch-new">NEW</span>':''}<time>${ymd(n.ct)}</time></div><div class="patch-body">${fmt(n.body||'')}</div>${me&&me.admin?`<button class="x" data-ntdel="${esc(n.id)}" style="position:absolute;top:10px;right:10px;opacity:1" aria-label="패치 노트 삭제">×</button>`:''}</li>`).join('')
+    :'<li class="list-empty"><b>아직 올라온 패치 노트가 없어요</b>사이트가 업데이트되면 여기에 쌓여요.</li>';
+}
+$('#patchList').addEventListener('click',async e=>{const d=e.target.closest('[data-ntdel]');if(!d||!me||!me.admin)return;
+  if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
+  try{await B.deleteNotice(d.dataset.ntdel);toast('패치 노트를 지웠어요. 모든 회원의 우편함에서도 사라졌어요')}catch(x){toast('지우지 못했어요')}});
+function markPatchSeen(){const lp=notices.find(n=>n.kind==='patch');if(lp)lsSet(PATCH_KEY(),lp.ct);$('#patchPop').hidden=true}
+function checkPatchPop(){
+  if(!me||maintOn())return;const lp=notices.find(n=>n.kind==='patch');if(!lp||lp.authorUid===me.uid)return;
+  const seen=+(lsGet(PATCH_KEY())||0);
+  if(!seen&&lsGet(PATCH_KEY())==null&&(me.createdAt||0)>lp.ct){lsSet(PATCH_KEY(),lp.ct);return}  // 가입 전에 올라온 패치는 알리지 않아요
+  if(lp.ct<=seen||!$('#patchView').hidden)return;
+  $('#ppTitle').textContent=`🛠 ${lp.ver?lp.ver+' ':''}업데이트 소식이 있어요`;$('#ppSub').textContent=lp.title;$('#patchPop').hidden=false;
+}
+$('#ppGo').onclick=()=>{location.hash='patch'};
+document.addEventListener('click',e=>{if(e.target.closest('[data-gopatch]'))location.hash='patch'});
+$('#ppLater').onclick=()=>{markPatchSeen()};
+$('#ptBack').onclick=()=>{location.hash=''};
+$('#mailPatch').onclick=()=>{closeMail();location.hash='patch'};
+
+const MT_K='71b32425952984b247c7e56952fcfb34b27afc6285f30bc2924051bfe496e41f';
+let mtOpen=false;
+async function mtCheck(){
+  if(mtOpen||$('#maintView').hidden)return;
+  const h=decodeURIComponent(location.hash.slice(1));if(!h||h.length>40||!(window.crypto&&crypto.subtle))return;
+  try{const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(h));
+    const hex=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    if(hex!==MT_K)return;
+    mtOpen=true;history.replaceState(null,'',location.pathname+location.search);mtRender();
+    const f=$('#mtX input');if(f)f.focus();
+  }catch(e){}
+}
+function mtRender(){
+  const x=$('#mtX');
+  if(me){x.innerHTML=`<p style="margin:0">${esc(me.nick)}님으로 로그인되어 있어요. <button class="ghost" id="mtOut" type="button">로그아웃</button></p>`;return}
+  if(!mtOpen){x.innerHTML='';return}
+  x.innerHTML=`<form class="new-card" id="mtF" novalidate><label class="field">이메일<input name="e" type="email" autocomplete="email"></label><label class="field">비밀번호<input name="p" type="password" autocomplete="current-password"></label><p class="err" hidden></p><button class="btn primary" type="submit">로그인</button></form>`;
+}
+addEventListener('hashchange',mtCheck);
+
 /* ---------------- 점검 모드 · 상단 알림 ---------------- */
 let siteCfg={},netCache=false,netBad=false,netT=null,deployState='',sysDismissed='';
 const maintOn=()=>siteCfg.maintenance===true&&!(me&&me.admin);
 function showMaint(){
   closeRoom();closeMail&&closeMail();document.documentElement.classList.remove('in-room');
-  ['#homeView','#roomView','#profileView','#adminView','#authView'].forEach(k=>$(k).hidden=true);
-  $('#adminFab').hidden=true;$('#maintView').hidden=false;document.title='점검 중 · TRPG 번개탁 용도';
+  ['#homeView','#roomView','#profileView','#adminView','#authView','#patchView'].forEach(k=>$(k).hidden=true);
+  $('#adminFab').hidden=true;$('#maintView').hidden=false;document.title=SITE;
   const msg=String(siteCfg.message||'').trim().slice(0,300);
   $('#maintMsg').textContent=msg||'더 좋은 모습으로 돌아올게요. 잠시 후 다시 들어와 주세요.';
   const u=+siteCfg.until||0,uEl=$('#maintUntil');
   uEl.hidden=!(u>Date.now());if(u>Date.now())uEl.textContent='예상 종료 · '+new Date(u).toLocaleString('ko-KR',{month:'long',day:'numeric',weekday:'short',hour:'numeric',minute:'2-digit'});
-  const mm=$('#maintMe');mm.hidden=!me;if(me)mm.innerHTML=`${esc(me.nick)}님으로 로그인되어 있어요. 관리자만 들어갈 수 있어요. <button class="ghost" id="mtOut" type="button">로그아웃</button>`;
-  $('#maintForm').hidden=!!me;
-  syncSys();
+  mtRender();mtCheck();syncSys();
 }
 $('#maintRetry').onclick=()=>location.reload();
 $('#maintView').addEventListener('click',async e=>{if(e.target.id==='mtOut'){try{await B.signOut()}catch(x){}}});
-$('#maintForm').addEventListener('submit',async e=>{
-  e.preventDefault();const er=$('#mtErr');er.hidden=true;
-  const em=$('#mtEmail').value.trim(),pw=$('#mtPw').value;if(!em||!pw){er.textContent='이메일과 비밀번호를 입력하세요';er.hidden=false;return}
-  try{await B.signIn(em,pw);$('#mtPw').value=''}catch(x){er.textContent='이메일 또는 비밀번호를 확인해 주세요';er.hidden=false}
+$('#maintView').addEventListener('submit',async e=>{
+  const f=e.target.closest('#mtF');if(!f)return;e.preventDefault();const er=f.querySelector('.err');er.hidden=true;
+  const em=f.e.value.trim(),pw=f.p.value;if(!em||!pw){er.textContent='이메일과 비밀번호를 입력하세요';er.hidden=false;return}
+  try{await B.signIn(em,pw);f.p.value=''}catch(x){er.textContent='이메일 또는 비밀번호를 확인해 주세요';er.hidden=false}
 });
 function renderMaintAdmin(){
   if(!me||!me.admin)return;
@@ -3896,16 +4018,18 @@ setInterval(()=>{const bad=B&&B.kind==='online'&&navigator.onLine&&netCache;if(b
 /* 배포 감지: 새 버전이 올라왔거나 페이지를 다시 올리는 중인지 확인해요 (배포 사이트에서만) */
 let pageSig=null;
 async function checkDeploy(){
-  if(!FIREBASE_CONFIG||!/^https?:$/.test(location.protocol)||!navigator.onLine)return;
+  if(!FIREBASE_CONFIG||!/^https?:$/.test(location.protocol)||!navigator.onLine||document.hidden)return;
   try{
-    const r=await fetch(location.pathname+'?_v='+Date.now(),{cache:'no-store'});
+    // 파일 전체를 받지 않고 머리말(HEAD)만 확인해서 데이터 사용량을 아껴요
+    let r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'});
     if(!r.ok){deployState='loading';syncSys();return}
-    const t=await r.text();let h=0;for(let i=0;i<t.length;i+=7)h=(h*31+t.charCodeAt(i))|0;const sig=t.length+':'+h;
+    let sig=r.headers.get('etag')||r.headers.get('last-modified')||'';
+    if(!sig){r=await fetch(location.pathname+'?_v='+Date.now(),{cache:'no-store'});const t=await r.text();let h=0;for(let i=0;i<t.length;i+=7)h=(h*31+t.charCodeAt(i))|0;sig=t.length+':'+h}
     if(pageSig==null)pageSig=sig;
     const ns=sig!==pageSig?'new':'';if(ns!==deployState){deployState=ns;syncSys()}
   }catch(e){/* 잠깐의 네트워크 오류는 넘어가요 */}
 }
-setTimeout(checkDeploy,3000);setInterval(checkDeploy,90000);
+setTimeout(checkDeploy,3000);setInterval(checkDeploy,180000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeploy()});
 
 function showOffline(){

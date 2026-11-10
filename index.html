@@ -18,7 +18,7 @@
   --f-display:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-narr:"Gowun Batang",ui-serif,Georgia,serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",monospace;
   --r:14px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -382,7 +382,7 @@ h1,h2{text-wrap:balance}
 .pf-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin:0 0 10px;padding:8px 10px;background:var(--sunk);border:1px solid var(--line);border-radius:10px}
 .pf-lbl{font-weight:600;margin-right:2px}
 .pf-term{display:inline-flex;align-items:center;gap:4px}
-.pf-term select{border:1px solid var(--line);background:var(--sheet);border-radius:6px;padding:2px 4px;font-family:var(--f-mono);font-size:12.5px;color:var(--ink)}
+.pf-term select{border:1px solid var(--line);background:var(--sheet);border-radius:6px;padding:3px 6px;font-family:var(--f-body);font-size:12.5px;font-weight:500;color:var(--ink)}
 .pf-term .num{width:2.8em;background:var(--sheet)}
 .pf-x,.pf-op{font-family:var(--f-mono);color:var(--muted)}
 .pf-del{width:20px;height:20px;border:1px solid var(--line);background:var(--sheet);border-radius:50%;font-size:12px;line-height:1;padding:0;color:var(--muted)}
@@ -563,6 +563,22 @@ html.has-sys body{padding-top:38px}
 .icon-btn{width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sheet);border-radius:10px;font-size:15px;line-height:1;display:grid;place-items:center}
 .icon-btn:hover{border-color:var(--accent)}
 .tool-btns{display:flex;gap:4px;flex-wrap:wrap}
+/* 선택 상자 디자인 통일: 사이트 글꼴 + 같은 화살표 */
+select:not(.status-sel){-webkit-appearance:none;appearance:none;font-family:var(--f-body);cursor:pointer;padding-right:26px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238a8497' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:right 9px center!important;background-size:10px 6px!important}
+select:not(.status-sel):focus-visible{outline:2px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:1px}
+select option{font-family:var(--f-body);background:var(--sheet);color:var(--ink)}
+.bp-step{display:inline-flex;align-items:center;height:30px;border:1px solid var(--line);background:var(--sheet);border-radius:9px;overflow:hidden}
+.bp-step button{border:0;background:none;height:100%;padding:0 8px;font-size:14px;color:var(--muted)}
+.bp-step button:hover{background:var(--sunk);color:var(--ink)}
+.bp-step .bp-val{font-size:12.5px;font-weight:600;color:var(--ink);min-width:78px;padding:0 6px;border-inline:1px solid var(--line)}
+.bp-step.on{border-color:var(--accent)}
+.bp-step.on .bp-val{background:var(--accent-soft);color:var(--accent)}
+.bp-step.pen.on .bp-val{background:var(--rose-soft);color:var(--rose)}
+.bp-step.pen.on{border-color:var(--rose)}
+.bp-step .bp-pin{font-size:12px;filter:grayscale(1);opacity:.5;border-left:1px solid var(--line)}
+.bp-step .bp-pin[aria-pressed="true"]{filter:none;opacity:1;background:var(--gold-soft)}
 .composer{position:relative}
 .ac-pop{position:absolute;left:14px;right:14px;bottom:calc(100% - 6px);z-index:30;max-height:min(320px,46vh);overflow-y:auto;background:var(--sheet);border:1px solid var(--line);border-radius:12px;box-shadow:0 -6px 30px rgba(30,20,60,.14);padding:6px}
 .ac-h{font-size:11.5px;color:var(--muted);font-weight:600;padding:4px 8px 6px;display:flex;justify-content:space-between;gap:8px}
@@ -1106,6 +1122,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
           <dt>/r 1d100&lt;=60</dt><dd>기능치 판정</dd>
           <dt>/rb 60 · /rbb 60</dt><dd>보너스 주사위 1·2개</dd>
           <dt>/rp 60 · /rpp 60</dt><dd>패널티 주사위 1·2개</dd>
+          <dt>/rb3 60 · /rp3 60</dt><dd>숫자만큼 보너스·패널티</dd>
           <dt>@이름 대사</dt><dd>그 캐릭터로 한 번만</dd>
           <dt>/지문 글 · /n 글</dt><dd>지문으로 한 번만</dd>
           <dt>/지문 (캡슐) 글</dt><dd>스타일 지정 (상자·강조·명조…)</dd>
@@ -1150,7 +1167,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
         <div class="speakers" id="speakers"></div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button class="np-pill" id="npPill" hidden></button>
-        <select class="bp-sel" id="bpSel" title="CoC 보너스·패널티 주사위 (다음 1d100 판정 한 번에 적용돼요)" aria-label="보너스·패널티 주사위"><option value="-2">패널티 2</option><option value="-1">패널티 1</option><option value="0" selected>🎲 보정 없음</option><option value="1">보너스 1</option><option value="2">보너스 2</option></select><div class="tool-btns"><button class="btn sm" id="memoBtn" title="나만 보는 메모 (방장도 볼 수 없어요)" aria-label="내 메모">📝<span class="tl"> 메모</span></button><button class="btn sm" id="galBtn" title="방장이 띄운 이미지 모아보기" aria-label="이미지 모아보기">🖼<span class="tl"> 이미지</span></button><button class="btn sm" id="bgmBtn" title="플레이리스트" aria-label="플레이리스트">🎵<span class="tl"> 음악</span></button><button class="btn sm" id="sheetBtn" title="지금 고른 인물의 캐릭터 시트" aria-label="캐릭터 시트">📜<span class="tl"> 시트</span></button></div>
+        <div class="bp-step" id="bpStep" title="CoC 보너스·패널티 주사위 · 다음 1d100 판정에 적용돼요"><button type="button" data-bp="-1" aria-label="패널티 하나 더">−</button><button type="button" class="bp-val" id="bpVal" title="누르면 보정 없음으로" aria-label="보정 초기화">🎲 보정 없음</button><button type="button" data-bp="1" aria-label="보너스 하나 더">＋</button><button type="button" class="bp-pin" id="bpPin" aria-pressed="false" title="굴린 뒤에도 보정 유지하기">📌</button></div><div class="tool-btns"><button class="btn sm" id="memoBtn" title="나만 보는 메모 (방장도 볼 수 없어요)" aria-label="내 메모">📝<span class="tl"> 메모</span></button><button class="btn sm" id="galBtn" title="방장이 띄운 이미지 모아보기" aria-label="이미지 모아보기">🖼<span class="tl"> 이미지</span></button><button class="btn sm" id="bgmBtn" title="플레이리스트" aria-label="플레이리스트">🎵<span class="tl"> 음악</span></button><button class="btn sm" id="sheetBtn" title="지금 고른 인물의 캐릭터 시트" aria-label="캐릭터 시트">📜<span class="tl"> 시트</span></button></div>
         <div class="seg" id="modes">
           <button data-mode="say">대사</button><button data-mode="narr">지문</button><button data-mode="whisper">귓속말</button>
         </div>
@@ -2339,15 +2356,17 @@ function rollBP(n){
   const vals=tens.map(t=>{const v=t*10+u;return v===0?100:v});const total=n>0?Math.min(...vals):Math.max(...vals);
   return {total,detail:`십의 자리 [${tens.map(t=>t?t*10:'00').join(', ')}] · 일의 자리 ${u}`};
 }
-let bpCur=0;
-function setBp(v){bpCur=Math.max(-2,Math.min(2,+v||0));const s=$('#bpSel');if(s){s.value=String(bpCur);s.classList.toggle('on',!!bpCur)}}
+let bpCur=0,bpPin=lsGet('bt-bp-pin')===true;
+function setBp(v){bpCur=Math.max(-9,Math.min(9,Math.round(+v||0)));const st=$('#bpStep');if(!st)return;
+  st.classList.toggle('on',!!bpCur);st.classList.toggle('pen',bpCur<0);
+  $('#bpVal').textContent=bpCur>0?`보너스 ${bpCur}`:bpCur<0?`패널티 ${-bpCur}`:'🎲 보정 없음';$('#bpPin').setAttribute('aria-pressed',bpPin)}
 function rollMsg(f,label,target,cid,bp){
   const d100=String(f).replace(/\s/g,'').toLowerCase()==='1d100';
   const n=d100?(bp!=null?bp:bpCur):0;
   const r=n?rollBP(n):roll(f);if(!r){toast('주사위 식을 읽지 못했어요. 예: 2d6+1');return false}
   const j=judge(r.total,target,f);
   push({type:'dice',label:label||'',f,total:r.total,detail:r.detail,target:target||null,verdict:j.v,vc:j.c,...(n?{bp:n}:{})},cid);
-  if(n&&bp==null)setBp(0);
+  if(n&&bp==null&&!bpPin)setBp(0);
   return {r,j};
 }
 function whTargets(){return R?R.chars.filter(c=>ownerOf(c)!==me.uid):[]}
@@ -2385,9 +2404,9 @@ async function send(){
     if(sm){const toks=sm[1].split(/[\s,·/]+/).filter(Boolean);const ns=toks.map(t=>NS_KO[t.replace(/\s/g,'')]),na=toks.map(t=>NA_KO[t]);
       if(toks.length&&toks.every((t,i)=>ns[i]||na[i])){onceNs=ns.find(Boolean)||null;onceNa=na.find(Boolean)||null;body=sm[2].trim()}}}
   const useMode=onceMode||mode;
-  const bpc=!pendingImg&&body.match(/^\/(rbb|rb|rpp|rp|보너스|패널티)\s+(\d{1,3})(?:\s+(.*))?$/i);
-  if(bpc){const k=bpc[1].toLowerCase(),n=k==='rbb'?2:k==='rb'||k==='보너스'?1:k==='rpp'?-2:-1;
-    if(rollMsg('1d100',bpc[3]||'',+bpc[2],onceCid,n)){ta.value='';autoGrow()}ta.focus();return}
+  const bpc=!pendingImg&&body.match(/^\/(rbb|rb|rpp|rp|보너스|패널티)(\d)?\s+(\d{1,3})(?:\s+(.*))?$/i);
+  if(bpc){const k=bpc[1].toLowerCase(),pos=/^(rbb|rb|보너스)$/.test(k),cnt=bpc[2]?Math.max(1,+bpc[2]):(k==='rbb'||k==='rpp'?2:1),n=pos?cnt:-cnt;
+    if(rollMsg('1d100',bpc[4]||'',+bpc[3],onceCid,n)){ta.value='';autoGrow()}ta.focus();return}
   const cmd=!pendingImg&&body.match(/^\/(?:r|roll|ㄱ)\s+([^\s<]+)(?:\s*<=?\s*(\d+))?\s*(.*)$/i);
   if(cmd){if(rollMsg(cmd[1],cmd[3],cmd[2]?+cmd[2]:null,onceCid)){ta.value='';autoGrow()}ta.focus();return}
   let extra={};
@@ -2471,6 +2490,8 @@ const AC_CMDS=[
   {c:'/rbb',d:'보너스 주사위 2개로 판정',ex:'/rbb 60 관찰력',ins:'/rbb '},
   {c:'/rp',a:['/패널티'],d:'패널티 주사위 1개로 판정',ex:'/rp 60 관찰력',ins:'/rp '},
   {c:'/rpp',d:'패널티 주사위 2개로 판정',ex:'/rpp 60 관찰력',ins:'/rpp '},
+  {c:'/rb3',d:'보너스 주사위를 숫자만큼 (1~9)',ex:'/rb3 60 관찰력',ins:'/rb3 '},
+  {c:'/rp3',d:'패널티 주사위를 숫자만큼 (1~9)',ex:'/rp3 60 관찰력',ins:'/rp3 '},
   {c:'/지문',a:['/n'],d:'이번 한 번만 지문으로',ex:'/지문 (캡슐) 제1장',ins:'/지문 '},
   {c:'/대사',a:['/s'],d:'이번 한 번만 대사로',ex:'/대사 안녕하세요',ins:'/대사 '},
   {c:'@',d:'이번 한 번만 다른 캐릭터로',ex:'@이름 대사',ins:'@'}
@@ -2503,7 +2524,7 @@ function acCompute(){
     if(m[2]==null)it.push({b:'글 바로 쓰기',d:'지금 고른 지문 스타일 그대로',ins:null});
     return {head:'지문 스타일',hint:'(상자 왼쪽)처럼 섞어 쓸 수 있어요',items:it,from:0}}
   // /r 기능치 · /rb 기능치
-  if((m=rest.match(/^\/(r|roll|ㄱ|rb|rbb|rp|rpp|보너스|패널티)\s+([^\s]*)$/i))){
+  if((m=rest.match(/^\/((?:r|roll|ㄱ)|(?:rbb|rb|rpp|rp|보너스|패널티)\d?)\s+([^\s]*)$/i))){
     const cmd=m[1].toLowerCase(),q=m[2],bp=!/^(r|roll|ㄱ)$/.test(cmd);
     if(q&&/^[\d<=d+\-]+$/i.test(q))return null;
     let sk=acSkills(who);if(bp)sk=sk.filter(x=>x.target&&x.f==='1d100');
@@ -2555,7 +2576,10 @@ $('#msg').addEventListener('keydown',e=>{
 });
 $('#msg').addEventListener('input',autoGrow);
 $('#tcPick').addEventListener('change',e=>{const v=e.target.value;if(/^#[0-9a-f]{6}$/i.test(v))wrap('{'+v+'|','}')});
-$('#bpSel').addEventListener('change',e=>{setBp(e.target.value);$('#msg').focus()});
+$('#bpStep').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.bp)setBp(bpCur+(+b.dataset.bp));else if(b.id==='bpVal')setBp(0);
+  else if(b.id==='bpPin'){bpPin=!bpPin;lsSet('bt-bp-pin',bpPin);setBp(bpCur);toast(bpPin?'굴린 뒤에도 보정을 유지해요':'한 번 굴리면 보정이 풀려요')}});
+setBp(0);
 $('#msg').addEventListener('paste',e=>{const f=[...(e.clipboardData?.files||[])].find(f=>f.type.startsWith('image/'));if(f){e.preventDefault();takeImage(f)}});
 const box=$('#box');
 box.addEventListener('dragover',e=>{if([...e.dataTransfer.items].some(i=>i.kind==='file')){e.preventDefault();box.classList.add('drop')}});
@@ -2644,12 +2668,8 @@ const SHEET_TPL={
   coc:{name:'CoC 7판',
     ab:[['STR','근력',50],['CON','건강',50],['SIZ','크기',50],['DEX','민첩',50],['APP','외모',50],['INT','지능',50],['POW','정신',50],['EDU','교육',60],['LUCK','행운',50]],
     res:[['체력',10,10,'#c94a6b'],['마력',10,10,'#5268d0'],['이성',50,99,'#2a8a80']],
-    sk:[['감정',5],['고고학',1],['과학',1],['관찰력',25],['근접전(격투)',25],['기계수리',10],['길찾기',10],['도서관 이용',20],['도약',20],['듣기',20],
-        ['말재주',5],['매혹',15],['모국어',60],['법률',5],['변장',5],['사격(권총)',20],['사격(라이플/산탄총)',25],['설득',10],['손놀림',10],['수영',20],
-        ['승마',5],['신용',0],['심리학',10],['역사',5],['열쇠공',1],['예술/공예',5],['오르기',20],['오컬트',5],['외국어',1],['운전(자동차)',20],
-        ['위협',15],['은밀행동',20],['응급처치',30],['의료',1],['인류학',1],['자연',10],['전기수리',10],['정신분석',1],['중장비 조작',1],['추적',10],
-        ['컴퓨터 사용',5],['크툴루 신화',0],['투척',20],['회계',5],['회피',25]],
-    fav:['관찰력','듣기','도서관 이용','심리학','회피']},
+    sk:[['감정',5],['고고학',1],['과학',1],['관찰력',25],['근접전(격투)',25],['기계수리',10],['길찾기',10],['도약',20],['듣기',20],['말재주',5],['매혹',15],['모국어',60],['법률',5],['변장',5],['사격(권총)',20],['사격(라이플/산탄총)',25],['설득',10],['손놀림',10],['수영',20],['승마',5],['신용',0],['심리학',10],['역사',5],['열쇠공',1],['예술/공예',5],['오르기',20],['오컬트',5],['외국어',1],['운전(자동차)',20],['위협',15],['은밀행동',20],['응급처치',30],['의료',1],['인류학',1],['자료조사',20],['자연',10],['전기수리',10],['정신분석',1],['중장비 조작',1],['추적',10],['컴퓨터 사용',5],['크툴루 신화',0],['투척',20],['회계',5],['회피',25]],
+    fav:['관찰력','듣기','자료조사','심리학','회피']},
   dnd:{name:'D&D 5e',
     ab:[['STR','근력',10],['DEX','민첩',10],['CON','건강',10],['INT','지능',10],['WIS','지혜',10],['CHA','매력',10]],
     res:[['체력',10,10,'#c94a6b'],['방어도',12,null,'']],
@@ -2694,6 +2714,7 @@ function sheetOf(c){
   if(!c.sheets[c.sheetKind])c.sheets[c.sheetKind]=newSheet(c.sheetKind);
   const sh=c.sheets[c.sheetKind];
   if(c.sheetKind==='coc'&&!Array.isArray(sh.pf))sh.pf=[{k:'EDU',m:4},{k:'INT',m:2}];
+  if(c.sheetKind==='coc')(sh.sk||[]).forEach(x=>{if(x.label==='도서관 이용')x.label='자료조사'});
   c.info=c.info||{};c.story=c.story||{};
   return sh;
 }

@@ -1,5 +1,3 @@
-<!doctype html>
-<html lang="ko">
 <title>TRPG 번개탁</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%236b47dc%27/%3E%3Cpath d=%27M17.6 4.5 8.4 17.4c-.4.5 0 1.1.6 1.1h5.6l-1.6 8.8c-.1.7.8 1.1 1.2.5l9.6-13.3c.4-.5 0-1.1-.6-1.1h-5.7l1.3-8.4c.1-.7-.8-1.1-1.2-.5z%27 fill=%27white%27/%3E%3C/svg%3E">
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -3646,10 +3644,11 @@ function doExportNow(kind){
   if(kind==='text'){copyText(plainLog(),'텍스트 로그를 복사했어요');return}
   const body=`<div class="ex-wrap">${exportHeader()}<div class="ex-log">${logBody(M,{export:true})}</div></div>`;
   if(kind==='file'){
+    const XV=exFileVars();
     const doc=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(R.name)} · 세션 로그</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
-<style>${$('#core').textContent}${EXPORT_EXTRA}</style></head><body>${body}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">${XV.link}
+<style>${$('#core').textContent}${EXPORT_EXTRA}${XV.css}</style></head><body>${body}
 <script>document.addEventListener('click',function(e){var s=e.target.closest('.spoiler');if(s)s.classList.toggle('open')})<\/script></body></html>`;
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([doc],{type:'text/html'}));
     a.download=(R.name||'session').replace(/[\\/:*?"<>|]/g,'_')+'_로그.html';document.body.appendChild(a);a.click();
@@ -3662,8 +3661,27 @@ function doExportNow(kind){
    - 모든 모양은 인라인 스타일로 넣어서, <style>을 지우는 편집기(노션·구글 문서 등)에서도 색·굵기·배치가 유지돼요.
    - HTML 코드 복사에는 <style> 블록을 함께 넣어서 티스토리 HTML 모드에서 지직·흔들림·물결 같은 움직임, 가림막, 글꼴까지 그대로 보여요.
    - 클래스 이름은 btl- 로 시작해서 블로그 스킨과 부딪히지 않아요. 표·문단 위주라 편집기가 잘 지키지 않는 flex/grid는 쓰지 않아요. */
-const EXC={ink:'#1f1a2e',muted:'#8a8497',line:'#e7e2f1',bubble:'#f3f0fa',soft:'#f0ebfd',accent:'#6b47dc',sunk:'#f7f5fc',
+const EXC0={ink:'#1f1a2e',muted:'#8a8497',line:'#e7e2f1',bubble:'#f3f0fa',soft:'#f0ebfd',accent:'#6b47dc',sunk:'#f7f5fc',ring:'#d8ccf6',
   tc:{r:'#c93c5c',b:'#3d62c9',g:'#2d8a4a',y:'#b07a10',p:'#8a4fc4',m:'#8a8597'}};
+let EXC=EXC0;
+// 내보내기 색도 지금 고른 테마 색을 따라가요 (내보낸 글은 밝은 배경 기준)
+function exAccent(){const ac=/^#[0-9a-f]{6}$/i.test(view.accent||'')?view.accent.toLowerCase():'#6b47dc';return ac==='#6b47dc'?null:ac}
+function exColors(){
+  const ac=exAccent();if(!ac)return EXC0;
+  return {...EXC0,accent:ac,soft:hexMix(ac,'#ffffff',.9),sunk:hexMix(ac,'#ffffff',.965),line:hexMix(ac,'#e9e8ee',.84),bubble:hexMix(ac,'#ffffff',.93),ring:hexMix(ac,'#ffffff',.72)};
+}
+// HTML 파일 저장용: 사이트 CSS 변수를 테마 색·글꼴로 덮어써요 (밝은/어두운 화면 둘 다)
+function exFileVars(){
+  const ac=exAccent();let css='';
+  if(ac){
+    const L=`--accent:${ac};--accent-soft:${hexMix(ac,'#ffffff',.9)};--sunk:${hexMix(ac,'#ffffff',.965)};--line:${hexMix(ac,'#e9e8ee',.84)};`;
+    const D=`--accent:${hexMix(ac,'#ffffff',.38)};--accent-soft:${hexMix(ac,'#17131f',.78)};--sunk:${hexMix(ac,'#141318',.93)};--line:${hexMix(ac,'#2a2932',.86)};`;
+    css+=`:root{${L}}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){${D}}}`;
+  }
+  const f=FONTS.find(x=>x[1]===view.font&&x[0]!=='기본');
+  if(f){const st=`"${f[1]}","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif`;css+=`:root{--f-body:${st};--f-display:${st}}`}
+  return {css,link:f&&f[2]?`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${f[2]}&display=swap">`:''};
+}
 function exFonts(){
   const f=FONTS.find(x=>x[1]===view.font&&x[0]!=='기본');
   const body=f?`'${f[1]}','IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif`:`'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif`;
@@ -3719,6 +3737,7 @@ function inlineText(text){
   return box.innerHTML;
 }
 function inlineLog(withStyle){
+  EXC=exColors();
   const F=exFonts(),tpl=TPLS[R.tpl]?R.tpl:'chat',lines=R.tplLines!==false;
   const first=M[0]?.ct,last=M[M.length-1]?.ct;
   // 프로필 사진은 <style>에 한 번만 넣고(용량 절약), 사진이 없거나 스타일이 지워지면 첫 글자 동그라미로 보여요
@@ -3750,7 +3769,7 @@ function inlineLog(withStyle){
     if(m.type==='narr'){
       const ns=NS[m.ns]?m.ns:'line',al={l:'left',c:'center',r:'right'}[NA[m.na]?m.na:'c'];
       const body=inlineText(m.text)+img;
-      if(ns==='chapter'){out+=`<div style="text-align:${al};margin:22px 0"><span style="display:inline-block;max-width:92%;background:${EXC.soft};border:1px solid #d8ccf6;color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.6;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
+      if(ns==='chapter'){out+=`<div style="text-align:${al};margin:22px 0"><span style="display:inline-block;max-width:92%;background:${EXC.soft};border:1px solid ${EXC.ring};color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.6;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
       const tbl=tpl==='table'&&['line','plain','serif'].includes(ns);
       const shortLine=`<div style="width:36px;height:1px;background:${EXC.line};margin:8px ${al==='left'?'0':'auto'} 8px ${al==='right'?'auto':al==='left'?'0':'auto'}"></div>`;
       const mg=tbl?'0':al==='left'?'16px auto 16px 0':al==='right'?'16px 0 16px auto':'16px auto';
@@ -4079,5 +4098,3 @@ async function boot(){
 }
 boot();
 </script>
-
-</html>

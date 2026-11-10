@@ -637,8 +637,8 @@ select option{font-family:var(--f-body);background:var(--sheet);color:var(--ink)
 .side-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .side-fold{width:30px;height:30px;flex:none;border:1px solid transparent;background:none;border-radius:8px;color:var(--muted);font-size:15px;display:grid;place-items:center}
 .side-fold:hover{background:var(--sunk);border-color:var(--line);color:var(--accent)}
-.side-toggle{display:grid;place-items:center;width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sunk);border-radius:10px;font-size:15px;color:var(--muted)}
-.side-toggle:hover{color:var(--accent);border-color:var(--accent)}
+.side-toggle{display:grid;place-items:center;width:28px;height:28px;flex:none;border:0;background:none;border-radius:6px;font-size:18px;line-height:1;color:var(--muted);margin-right:-4px}
+.side-toggle:hover{color:var(--accent)}
 @media (min-width:861px){.app.side-off{grid-template-columns:minmax(0,1fr)}.app.side-off>.side{display:none}}
 .ch-tabs{display:flex;gap:2px;padding:8px 14px 0;border-bottom:1px solid var(--line)}
 .ch-tabs button{position:relative;border:0;background:none;padding:6px 14px 8px;font-size:13.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
@@ -862,6 +862,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   .top-actions .btn span{display:none}
   .tool-btns .tl{display:none}
   .side-toggle,.side-fold{display:none!important}
+  .bp-step .bp-val{min-width:50px;padding:0 4px}.bp-step button{padding:0 7px}
   .composer .hint code,.composer .hint kbd{display:none}
   .tool-btns .btn{padding-inline:9px}
   html.has-sys .app{height:calc(100% - 38px)}
@@ -1728,7 +1729,10 @@ let authNotice='';
 
 /* ---------------- Formatting ---------------- */
 const FX={'지직':'fx-glitch','흔들':'fx-shake','희미':'fx-fade','빛':'fx-glow','작게':'fx-small','뒤집':'fx-flip','물결':'fx-wave'};
-function fmt(s){
+/* 같은 글은 한 번만 변환해요 (로그가 길어도 빠르게) */
+const fmtCache=new Map();
+function fmt(s){s=s==null?'':String(s);let h=fmtCache.get(s);if(h===undefined){h=fmtRaw(s);if(fmtCache.size>5000)fmtCache.clear();fmtCache.set(s,h)}return h}
+function fmtRaw(s){
   let h=esc(s||'')
     .replace(/\(([^()\n]*)\)/g,'<span class="paren">($1)</span>')
     .replace(/（([^（）\n]*)）/g,'<span class="paren">（$1）</span>');
@@ -1845,11 +1849,19 @@ function ago(t){
 const initial=n=>esc([...String(n||'?').trim()][0]||'?');
 const safeColor=c=>typeof c==='string'&&/^#[0-9a-f]{3,8}$/i.test(c)?c:'#6c6680';
 const safeImg=u=>typeof u==='string'&&/^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(u)?u:'';
-const dot=(c,cls='')=>{const av=safeImg(c.avatar);return `<span class="dot ${cls}" style="--cc:${safeColor(c.color)}">${av?`<img src="${av}" alt="">`:initial(c.name)}</span>`};
+/* 큰 이미지(data:)는 한 번만 Blob 주소로 바꿔 써요. 로그를 다시 그릴 때 수십 MB 문자열을 매번 다시 읽지 않게 해요 */
+const blobCache=new Map();
+function fastImg(v){
+  const s=safeImg(v);if(!s||s.length<6000)return s;
+  const k=s.length+':'+s.slice(-96);let u=blobCache.get(k);if(u)return u;
+  try{const i=s.indexOf(','),mime=s.slice(5,s.indexOf(';')),bin=atob(s.slice(i+1)),a=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);u=URL.createObjectURL(new Blob([a],{type:mime}))}catch(e){return s}
+  blobCache.set(k,u);return u;
+}
+const dot=(c,cls='',raw=false)=>{const av=raw?safeImg(c.avatar):fastImg(c.avatar);return `<span class="dot ${cls}" style="--cc:${safeColor(c.color)}">${av?`<img src="${av}" alt="">`:initial(c.name)}</span>`};
 
 /* ---------------- App state ---------------- */
 let B=null,me=null,rooms=[],filter='all',unsubHome=null;
-let roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null;
+let lastLogHTML='',roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null;
 let speakerId=null,mode='say',pendingImg=null;
 
 function route(){
@@ -2253,7 +2265,7 @@ $('#pfDelForm').addEventListener('submit',async e=>{
 });
 
 /* ---------------- Room ---------------- */
-function closeRoom(){flushMemo();OOC=[];chTab='main';memoText=null;msgEdit=null;closeAllSheets();bgmStop();shows=[];tracks=[];unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];MP=[];MW=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
+function closeRoom(){flushMemo();lastLogHTML='';OOC=[];chTab='main';memoText=null;msgEdit=null;closeAllSheets();bgmStop();shows=[];tracks=[];unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];MP=[];MW=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
 function openRoom(id){
   if(roomId===id)return;
   closeRoom();roomId=id;
@@ -2344,7 +2356,7 @@ function msgHTML(m,opts={}){
   const edMark=m.edited&&!opts.export?'<span class="edited">(수정됨)</span>':'';
   const player=!opts.export&&R&&m.uid&&(R.members||[]).length>1&&R.memberNames?R.memberNames[m.uid]:'';
   const cls=opts.isNew?' new':'';
-  const img=m.img?`<img class="mimg" src="${safeImg(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
+  const img=m.img?`<img class="mimg" src="${opts.export?safeImg(m.img):fastImg(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
   if(m.type==='narr')return `<div class="msg narr ns-${NS[m.ns]?m.ns:'line'} na-${NA[m.na]?m.na:'c'}${cls}${isEd?' editing':''}">${edBtn}${del}${img}${isEd?edBox:fmt(m.text)+edMark}</div>`;
   if(m.type==='dice')return `<div class="msg dice-row${cls}" style="--cc:${safeColor(m.color)}">${del}<div class="dice"><div class="die">${esc(m.total)}</div><div class="dice-meta">
     <div class="dice-top"><b>${esc(m.name)}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${m.bp?`<span class="bp-tag">${+m.bp>0?'보너스':'패널티'} ${Math.abs(+m.bp)||''}</span>`:''}${m.verdict?`<span class="verdict ${esc(m.vc)}">${esc(m.verdict)}</span>`:''}</div>
@@ -2355,7 +2367,7 @@ function msgHTML(m,opts={}){
     const third=me&&m.uid!==me.uid&&m.toUid!==me.uid;
     wt=`<span class="wh-to">🔒 ${toName?esc(toName)+'에게 귓속말':'귓속말'}${third?' · 방장만 보임':''}</span>`;
   }
-  return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${me&&m.uid===me.uid&&!opts.export?' mine':''}${cls}${isEd?' editing':''}" style="--cc:${safeColor(m.color)}">${dot(m)}
+  return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${me&&m.uid===me.uid&&!opts.export?' mine':''}${cls}${isEd?' editing':''}" style="--cc:${safeColor(m.color)}">${dot(m,"",!!opts.export)}
     <div style="min-width:0"><div class="who"${player?` title="플레이어: ${esc(player)}"`:''}>${esc(m.name)} <time>${hhmm(m.ct)}</time>${wt}</div><div class="bubble">${edBtn}${del}${img}${isEd?edBox:(m.text?fmt(m.text):'')+edMark}</div></div></div>`;
 }
 function logBody(list,opts={}){
@@ -2369,7 +2381,10 @@ function renderLog(fromMessages){
   const newFrom=fromMessages&&lastCount&&M.length>lastCount?lastCount:null;
   const ta=el.querySelector('[data-editin]'),sel=ta&&document.activeElement===ta?[ta.selectionStart,ta.selectionEnd]:null;
   if(msgEdit&&!M.some(x=>x.id===msgEdit.id))msgEdit=null;
-  el.innerHTML=M.length?logBody(M,{newFrom}):'<div class="empty"><b>테이블이 비어 있어요</b>캐릭터를 고르고 첫 지문을 남겨 보세요. 초대 링크로 친구를 부를 수 있어요.</div>';
+  const html=M.length?logBody(M,{newFrom}):'<div class="empty"><b>테이블이 비어 있어요</b>캐릭터를 고르고 첫 지문을 남겨 보세요. 초대 링크로 친구를 부를 수 있어요.</div>';
+  // 바뀐 게 없으면 다시 그리지 않아요 (스크롤·선택이 튀지 않게)
+  if(html===lastLogHTML&&el.childElementCount){lastCount=M.length;return}
+  lastLogHTML=html;el.innerHTML=html;
   if(nearBottom||!lastCount)el.scrollTop=el.scrollHeight;
   lastCount=M.length;
   const nt=el.querySelector('[data-editin]');if(nt){nt.value=msgEdit.text;if(sel){nt.focus();nt.setSelectionRange(sel[0],sel[1])}}
@@ -2392,7 +2407,7 @@ function rollBP(n){
 let bpCur=0,bpPin=lsGet('bt-bp-pin')===true;
 function setBp(v){bpCur=Math.max(-9,Math.min(9,Math.round(+v||0)));const st=$('#bpStep');if(!st)return;
   st.classList.toggle('on',!!bpCur);st.classList.toggle('pen',bpCur<0);
-  $('#bpVal').textContent=bpCur>0?`보너스 ${bpCur}`:bpCur<0?`패널티 ${-bpCur}`:'🎲 보정 없음';$('#bpPin').setAttribute('aria-pressed',bpPin)}
+  const sm=innerWidth<=860;$('#bpVal').textContent=bpCur>0?(sm?`보너스${bpCur}`:`보너스 ${bpCur}`):bpCur<0?(sm?`패널티${-bpCur}`:`패널티 ${-bpCur}`):(sm?'🎲 0':'🎲 보정 없음');$('#bpPin').setAttribute('aria-pressed',bpPin)}
 function rollMsg(f,label,target,cid,bp){
   const d100=String(f).replace(/\s/g,'').toLowerCase()==='1d100';
   const n=d100?(bp!=null?bp:bpCur):0;
@@ -3494,69 +3509,132 @@ function doExport(kind){
     a.download=(R.name||'session').replace(/[\\/:*?"<>|]/g,'_')+'_로그.html';document.body.appendChild(a);a.click();
     setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);toast('HTML 파일을 저장했어요');return;
   }
-  const html=inlineLog();
-  if(kind==='code'){copyText(html,'HTML 코드를 복사했어요. 블로그 편집기의 HTML 모드에 붙여 넣어 주세요');return}
-  copyRich(html,plainLog());
+  if(kind==='code'){copyText(inlineLog(true),'HTML 코드를 복사했어요. 블로그 편집기의 HTML 모드에 붙여 넣어 주세요');return}
+  copyRich(inlineLog(false),plainLog());
 }
-/* 블로그·문서 편집기용: 클래스 없이 인라인 스타일만 쓰는 HTML (표·문단 위주라 편집기가 잘 지키지 않는 flex/grid는 쓰지 않아요) */
+/* 블로그·문서 편집기용 HTML
+   - 모든 모양은 인라인 스타일로 넣어서, <style>을 지우는 편집기(노션·구글 문서 등)에서도 색·굵기·배치가 유지돼요.
+   - HTML 코드 복사에는 <style> 블록을 함께 넣어서 티스토리 HTML 모드에서 지직·흔들림·물결 같은 움직임, 가림막, 글꼴까지 그대로 보여요.
+   - 클래스 이름은 btl- 로 시작해서 블로그 스킨과 부딪히지 않아요. 표·문단 위주라 편집기가 잘 지키지 않는 flex/grid는 쓰지 않아요. */
 const EXC={ink:'#1f1a2e',muted:'#8a8497',line:'#e7e2f1',bubble:'#f3f0fa',soft:'#f0ebfd',accent:'#6b47dc',sunk:'#f7f5fc',
   tc:{r:'#c93c5c',b:'#3d62c9',g:'#2d8a4a',y:'#b07a10',p:'#8a4fc4',m:'#8a8597'}};
+function exFonts(){
+  const f=FONTS.find(x=>x[1]===view.font&&x[0]!=='기본');
+  const body=f?`'${f[1]}','IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif`:`'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif`;
+  const fams=['IBM+Plex+Sans+KR:wght@400;500;600;700','Gowun+Batang:wght@400;700','IBM+Plex+Mono:wght@400;500'];if(f&&f[2])fams.push(f[2]);
+  return {body,serif:`'Gowun Batang','Nanum Myeongjo',serif`,mono:`'IBM Plex Mono',Menlo,'IBM Plex Sans KR',monospace`,url:'https://fonts.googleapis.com/css2?family='+fams.join('&family=')+'&display=swap'};
+}
+function exStyle(F,avCss){
+  return `<style>
+@import url('${F.url}');
+.btl,.btl *{box-sizing:border-box}
+.btl{font-family:${F.body}}
+.btl .btl-spoiler:hover,.btl .btl-spoiler:focus,.btl .btl-spoiler:active{background:${EXC.line}!important;color:inherit!important}
+.btl .btl-fx-glitch{position:relative;display:inline-block;font-weight:600;text-shadow:none!important;animation:btlGlB 2.6s infinite steps(1)}
+.btl .btl-fx-glitch::before,.btl .btl-fx-glitch::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;pointer-events:none;white-space:nowrap}
+.btl .btl-fx-glitch::before{color:#ff2f6d;animation:btlGl1 1.7s infinite steps(1)}
+.btl .btl-fx-glitch::after{color:#14bccb;animation:btlGl2 2.1s infinite steps(1)}
+@keyframes btlGlB{0%,86%,100%{transform:none}88%{transform:skewX(-12deg) translateX(1px)}91%{transform:skewX(8deg)}94%{transform:translateX(-1px)}}
+@keyframes btlGl1{0%{clip-path:inset(0 0 78% 0);transform:translate(-2px,0)}15%{clip-path:inset(35% 0 40% 0);transform:translate(2px,-1px)}30%{clip-path:inset(70% 0 5% 0);transform:translate(-1px,1px)}45%{clip-path:inset(12% 0 66% 0);transform:translate(3px,0)}60%{clip-path:inset(48% 0 28% 0);transform:translate(-3px,0)}75%{clip-path:inset(100% 0 0 0)}100%{clip-path:inset(20% 0 60% 0);transform:translate(1px,0)}}
+@keyframes btlGl2{0%{clip-path:inset(60% 0 12% 0);transform:translate(2px,0)}20%{clip-path:inset(8% 0 75% 0);transform:translate(-2px,1px)}40%{clip-path:inset(100% 0 0 0)}55%{clip-path:inset(40% 0 35% 0);transform:translate(3px,0)}70%{clip-path:inset(80% 0 2% 0);transform:translate(-2px,0)}100%{clip-path:inset(25% 0 55% 0);transform:translate(1px,-1px)}}
+.btl .btl-fx-shake{display:inline-block;animation:btlShake .32s infinite}
+@keyframes btlShake{0%{transform:translate(0,0)}25%{transform:translate(1px,-1px) rotate(-1.2deg)}50%{transform:translate(-1px,1px)}75%{transform:translate(1px,1px) rotate(1.2deg)}100%{transform:translate(0,0)}}
+.btl .btl-fx-fade{opacity:.5;filter:blur(.6px)}
+.btl .btl-fx-glow{text-shadow:0 0 6px currentColor,0 0 16px currentColor!important}
+.btl .btl-fx-wave{display:inline-block}
+.btl .btl-fx-wave span{display:inline-block;animation:btlWave 1.4s ease-in-out infinite}
+@keyframes btlWave{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.btl .btl-av .btl-ini{display:inline}
+${avCss}
+</style>`;
+}
 function inlineText(text){
   const box=document.createElement('div');box.innerHTML=fmt(text||'');
   box.querySelectorAll('*').forEach(el=>{
-    const c=el.className&&typeof el.className==='string'?el.className:'';let st=el.getAttribute('style')||'';
-    if(/\banimation-delay/.test(st))st='';
+    const c=el.className&&typeof el.className==='string'?el.className:'';let st=(el.getAttribute('style')||'').trim();if(st&&!st.endsWith(';'))st+=';';
     const m=c.match(/\btc-([rbgypm])\b/);if(m)st+=`color:${EXC.tc[m[1]]};`;
     if(/\bparen\b/.test(c))st+=`color:${EXC.muted};`;
-    if(/\bbig\b/.test(c))st+='font-size:1.35em;font-weight:700;';
-    if(/\bspoiler\b/.test(c))st+=`background:${EXC.ink};color:${EXC.ink};border-radius:3px;padding:0 2px;`;
-    if(/\bfx-glitch\b/.test(c))st+='font-weight:600;text-shadow:1.5px 0 #ff2f6d,-1.5px 0 #14bccb;';
-    if(/\bfx-glow\b/.test(c))st+=`text-shadow:0 0 6px ${EXC.accent};color:${EXC.accent};`;
+    if(/\bbig\b/.test(c))st+='font-size:1.35em;font-weight:600;';
+    if(/\bspoiler\b/.test(c))st+=`background:${EXC.ink};color:${EXC.ink};border-radius:4px;padding:0 3px;cursor:pointer;`;
+    if(/\bfx-glitch\b/.test(c))st+='display:inline-block;font-weight:600;text-shadow:1.5px 0 #ff2f6d,-1.5px 0 #14bccb;';
+    if(/\bfx-shake\b/.test(c))st+='display:inline-block;';
+    if(/\bfx-glow\b/.test(c))st+='text-shadow:0 0 6px currentColor,0 0 16px currentColor;';
     if(/\bfx-fade\b/.test(c))st+='opacity:.5;';
-    if(/\bfx-small\b/.test(c))st+='font-size:.82em;';
+    if(/\bfx-small\b/.test(c))st+=`font-size:.8em;color:${EXC.muted};`;
     if(/\bfx-flip\b/.test(c))st+='display:inline-block;transform:rotate(180deg);';
+    if(/\bfx-wave\b/.test(c))st+='display:inline-block;';
+    if(el.parentElement&&/\bfx-wave\b/.test(el.parentElement.className||''))st+='display:inline-block;';
     if(st)el.setAttribute('style',st);else el.removeAttribute('style');
-    ['class','data-t','role','tabindex','title'].forEach(k=>el.removeAttribute(k));
+    const cls=c.split(/\s+/).filter(Boolean).map(x=>'btl-'+x).join(' ');
+    if(cls)el.setAttribute('class',cls);else el.removeAttribute('class');
+    if(/\bspoiler\b/.test(c))el.setAttribute('tabindex','0');else el.removeAttribute('tabindex');
+    ['role','title'].forEach(k=>el.removeAttribute(k));
   });
   return box.innerHTML;
 }
-function inlineLog(){
-  const F="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
+function inlineLog(withStyle){
+  const F=exFonts(),tpl=TPLS[R.tpl]?R.tpl:'chat',lines=R.tplLines!==false;
   const first=M[0]?.ct,last=M[M.length-1]?.ct;
-  let out=`<div style="max-width:720px;margin:0 auto;padding:24px 16px;background:#ffffff;color:${EXC.ink};font-family:${F};font-size:15px;line-height:1.7">`;
-  out+=`<div style="text-align:center;margin:0 0 24px;padding:0 0 18px;border-bottom:1px solid ${EXC.line}"><p style="margin:0 0 6px;font-size:12px;letter-spacing:.12em;color:${EXC.muted}">${esc(R.system||'TRPG')} · 세션 로그</p><p style="margin:0 0 6px;font-size:26px;font-weight:700">${esc(R.name)}</p><p style="margin:0;font-size:13px;color:${EXC.muted}">${R.chars.filter(c=>!c.hidden).map(c=>esc(c.name)).join(' · ')}${first?` — ${ymd(first)}${last&&ymd(last)!==ymd(first)?' ~ '+ymd(last):''}`:''}</p></div>`;
+  // 프로필 사진은 <style>에 한 번만 넣고(용량 절약), 사진이 없거나 스타일이 지워지면 첫 글자 동그라미로 보여요
+  const avIdx=new Map();let avCss='';
+  const avatar=(c,m,size,radius)=>{
+    const col=safeColor(c?c.color:m.color),ini=esc(initial(c?c.name:m.name)),src=c&&safeImg(c.avatar);
+    let cls='btl-av';
+    if(withStyle&&src){if(!avIdx.has(c.id)){const k='btl-av'+avIdx.size;avIdx.set(c.id,k);avCss+=`.btl .${k}{background-image:url(${src})!important;background-size:cover!important;background-position:center!important}.btl .${k} .btl-ini{visibility:hidden}\n`}cls+=' '+avIdx.get(c.id)}
+    return `<div class="${cls}" style="width:${size}px;height:${size}px;line-height:${size}px;border-radius:${radius};background:${col};color:#fff;text-align:center;font-weight:700;font-size:${Math.round(size*.4)}px;overflow:hidden"><span class="btl-ini">${ini}</span></div>`;
+  };
+  let out=`<div class="btl" style="max-width:720px;margin:0 auto;padding:24px 16px;background:#ffffff;color:${EXC.ink};font-family:${F.body};font-size:15px;line-height:1.7;text-align:left">`;
+  out+=`<div style="text-align:center;margin:0 0 24px;padding:0 0 18px;border-bottom:1px solid ${EXC.line}"><p style="margin:0 0 6px;font-size:12px;letter-spacing:.12em;color:${EXC.muted}">${esc(R.system||'TRPG')} · 세션 로그</p><p style="margin:0 0 6px;font-size:26px;font-weight:700;font-family:${F.body}">${esc(R.name)}</p><p style="margin:0;font-size:13px;color:${EXC.muted}">${R.chars.filter(c=>!c.hidden).map(c=>esc(c.name)).join(' · ')}${first?` — ${ymd(first)}${last&&ymd(last)!==ymd(first)?' ~ '+ymd(last):''}`:''}</p></div>`;
+  const rowLine=lines?`border-top:1px solid ${EXC.line};`:'';
   let day='';
   for(const m of M){
     const d=ymd(m.ct);if(d!==day){day=d;out+=`<p style="text-align:center;margin:20px 0 12px;font-size:12px;letter-spacing:.06em;color:${EXC.muted}">${d}</p>`}
     const c=R.chars.find(x=>x.id===m.cid),name=esc(c?c.name:m.name),col=safeColor(c?c.color:m.color);
     const img=m.img?`<br><img src="${safeImg(m.img)}" alt="" style="max-width:100%;max-height:420px;border-radius:10px;margin-top:6px">`:'';
     if(m.type==='dice'){
-      const v=m.verdict?`<span style="display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;background:${m.vc==='fail'||m.vc==='fumble'?'#f9e3ea':EXC.soft};color:${m.vc==='fail'||m.vc==='fumble'?'#c4466a':EXC.accent}">${esc(m.verdict)}</span>`:'';
+      const bad=m.vc==='fail'||m.vc==='fumble';
+      const v=m.verdict?`<span style="display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;background:${bad?'#f9e3ea':EXC.soft};color:${bad?'#c4466a':EXC.accent}">${esc(m.verdict)}</span>`:'';
       const bp=m.bp?`<span style="display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;background:#f6ecd6;color:#a8771c">${+m.bp>0?'보너스':'패널티'} ${Math.abs(+m.bp)}</span>`:'';
-      out+=`<div style="text-align:center;margin:14px 0"><table style="display:inline-table;border-collapse:separate;border:1px solid ${EXC.line};border-radius:12px;background:${EXC.sunk};text-align:left"><tr>
-<td style="padding:10px 0 10px 14px;border:0;vertical-align:middle"><div style="width:40px;height:40px;line-height:40px;text-align:center;border-radius:9px;background:${col};color:#fff;font-weight:700;font-size:16px">${esc(m.total)}</div></td>
-<td style="padding:10px 16px 10px 12px;border:0;vertical-align:middle;font-size:14px"><b>${name}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${bp}${v}<br><span style="font-size:12px;color:${EXC.muted};font-family:Menlo,monospace">${esc(m.f)} → ${esc(m.detail)}</span></td></tr></table></div>`;
+      const left=tpl==='coco';
+      out+=`<div style="text-align:${left?'left':'center'};margin:${left?'0':'14px 0'};${left?`padding:10px 0 10px 58px;border-bottom:${lines?`1px solid ${EXC.line}`:'0'};`:''}"><table style="display:inline-table;border-collapse:separate;border:1px solid ${EXC.line};${left?`border-left:3px solid ${col};`:''}border-radius:12px;background:${EXC.sunk};text-align:left;margin:0"><tr>
+<td style="padding:10px 0 10px 14px;border:0;vertical-align:middle"><div style="width:40px;height:40px;line-height:40px;text-align:center;border-radius:9px;background:${col};color:#fff;font-weight:700;font-size:16px;font-family:${F.mono}">${esc(m.total)}</div></td>
+<td style="padding:10px 16px 10px 12px;border:0;vertical-align:middle;font-size:14px"><b>${name}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${bp}${v}<br><span style="font-size:12px;color:${EXC.muted};font-family:${F.mono}">${esc(m.f)} → ${esc(m.detail)}</span></td></tr></table></div>`;
       continue;
     }
     if(m.type==='narr'){
       const ns=NS[m.ns]?m.ns:'line',al={l:'left',c:'center',r:'right'}[NA[m.na]?m.na:'c'];
       const body=inlineText(m.text)+img;
-      if(ns==='chapter'){out+=`<div style="text-align:${al};margin:24px 0"><span style="display:inline-block;background:${EXC.soft};border:1px solid #d8ccf6;color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.05em;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
-      const base=`margin:18px auto;max-width:600px;text-align:${al};line-height:1.8;`;
-      const sty={line:`border-top:1px solid ${EXC.line};border-bottom:1px solid ${EXC.line};padding:12px 8px;`,plain:'padding:4px 8px;',
-        box:`border:1px solid ${EXC.line};background:${EXC.sunk};border-radius:12px;padding:12px 18px;`,
+      if(ns==='chapter'){out+=`<div style="text-align:${al};margin:22px 0"><span style="display:inline-block;max-width:92%;background:${EXC.soft};border:1px solid #d8ccf6;color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.6;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
+      const tbl=tpl==='table'&&['line','plain','serif'].includes(ns);
+      const shortLine=`<div style="width:36px;height:1px;background:${EXC.line};margin:8px ${al==='left'?'0':'auto'} 8px ${al==='right'?'auto':al==='left'?'0':'auto'}"></div>`;
+      const mg=tbl?'0':al==='left'?'16px auto 16px 0':al==='right'?'16px 0 16px auto':'16px auto';
+      const base=`margin:${mg};max-width:${tbl?'none':'560px'};text-align:${al};line-height:1.75;font-size:15px;${tbl?`padding:8px 40px;${rowLine}font-weight:700;font-style:italic;`:''}`;
+      const sty={line:'padding:4px 20px;',plain:'padding:4px 20px;',
+        box:`border:1px solid ${EXC.line};background:${EXC.sunk};border-radius:12px;padding:10px 16px;`,
         accent:`background:${EXC.soft};border-left:3px solid ${EXC.accent};border-radius:4px 10px 10px 4px;padding:10px 16px;font-weight:500;`,
-        serif:`font-family:'Gowun Batang','Nanum Myeongjo',serif;font-size:16px;padding:4px 8px;`,
-        quiet:`font-size:13px;color:${EXC.muted};font-style:italic;padding:2px 8px;`}[ns];
-      out+=`<div style="${base}${sty}">${body}</div>`;continue;
+        serif:`font-family:${F.serif};font-size:16.5px;line-height:1.85;padding:4px 20px;`,
+        quiet:`font-size:13px;color:${EXC.muted};font-style:italic;padding:2px 20px;`}[ns];
+      if(tbl)out+=`<div style="${base}${ns==='serif'?`font-family:${F.serif};`:''}">${body}</div>`;
+      else out+=`<div style="${base}${sty}">${ns==='line'||ns==='serif'?shortLine:''}${body}${ns==='line'||ns==='serif'?shortLine:''}</div>`;
+      continue;
     }
     const wh=m.type==='whisper'?`<span style="margin-left:6px;font-size:11.5px;color:${EXC.muted}">🔒 ${esc(m.toName||'')}에게 귓속말</span>`:'';
-    out+=`<table style="border-collapse:collapse;border:0;margin:0 0 12px;width:100%"><tr>
-<td style="width:38px;vertical-align:top;padding:2px 10px 0 0;border:0"><div style="width:36px;height:36px;line-height:36px;border-radius:50%;background:${col};color:#fff;text-align:center;font-weight:700;font-size:14px">${esc(initial(c?c.name:m.name))}</div></td>
+    const text=inlineText(m.text)+img;
+    if(tpl==='table'){
+      out+=`<table style="border-collapse:collapse;border:0;margin:0;width:100%"><tr style="${rowLine}"><td style="width:42px;vertical-align:top;padding:6px 10px 6px 14px;border:0">${avatar(c,m,30,'5px')}</td>
+<td style="vertical-align:top;padding:9px 14px 6px 0;border:0;font-size:14.5px;line-height:1.65"><b>${name}</b>${wh}<b style="font-weight:400;color:${EXC.muted}">:</b> ${text}</td></tr></table>`;
+    }else if(tpl==='coco'){
+      out+=`<table style="border-collapse:collapse;border:0;margin:0;width:100%"><tr><td style="width:58px;vertical-align:top;padding:10px 12px 10px 4px;border:0;${lines?`border-bottom:1px solid ${EXC.line};`:''}">${avatar(c,m,46,'8px')}</td>
+<td style="vertical-align:top;padding:10px 4px;border:0;${lines?`border-bottom:1px solid ${EXC.line};`:''}"><div style="font-size:13.5px;margin:0 0 2px"><b style="color:${col}">${name}</b><span style="margin-left:6px;font-size:11.5px;color:${EXC.muted}">${hhmm(m.ct)}</span>${wh}</div><div style="font-size:15px;line-height:1.65">${text}</div></td></tr></table>`;
+    }else{
+      out+=`<table style="border-collapse:collapse;border:0;margin:0 0 12px;width:100%"><tr>
+<td style="width:46px;vertical-align:top;padding:2px 10px 0 0;border:0">${avatar(c,m,36,'50%')}</td>
 <td style="vertical-align:top;padding:0;border:0"><div style="font-size:13px;margin:0 0 3px"><b style="color:${col}">${name}</b><span style="margin-left:6px;font-size:11.5px;color:${EXC.muted}">${hhmm(m.ct)}</span>${wh}</div>
-<div style="display:inline-block;max-width:100%;background:${m.type==='whisper'?'#ffffff':EXC.bubble};${m.type==='whisper'?`border:1px dashed ${EXC.line};`:''}border-radius:4px 14px 14px 14px;padding:8px 13px;font-size:15px;line-height:1.65">${inlineText(m.text)}${img}</div></td></tr></table>`;
+<div style="display:inline-block;max-width:100%;background:${m.type==='whisper'?'#ffffff':EXC.bubble};${m.type==='whisper'?`border:1px dashed ${EXC.line};`:''}border-radius:4px 14px 14px 14px;padding:8px 13px;font-size:15px;line-height:1.65">${text}</div></td></tr></table>`;
+    }
   }
-  return out+'</div>';
+  out+='</div>';
+  return withStyle?exStyle(F,avCss)+'\n'+out:out;
 }
 function copyRich(html,txt){
   const ok=()=>toast('꾸밈 포함 로그를 복사했어요');
@@ -3635,7 +3713,8 @@ function applyView(){
   else{r.style.removeProperty('--accent');r.style.removeProperty('--accent-soft')}
   const f=FONTS.find(x=>x[1]===view.font);
   if(f&&f[2]&&!document.getElementById('font-'+f[1].replace(/\s/g,''))){const l=document.createElement('link');l.rel='stylesheet';l.id='font-'+f[1].replace(/\s/g,'');l.href='https://fonts.googleapis.com/css2?family='+f[2]+'&display=swap';document.head.appendChild(l)}
-  if(f&&f[0]!=='기본')r.style.setProperty('--f-body',`"${f[1]}","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif`);else r.style.removeProperty('--f-body');
+  if(f&&f[0]!=='기본'){const st=`"${f[1]}","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif`;r.style.setProperty('--f-body',st);r.style.setProperty('--f-display',st)}
+  else{r.style.removeProperty('--f-body');r.style.removeProperty('--f-display')}
   r.dataset.fs=['s','m','l','xl'].includes(view.size)?view.size:'m';
 }
 function renderViewPop(){

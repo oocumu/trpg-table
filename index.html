@@ -313,7 +313,6 @@ h1,h2{text-wrap:balance}
 .sheet-head{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);cursor:move;touch-action:none;background:var(--sunk)}
 .sheet-head .x,.sheet-head button{cursor:pointer}
 .sheet-grip{font-size:11px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
-.sheet::after{content:"";position:absolute;right:3px;bottom:3px;width:10px;height:10px;border-right:2px solid var(--line);border-bottom:2px solid var(--line);border-radius:0 0 4px 0;pointer-events:none}
 @media (max-width:700px){
   .sheet{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%!important;height:86vh!important;max-width:none;max-height:none;
     resize:none;border-radius:16px 16px 0 0;border-bottom:0}
@@ -563,6 +562,37 @@ html.has-sys body{padding-top:38px}
 .icon-btn{width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sheet);border-radius:10px;font-size:15px;line-height:1;display:grid;place-items:center}
 .icon-btn:hover{border-color:var(--accent)}
 .tool-btns{display:flex;gap:4px;flex-wrap:wrap}
+.tool-btns .btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.char .x.edit.on{opacity:1;background:var(--accent-soft);border-radius:6px}
+/* 떠 있는 창: 크기를 줄여도 안 깨지게 */
+.sheet{container-type:inline-size}
+.sheet.fwin{min-width:260px;min-height:200px}
+.sheet::after{content:"";position:absolute;right:3px;bottom:3px;width:10px;height:10px;pointer-events:none;opacity:.45;
+  background:linear-gradient(135deg,transparent 45%,var(--muted) 45% 52%,transparent 52% 68%,var(--muted) 68% 75%,transparent 75%)}
+@container (max-width:440px){
+  .sheet-grip{display:none}
+  .sheet-title b{font-size:17px}
+  .sheet-tabs button{font-size:12.5px;padding-inline:4px}
+  .ab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pf-row{flex-wrap:wrap;row-gap:6px}
+  .bgm-acts .bgm-play{padding:2px 6px}
+  .gal-grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+}
+@container (max-width:340px){
+  .sheet-head{padding:10px 12px;gap:8px}
+  .sheet-head .dot{display:none}
+  .sheet-title span{display:none}
+  .sheet-body{padding:12px}
+  .ab-grid{gap:6px}
+  .sk{grid-template-columns:18px minmax(0,1fr) auto auto;gap:4px}
+  .sk>:nth-child(3){display:none}
+  .bgm-ctl button{min-width:34px;height:30px}
+  .bgm-loop{font-size:11.5px!important}
+  .show-form input[type=text],.bgm-add input{min-width:0}
+}
+.modal:not(.crop-modal){resize:both;min-width:min(320px,100%);min-height:240px;max-width:calc(100vw - 24px);max-height:calc(100vh - 24px);position:relative}
+.modal:not(.crop-modal)::after{content:"";position:absolute;right:3px;bottom:3px;width:10px;height:10px;pointer-events:none;opacity:.45;
+  background:linear-gradient(135deg,transparent 45%,var(--muted) 45% 52%,transparent 52% 68%,var(--muted) 68% 75%,transparent 75%)}
 /* 선택 상자 디자인 통일: 사이트 글꼴 + 같은 화살표 */
 select:not(.status-sel){-webkit-appearance:none;appearance:none;font-family:var(--f-body);cursor:pointer;padding-right:26px!important;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238a8497' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important;
@@ -604,6 +634,9 @@ select option{font-family:var(--f-body);background:var(--sheet);color:var(--ink)
 .tag.hid-tag{background:var(--sunk);color:var(--muted);border-style:dashed}
 .clear-btn{color:var(--rose)}
 .clear-btn.armed{background:var(--rose);color:#fff;border-color:var(--rose)}
+.side-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.side-fold{width:30px;height:30px;flex:none;border:1px solid transparent;background:none;border-radius:8px;color:var(--muted);font-size:15px;display:grid;place-items:center}
+.side-fold:hover{background:var(--sunk);border-color:var(--line);color:var(--accent)}
 .side-toggle{display:grid;place-items:center;width:34px;height:34px;flex:none;border:1px solid var(--line);background:var(--sunk);border-radius:10px;font-size:15px;color:var(--muted)}
 .side-toggle:hover{color:var(--accent);border-color:var(--accent)}
 @media (min-width:861px){.app.side-off{grid-template-columns:minmax(0,1fr)}.app.side-off>.side{display:none}}
@@ -828,7 +861,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   .send-row{justify-content:flex-end}
   .top-actions .btn span{display:none}
   .tool-btns .tl{display:none}
-  .side-toggle{display:none}
+  .side-toggle,.side-fold{display:none!important}
   .composer .hint code,.composer .hint kbd{display:none}
   .tool-btns .btn{padding-inline:9px}
   html.has-sys .app{height:calc(100% - 38px)}
@@ -1054,7 +1087,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <div class="app" id="roomView" hidden>
   <aside class="side" id="side" aria-label="세션 시트">
     <div class="side-scroll">
-      <button class="back" id="backBtn"><span class="brand-mark">d20</span>세션 목록으로</button>
+      <div class="side-top"><button class="back" id="backBtn"><span class="brand-mark">d20</span>세션 목록으로</button><button class="side-fold" id="sideFold" type="button" aria-label="사이드바 접기" title="사이드바 접기">⇤</button></div>
 
       <section id="roomSetSec" hidden>
         <div class="sec-h"><h2>방 설정</h2></div>
@@ -1137,7 +1170,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   <main class="main" id="roomMain">
     <header class="top">
       <button class="menu-btn" id="menuBtn" aria-label="세션 시트 열기">☰</button>
-      <button class="side-toggle" id="sideToggle" aria-label="사이드바 숨기기" title="사이드바 숨기기">⇤</button>
+      <button class="side-toggle" id="sideToggle" aria-label="사이드바 펼치기" title="사이드바 펼치기" hidden>☰</button>
       <input class="room-name" id="roomName" aria-label="세션 이름" maxlength="40">
       <div class="top-actions">
         <button class="mail-btn" hidden aria-label="우편함" title="우편함">📮<span class="mail-badge" hidden></span></button>
@@ -2455,7 +2488,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t||!R||!$('#homeView').hidden&&!t.closest('#roomView'))return;
   const d=t.dataset;
   if(d.pick){const pc=R.chars.find(c=>c.id===d.pick);if(!pc||ownerOf(pc)!==me.uid)return;speakerId=d.pick;remember();renderRoom();if(t.closest('.side'))drawer(false);return}
-  if(d.sheet){openSheet(d.sheet);if(t.closest('.side'))drawer(false);return}
+  if(d.sheet){if(wins.has(d.sheet)){closeSheet(d.sheet);return}openSheet(d.sheet);if(t.closest('.side'))drawer(false);return}
   if(d.hidechar){const hc=R.chars.find(c=>c.id===d.hidechar);if(!hc||!isGM()||ownerOf(hc)!==me.uid)return;const nc={...hc,hidden:!hc.hidden};
     B.saveChar(roomId,nc,!!hc.hidden).then(()=>toast(nc.hidden?`${hc.name}을(를) 비공개로 돌렸어요`:`${hc.name}을(를) 공개했어요`)).catch(x=>toast(errText(x)));return}
   if(d.editchar){const ec=R.chars.find(c=>c.id===d.editchar);if(canEdit(ec))openCharForm(ec);return}
@@ -2478,7 +2511,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.matches('label[for]'))e.target.click();
 });
 $('#lightbox').onclick=()=>$('#lightbox').hidden=true;
-$('#sheetBtn').onclick=()=>{if(R)openSheet(speaker().id)};
+$('#sheetBtn').onclick=()=>{if(!R)return;const sp=speaker();if(!sp)return;if(wins.has(sp.id))closeSheet(sp.id);else openSheet(sp.id)};
 $('#fxBtn').onclick=()=>{const open=$('#fxMenu').hidden;closeMenus('fx');$('#fxMenu').hidden=!open;$('#fxBtn').setAttribute('aria-expanded',open)};
 $('#exportBtn').onclick=()=>{const open=$('#exportMenu').hidden;closeMenus('export');$('#exportMenu').hidden=!open;$('#exportBtn').setAttribute('aria-expanded',open)};
 
@@ -2872,7 +2905,8 @@ function frontWin(el){el.style.zIndex=++zTop}
 function placeWin(el,dw,dh,key){
   frontWin(el);if(mobileSheet())return;
   const g=lsGet(key||GEO_KEY)||{},W=innerWidth,H=innerHeight,n=$$('#sheets .sheet').length-1;
-  const w=Math.min(g.w||dw||460,W-16),h=Math.min(g.h||dh||Math.min(700,H-48),H-16);
+  // 처음 열 때는 아래 입력창(창 버튼들)을 가리지 않는 높이로 열어요
+  const w=Math.min(g.w||dw||460,W-16),h=Math.min(g.h||Math.min(dh||700,Math.max(300,H-76-230-n*28)),H-16);
   el.style.width=w+'px';el.style.height=h+'px';
   el.style.left=((g.x!=null?g.x:W-w-24)-n*28)+'px';el.style.top=((g.y!=null?g.y:76)+n*28)+'px';
   clampWin(el);
@@ -2936,6 +2970,7 @@ function renderRoomExtras(){
   if(!NS[nsCur])nsCur='line';
   $('#nsRow').hidden=mode!=='narr';
   if(chTab==='ooc')$('#msg').placeholder='사담을 입력하세요 · 닉네임으로 보내져요';
+  syncToolBtns();
   $$('#nsSeg [data-ns]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ns===nsCur));
   if(!NA[naCur])naCur='c';
   $$('#naSeg [data-na]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.na===naCur));
@@ -2963,6 +2998,7 @@ $('#tplLines').addEventListener('change',e=>{if(!isGM())return;saveRoom({tplLine
 $('#nsSeg').addEventListener('click',e=>{const b=e.target.closest('[data-ns]');if(!b||!NS[b.dataset.ns])return;nsCur=b.dataset.ns;lsSet('bt-ns-'+roomId,nsCur);renderRoomExtras();$('#msg').focus()});
 
 /* ---------------- 떠 있는 창 (이미지·플레이리스트) ---------------- */
+function toggleOff(key){const el=$(`#sheets .sheet[data-win="${key}"]`);if(!el)return false;const x=el.querySelector('[data-wclose]');if(x)x.click();else el.remove();return true}
 function fwin(key,geo,label){
   let el=$(`#sheets .sheet[data-win="${key}"]`);
   if(el){frontWin(el);return {el,isNew:false}}
@@ -3010,7 +3046,7 @@ showFile.onchange=async()=>{
   const ti=$('#showTitle'),title=(ti?ti.value:'').trim().slice(0,60);
   try{await B.addShow(roomId,{img,title});if(ti)ti.value='';toast('이미지를 띄웠어요')}catch(e){toast('띄우지 못했어요. 잠시 뒤 다시 해 주세요')}
 };
-$('#galBtn').onclick=()=>{if(R)openGallery()};
+$('#galBtn').onclick=()=>{if(R&&!toggleOff('gallery'))openGallery()};
 
 /* ---------------- 플레이리스트 ---------------- */
 let bgmAudio=null,ytP=null,ytReady=false,ytPromise=null,ytCur=null,bgmBlocked=false,bgmLoading=false,bgmEndKey='',bgmErr=0,bgmArm=null,bgmUp='',dragTr=null;
@@ -3139,7 +3175,7 @@ $('#npPill').onclick=()=>{
   }
   openBgmWin();
 };
-$('#bgmBtn').onclick=()=>{if(R)openBgmWin()};
+$('#bgmBtn').onclick=()=>{if(R&&!toggleOff('bgm'))openBgmWin()};
 function openBgmWin(){const {el,isNew}=fwin('bgm','bt-win-bgm','플레이리스트');renderBgmWin(true);if(isNew)finishWin(el,400,560)}
 function renderBgmWin(force){
   const el=$('#sheets .sheet[data-win="bgm"]');if(!el||!R)return;
@@ -3306,7 +3342,15 @@ $('#sheets').addEventListener('input',e=>{
 $('#sheets').addEventListener('winclose',()=>flushMemo());
 document.addEventListener('visibilitychange',()=>{if(document.hidden)flushMemo()});
 window.addEventListener('beforeunload',()=>{flushMemo()});
-$('#memoBtn').onclick=()=>openMemo();
+$('#memoBtn').onclick=()=>{if(!toggleOff('memo'))openMemo()};
+/* 열려 있는 창의 버튼은 눌린 모양으로 보여 줘요 */
+function syncToolBtns(){
+  const has=k=>!!$(`#sheets .sheet[data-win="${k}"]`);
+  $('#memoBtn').setAttribute('aria-pressed',has('memo'));$('#galBtn').setAttribute('aria-pressed',has('gallery'));$('#bgmBtn').setAttribute('aria-pressed',has('bgm'));
+  const sp=R&&speaker();$('#sheetBtn').setAttribute('aria-pressed',!!(sp&&wins.has(sp.id)));
+  $$('#chars [data-sheet]').forEach(b=>b.classList.toggle('on',wins.has(b.dataset.sheet)));
+}
+new MutationObserver(syncToolBtns).observe($('#sheets'),{childList:true});
 
 function onSheet(type,fn){$('#sheets').addEventListener(type,e=>{const el=e.target.closest('.sheet[data-cid]');if(!el||!useWin(el.dataset.cid))return;try{fn(e)}finally{stashWin()}})}
 function markSheet(c){
@@ -3575,8 +3619,9 @@ $('#roomSetSec').addEventListener('click',async e=>{
 });
 
 /* ---------------- 사이드바 숨기기 ---------------- */
-function applySide(){const off=lsGet('bt-side-off')===true;$('#roomView').classList.toggle('side-off',off);const b=$('#sideToggle');b.textContent=off?'☰':'⇤';b.title=off?'사이드바 보이기':'사이드바 숨기기';b.setAttribute('aria-label',b.title)}
-$('#sideToggle').onclick=()=>{lsSet('bt-side-off',lsGet('bt-side-off')!==true);applySide()};
+function applySide(){const off=lsGet('bt-side-off')===true;$('#roomView').classList.toggle('side-off',off);$('#sideToggle').hidden=!off}
+$('#sideToggle').onclick=()=>{lsSet('bt-side-off',false);applySide()};
+$('#sideFold').onclick=()=>{lsSet('bt-side-off',true);applySide();toast('사이드바를 접었어요 · 제목 왼쪽 ☰로 다시 펼쳐요')};
 applySide();
 
 /* ---------------- 보기 설정 (테마 색 · 글꼴 · 글자 크기) ---------------- */

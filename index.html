@@ -633,7 +633,11 @@ h1,h2{text-wrap:balance}
 #log.tpl-table .msg .edt{top:6px;right:34px}
 #log.tpl-table .mimg{display:block;max-height:220px;margin-top:4px}
 #log.tpl-table .narr:not(.ns-chapter){align-self:stretch;max-width:none;margin:0;padding:8px 40px}
-#log.tpl-table .say+.narr,#log.tpl-table .whisper+.narr,#log.tpl-table .dice-row+.narr{border-top:1px solid var(--line)}
+#log.tpl-table{overflow-x:hidden}
+#log.tpl-table .narr:not(.ns-chapter):not(.ns-box):not(.ns-accent){border-top:1px solid var(--line)}
+#log.tpl-table .narr.ns-box::before,#log.tpl-table .narr.ns-accent::before,#log.tpl-table .narr.ns-chapter::before{display:block!important;content:"";position:absolute;left:-3000px;right:-3000px;top:-11px;width:auto!important;height:1px!important;margin:0!important;background:var(--line);border:0!important}
+#log.tpl-table .narr.ns-chapter::before{top:-15px}
+#log.no-lines.tpl-table .narr::before{display:none!important}
 #log.tpl-table .narr.ns-line,#log.tpl-table .narr.ns-plain,#log.tpl-table .narr.ns-serif{font-weight:700}
 #log.tpl-table .narr.ns-line::before,#log.tpl-table .narr.ns-line::after,#log.tpl-table .narr.ns-serif::before,#log.tpl-table .narr.ns-serif::after{display:none}
 #log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{align-self:center;max-width:min(560px,92%);margin:10px 0;padding:10px 16px}

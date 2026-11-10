@@ -605,23 +605,36 @@ h1,h2{text-wrap:balance}
 #log.tpl-coco .whisper .bubble{border:0}
 #log.tpl-coco .msg .del{top:2px;right:2px}
 /* 채팅 형식: 표 (Roll20) */
-#log.tpl-table{gap:0;padding:10px 12px}
-#log.tpl-table .msg{max-width:none}
-#log.tpl-table>.say:nth-of-type(even),#log.tpl-table>.whisper:nth-of-type(even){background:var(--sunk)}
 /* 코코포리아·표에서도 지문·주사위·날짜는 채팅 형식과 똑같이 가운데 */
-#log.tpl-coco .narr,#log.tpl-table .narr{max-width:560px;margin:14px 0}
+#log.tpl-coco .narr{max-width:560px;margin:14px 0}
 #log.tpl-coco .dice-row,#log.tpl-table .dice-row{max-width:none;margin:12px 0}
 #log.tpl-coco .daymark,#log.tpl-table .daymark{margin:8px 0}
-#log.tpl-table .say,#log.tpl-table .whisper{grid-template-columns:22px minmax(0,1fr);gap:8px;padding:5px 8px;border-bottom:1px solid var(--line);align-items:start}
-#log.tpl-table .say>.dot,#log.tpl-table .whisper>.dot{width:22px;height:22px;font-size:10px;margin-top:1px}
-#log.tpl-table .say>div,#log.tpl-table .whisper>div{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:6px}
-#log.tpl-table .who{font-size:14px}
+/* 채팅 형식: 표 (Roll20) */
+#log.tpl-table{gap:0;padding:8px 0}
+#log.tpl-table .msg{max-width:none}
+#log.tpl-table .say,#log.tpl-table .whisper{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:6px 14px;border-top:1px solid var(--line);align-items:start}
+#log.tpl-table .say.mine,#log.tpl-table .whisper.mine{background:color-mix(in srgb,var(--accent) 14%,var(--sheet));border-top-color:color-mix(in srgb,var(--accent) 28%,var(--line))}
+#log.tpl-table .say>.dot,#log.tpl-table .whisper>.dot{width:30px;height:30px;border-radius:5px;font-size:13px}
+#log.tpl-table .say>div,#log.tpl-table .whisper>div{display:block;line-height:1.65;padding-top:4px;font-size:14.5px}
+#log.tpl-table .who{display:inline;font-size:14.5px;font-weight:700;color:var(--ink)}
 #log.tpl-table .who time{display:none}
-#log.tpl-table .who::after{content:":";color:var(--muted);font-weight:400;margin-left:1px}
-#log.tpl-table .say>div,#log.tpl-table .whisper>div{column-gap:4px}
-#log.tpl-table .bubble{background:none;border:0;padding:0;margin:0;border-radius:0;width:auto;flex:1 1 200px;min-width:0}
-#log.tpl-table .msg .del{top:3px;right:4px}
-#log.tpl-table .mimg{max-height:220px}
+#log.tpl-table .who .by{font-weight:400;font-size:12px}
+#log.tpl-table .who::after{content:":";margin:0 5px 0 -.22em}
+#log.tpl-table .wh-to{font-size:11.5px;margin-left:4px}
+#log.tpl-table .bubble{display:inline;position:static;background:none;border:0;padding:0;margin:0;border-radius:0;width:auto;max-width:none}
+#log.tpl-table .msg .del{top:6px;right:8px}
+#log.tpl-table .msg .edt{top:6px;right:34px}
+#log.tpl-table .mimg{display:block;max-height:220px;margin-top:4px}
+#log.tpl-table .narr:not(.ns-chapter){align-self:stretch;max-width:none;margin:0;padding:8px 40px}
+#log.tpl-table .say+.narr,#log.tpl-table .whisper+.narr,#log.tpl-table .dice-row+.narr{border-top:1px solid var(--line)}
+#log.tpl-table .narr.ns-line,#log.tpl-table .narr.ns-plain,#log.tpl-table .narr.ns-serif{font-weight:700}
+#log.tpl-table .narr.ns-line::before,#log.tpl-table .narr.ns-line::after,#log.tpl-table .narr.ns-serif::before,#log.tpl-table .narr.ns-serif::after{display:none}
+#log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{align-self:center;max-width:min(560px,92%);margin:10px 0;padding:10px 16px}
+#log.tpl-table .narr.ns-box.na-l,#log.tpl-table .narr.ns-accent.na-l{align-self:flex-start;margin-left:14px}
+#log.tpl-table .narr.ns-box.na-r,#log.tpl-table .narr.ns-accent.na-r{align-self:flex-end;margin-right:14px}
+#log.tpl-table .narr.ns-chapter{margin:14px 14px!important}
+#log.tpl-table .dice-row{border-top:1px solid var(--line);margin:0;padding:12px 0;align-self:stretch;justify-content:center}
+#log.tpl-table .daymark{margin:0;padding:10px 0 6px}
 /* 떠 있는 창 공통 */
 .fwin-body{display:flex;flex-direction:column;gap:12px}
 .sheet.fwin{display:flex;flex-direction:column}.sheet.fwin>.sheet-body{flex:1;min-height:0;overflow:auto}
@@ -2082,7 +2095,7 @@ function msgHTML(m,opts={}){
     const third=me&&m.uid!==me.uid&&m.toUid!==me.uid;
     wt=`<span class="wh-to">🔒 ${toName?esc(toName)+'에게 귓속말':'귓속말'}${third?' · 방장만 보임':''}</span>`;
   }
-  return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${cls}${isEd?' editing':''}" style="--cc:${safeColor(m.color)}">${dot(m)}
+  return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${me&&m.uid===me.uid&&!opts.export?' mine':''}${cls}${isEd?' editing':''}" style="--cc:${safeColor(m.color)}">${dot(m)}
     <div style="min-width:0"><div class="who">${esc(m.name)} <time>${hhmm(m.ct)}</time>${player?`<span class="by">· ${esc(player)}</span>`:''}${wt}</div><div class="bubble">${edBtn}${del}${img}${isEd?edBox:(m.text?fmt(m.text):'')+edMark}</div></div></div>`;
 }
 function logBody(list,opts={}){

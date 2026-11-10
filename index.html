@@ -607,6 +607,13 @@ h1,h2{text-wrap:balance}
 /* 채팅 형식: 표 (Roll20) */
 /* 코코포리아·표에서도 지문·주사위·날짜는 채팅 형식과 똑같이 가운데 */
 #log.tpl-coco .narr{max-width:560px;margin:14px 0}
+#log.tpl-coco .narr+.say,#log.tpl-coco .narr+.whisper,#log.tpl-coco .dice-row+.say,#log.tpl-coco .dice-row+.whisper,#log.tpl-coco .daymark+.say,#log.tpl-coco .daymark+.whisper{border-top:1px solid var(--line)}
+.tpl-lines{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.tpl-lines input{accent-color:var(--accent);margin:0}
+/* 구분선 끄기 */
+#log.no-lines .say,#log.no-lines .whisper,#log.no-lines .narr,#log.no-lines .dice-row{border-top:0!important;border-bottom:0!important}
+#log.no-lines.tpl-coco .say,#log.no-lines.tpl-coco .whisper{padding:7px 4px}
+#log.no-lines.tpl-table .say.mine+.say.mine,#log.no-lines.tpl-table .whisper.mine+.say.mine,#log.no-lines.tpl-table .say.mine+.whisper.mine{margin-top:0}
 #log.tpl-coco .dice-row,#log.tpl-table .dice-row{max-width:none;margin:12px 0}
 #log.tpl-coco .daymark,#log.tpl-table .daymark{margin:8px 0}
 /* 채팅 형식: 표 (Roll20) */
@@ -618,9 +625,9 @@ h1,h2{text-wrap:balance}
 #log.tpl-table .say>div,#log.tpl-table .whisper>div{display:block;line-height:1.65;padding-top:4px;font-size:14.5px}
 #log.tpl-table .who{display:inline;font-size:14.5px;font-weight:700;color:var(--ink)}
 #log.tpl-table .who time{display:none}
-#log.tpl-table .who .by{font-weight:400;font-size:12px}
+#log.tpl-table .who .by{display:none}
 #log.tpl-table .who::after{content:":";margin:0 5px 0 -.22em}
-#log.tpl-table .wh-to{font-size:11.5px;margin-left:4px}
+#log.tpl-table .wh-to{font-size:11px;font-weight:500;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--sunk);vertical-align:1px}
 #log.tpl-table .bubble{display:inline;position:static;background:none;border:0;padding:0;margin:0;border-radius:0;width:auto;max-width:none}
 #log.tpl-table .msg .del{top:6px;right:8px}
 #log.tpl-table .msg .edt{top:6px;right:34px}
@@ -895,7 +902,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 
       <section id="roomSetSec" hidden>
         <div class="sec-h"><h2>방 설정</h2></div>
-        <div class="field"><span>채팅 형식</span><div class="seg tpl-seg" id="tplSeg"><button data-tpl="chat">채팅</button><button data-tpl="coco">코코포리아</button><button data-tpl="table">표</button></div></div>
+        <div class="field"><span>채팅 형식</span><div class="seg tpl-seg" id="tplSeg"><button data-tpl="chat">채팅</button><button data-tpl="coco">코코포리아</button><button data-tpl="table">표</button></div><label class="tpl-lines" id="tplLinesRow" hidden><input type="checkbox" id="tplLines"> 대사 사이 구분선 보이기</label></div>
         <label class="field" style="margin-top:12px"><span>방 공지</span><textarea id="noticeIn" class="notice-in" rows="3" maxlength="1000" placeholder="참가자 모두에게 로그 위에 고정돼서 보여요"></textarea></label>
         <div class="row" style="display:flex;gap:6px;margin-top:6px"><button class="btn primary sm" id="noticeSave">공지 올리기</button><button class="btn sm" id="noticeDel">내리기</button></div>
       </section>
@@ -2096,7 +2103,7 @@ function msgHTML(m,opts={}){
     wt=`<span class="wh-to">🔒 ${toName?esc(toName)+'에게 귓속말':'귓속말'}${third?' · 방장만 보임':''}</span>`;
   }
   return `<div class="msg ${m.type==='whisper'?'whisper':'say'}${me&&m.uid===me.uid&&!opts.export?' mine':''}${cls}${isEd?' editing':''}" style="--cc:${safeColor(m.color)}">${dot(m)}
-    <div style="min-width:0"><div class="who">${esc(m.name)} <time>${hhmm(m.ct)}</time>${player?`<span class="by">· ${esc(player)}</span>`:''}${wt}</div><div class="bubble">${edBtn}${del}${img}${isEd?edBox:(m.text?fmt(m.text):'')+edMark}</div></div></div>`;
+    <div style="min-width:0"><div class="who"${player?` title="플레이어: ${esc(player)}"`:''}>${esc(m.name)} <time>${hhmm(m.ct)}</time>${player?`<span class="by">· ${esc(player)}</span>`:''}${wt}</div><div class="bubble">${edBtn}${del}${img}${isEd?edBox:(m.text?fmt(m.text):'')+edMark}</div></div></div>`;
 }
 function logBody(list,opts={}){
   let out='',day='';
@@ -2561,6 +2568,8 @@ function renderRoomExtras(){
   if(!R)return;
   const tpl=TPLS[R.tpl]?R.tpl:'chat',log=$('#log'),gm=isGM();
   log.classList.remove('tpl-chat','tpl-coco','tpl-table');log.classList.add('tpl-'+tpl);
+  log.classList.toggle('no-lines',R.tplLines===false);
+  $('#tplLinesRow').hidden=tpl==='chat';$('#tplLines').checked=R.tplLines!==false;
   $('#roomSetSec').hidden=!gm;
   $$('#tplSeg [data-tpl]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tpl===tpl));
   const nIn=$('#noticeIn');if(document.activeElement!==nIn)nIn.value=(R.notice&&R.notice.text)||'';
@@ -2590,6 +2599,7 @@ $('#noticeDel').onclick=async()=>{if(!isGM())return;await saveRoom({notice:null}
 $('#tplSeg').addEventListener('click',e=>{const b=e.target.closest('[data-tpl]');if(!b||!isGM()||!TPLS[b.dataset.tpl])return;
   const L=$('#log'),bottom=L.scrollHeight-L.scrollTop-L.clientHeight<40;saveRoom({tpl:b.dataset.tpl});renderRoomExtras();if(bottom)L.scrollTop=L.scrollHeight});
 $('#naSeg').addEventListener('click',e=>{const b=e.target.closest('[data-na]');if(!b||!NA[b.dataset.na])return;naCur=b.dataset.na;lsSet('bt-na-'+roomId,naCur);renderRoomExtras();$('#msg').focus()});
+$('#tplLines').addEventListener('change',e=>{if(!isGM())return;saveRoom({tplLines:e.target.checked});renderRoomExtras()});
 $('#nsSeg').addEventListener('click',e=>{const b=e.target.closest('[data-ns]');if(!b||!NS[b.dataset.ns])return;nsCur=b.dataset.ns;lsSet('bt-ns-'+roomId,nsCur);renderRoomExtras();$('#msg').focus()});
 
 /* ---------------- 떠 있는 창 (이미지·플레이리스트) ---------------- */

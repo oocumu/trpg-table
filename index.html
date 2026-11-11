@@ -1364,6 +1364,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
+const BUILD_ID = '20261111160256'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -4036,7 +4037,7 @@ function syncSys(){
   let st=null;
   if(off)st=['warn','⚠','인터넷 연결이 끊겼어요. 다시 연결되면 자동으로 이어져요.'];
   else if(deployState==='loading')st=['info','⟳','사이트를 새로 불러오는 중이에요. 잠시 후 새로고침해 주세요.','새로고침',()=>location.reload()];
-  else if(deployState==='new')st=['','✨','사이트가 업데이트됐어요. 새로고침하면 새 버전으로 바뀌어요.','새로고침',()=>location.reload(),true];
+  else if(deployState==='new')st=['','✨','사이트가 업데이트됐어요. 새로고침하면 새 버전으로 바뀌어요.','새로고침',freshReload,true];
   else if(netBad)st=['warn','⚠','서버와 연결이 원활하지 않아요. 잠시만 기다려 주세요.'];
   else if(me&&me.admin&&siteCfg.maintenance===true)st=['info','🛠','점검 모드가 켜져 있어요. 지금은 관리자만 사이트에 들어올 수 있어요.','점검 설정',()=>{location.hash='admin';setTimeout(()=>setAdmTab('maint'),0)}];
   if(!st){hideSys();return}
@@ -4049,18 +4050,37 @@ addEventListener('online',()=>{syncSys();if(!$('#sysBar').hidden)return;showSys(
 setInterval(()=>{const bad=B&&B.kind==='online'&&navigator.onLine&&netCache;if(bad){if(!netT)netT=Date.now()}else netT=null;
   const nb=!!(netT&&Date.now()-netT>8000);if(nb!==netBad){netBad=nb;syncSys()}},2000);
 /* 배포 감지: 새 버전이 올라왔거나 페이지를 다시 올리는 중인지 확인해요 (배포 사이트에서만) */
-let pageSig=null;
+// 새 버전 확인: CDN 서버마다 머리말(ETag)이 달라서 그것만으로 판단하면 업데이트가 없어도 알림이 떠요.
+// 그래서 머리말이 바뀌었을 때만 파일을 받아 그 안의 배포 번호(BUILD_ID)를 지금 페이지와 비교해요.
+// 새로고침할 때 브라우저에 남은 옛 파일 대신 새 파일을 받도록 주소에 잠깐 번호를 붙였다가 지워요
+function freshReload(){location.replace(location.pathname+'?v='+Date.now()+location.hash)}
+if(/[?&]v=\d+/.test(location.search))history.replaceState(null,'',location.pathname+location.hash);
+const okSigs=new Set();let deployFails=0,checking=false;
+async function remoteBuild(){
+  const r=await fetch(location.pathname+'?_v='+Date.now(),{cache:'no-store'});
+  if(!r.ok)return null;
+  const m=(await r.text()).match(/const BUILD_ID = '([^']*)'/);
+  return m?m[1]:null;
+}
 async function checkDeploy(){
-  if(!FIREBASE_CONFIG||!/^https?:$/.test(location.protocol)||!navigator.onLine||document.hidden)return;
+  if(!FIREBASE_CONFIG||BUILD_ID==='dev'||checking||!/^https?:$/.test(location.protocol)||!navigator.onLine||document.hidden)return;
+  checking=true;
   try{
-    // 파일 전체를 받지 않고 머리말(HEAD)만 확인해서 데이터 사용량을 아껴요
-    let r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'});
-    if(!r.ok){deployState='loading';syncSys();return}
-    let sig=r.headers.get('etag')||r.headers.get('last-modified')||'';
-    if(!sig){r=await fetch(location.pathname+'?_v='+Date.now(),{cache:'no-store'});const t=await r.text();let h=0;for(let i=0;i<t.length;i+=7)h=(h*31+t.charCodeAt(i))|0;sig=t.length+':'+h}
-    if(pageSig==null)pageSig=sig;
-    const ns=sig!==pageSig?'new':'';if(ns!==deployState){deployState=ns;syncSys()}
+    const r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'});
+    if(!r.ok){
+      // 배포 중 잠깐 생기는 오류는 두 번 연속일 때만 알려요
+      if(++deployFails>=2&&deployState!=='new'){deployState='loading';syncSys()}
+      return;
+    }
+    deployFails=0;if(deployState==='loading'){deployState='';syncSys()}
+    const sig=(r.headers.get('etag')||r.headers.get('last-modified')||'').replace(/^W\//,'');
+    if(sig&&okSigs.has(sig))return;          // 이미 확인한 머리말이면 파일은 받지 않아요
+    const rb=await remoteBuild();
+    if(rb==null)return;                     // 확인이 안 되면 알림을 띄우지 않아요
+    if(sig&&rb===BUILD_ID&&okSigs.size<20)okSigs.add(sig);
+    const ns=rb!==BUILD_ID?'new':'';if(ns!==deployState){deployState=ns;syncSys()}
   }catch(e){/* 잠깐의 네트워크 오류는 넘어가요 */}
+  finally{checking=false}
 }
 setTimeout(checkDeploy,3000);setInterval(checkDeploy,180000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeploy()});

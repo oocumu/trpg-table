@@ -408,6 +408,26 @@ kbd{display:inline-block;min-width:1.5em;padding:1px 5px;border:1px solid var(--
 .wck{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--muted)}.wck input{accent-color:var(--accent);margin:0}
 .wp-acts{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}.wp-acts .rollb{margin:0}
 .san-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px}.san-row .wf{flex:1 1 120px}
+.ab.auto{background:var(--sheet);border-style:dashed}
+.ab-val{font-family:var(--f-mono);font-size:22px;font-weight:600;line-height:1.35;font-variant-numeric:tabular-nums}
+.ab-auto{font-size:10.5px;color:var(--accent);margin-top:4px;font-weight:600}
+.res-st{margin:-4px 0 0 62px}.res-st .st-chips{margin-top:0}
+.san-box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--sunk);display:flex;flex-direction:column;gap:10px}
+.san-box .sh-h{margin:0}.san-box .res-st{margin:0}
+.san-top{display:flex;align-items:center;gap:8px}
+.san-cur{width:3.2em;border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:2px 4px;text-align:center;font-family:var(--f-mono);font-size:24px;font-weight:600;color:var(--ink)}
+.san-cur:focus{border-color:var(--accent);outline:none}
+.san-max{font-family:var(--f-mono);font-size:14px;color:var(--muted)}
+.san-bar{flex:1;--resc:#2a8a80}.san-box .san-row{margin:0}
+.mad-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mad-row .rollb{margin:0}.mad-lbl{font-size:12px;font-weight:600;color:var(--muted);margin-right:4px}
+.sp-box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:linear-gradient(180deg,var(--accent-soft),transparent 70%)}
+.sp-pool{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:6px;font-size:12.5px;color:var(--muted)}
+.sp-pool label{display:flex;align-items:center;gap:6px;font-weight:600}.sp-hint{font-size:11.5px}
+.sp-row{grid-template-columns:22px minmax(0,1fr) auto auto auto}
+.sp-mark{color:var(--accent);text-align:center;font-size:13px}
+.sp-vals{display:flex;align-items:center;gap:3px}.sp-arrow{color:var(--muted);font-size:11px}
+.sp-row .sk-act .x{opacity:.55}.sp-row:hover .sk-act .x{opacity:1}
+@container (max-width:440px){.sp-row{grid-template-columns:18px minmax(0,1fr) auto;row-gap:2px}.sp-row .sk-sub{display:none}.sp-row .sk-act{grid-column:2/-1;justify-content:flex-end}}
 .mini-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mini{border:1px solid var(--line);border-radius:10px;background:var(--sunk);padding:7px 10px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;min-width:0}
 .mini small{font-size:11.5px;color:var(--muted);font-weight:600}.mini b{font-family:var(--f-mono);font-size:17px;font-weight:600}.mini em{font-style:normal;font-size:11px;color:var(--muted)}
@@ -963,6 +983,12 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   html.has-sys .app{height:calc(100% - 38px)}
 }
 @media (max-width:480px){.new-row{grid-template-columns:minmax(0,1fr)}}
+.gate-page .auth-center{text-align:center;align-items:center}
+.gate-h1{font-family:var(--f-display);font-size:26px;margin:18px 0 6px}
+.gate-form{display:flex;flex-direction:column;gap:10px;width:min(320px,100%);margin:14px auto 6px}
+.gate-form .code-input{text-align:center;font-size:22px;letter-spacing:.3em;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);color:var(--ink);text-transform:uppercase;font-family:var(--f-mono)}
+.gate-form .code-input:focus{border-color:var(--accent);outline:none}
+.gate-form .btn{padding:11px}
 .boot-page{position:fixed;inset:0;display:grid;place-items:center;background:var(--paper);z-index:5}
 .boot-mark{width:44px;height:44px;border-radius:13px;animation:bootPulse 1.1s ease-in-out infinite}
 @keyframes bootPulse{0%,100%{opacity:.35;transform:scale(.94)}50%{opacity:1;transform:none}}
@@ -1014,6 +1040,22 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
       </form>
     <button class="btn primary" id="authRetry" hidden style="padding:10px 18px">새로고침</button>
     <p class="auth-note" id="authNote"></p>
+  </div>
+</div>
+
+<!-- 방 링크로 들어왔는데 아직 참가하지 않은 방: 가운데에 코드 입력만 -->
+<div class="auth-page gate-page" id="gateView" hidden>
+  <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
+  <div class="auth-center">
+    <div class="auth-brand"><span class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span><b>TRPG 번개탁</b></div>
+    <h1 class="gate-h1" id="gateTitle">참가 코드를 입력해 주세요</h1>
+    <p class="auth-sub" id="gateSub">이 방은 참가 코드가 있어야 들어갈 수 있어요.<br>방장에게 받은 코드를 입력해 주세요.</p>
+    <form class="gate-form" id="gateForm" novalidate>
+      <input id="gateCode" class="code-input" maxlength="10" autocomplete="off" placeholder="참가 코드" aria-label="참가 코드">
+      <p class="err" id="gateErr" hidden></p>
+      <button class="btn primary" type="submit" id="gateGo">입장하기</button>
+    </form>
+    <button class="ghost" type="button" id="gateBack">세션 목록으로</button>
   </div>
 </div>
 
@@ -1443,7 +1485,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261113170416'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261113173638'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -1572,8 +1614,9 @@ function makeLocal(){
       const id='r'+uid();let code;do code=makeCode();while(db.codes[code]);
       db.rooms[id]={...data,id,code};db.codes[code]=id;db.messages[id]=[];write();emit();return {id,code};
     },
-    async joinByCode(code){
+    async joinByCode(code,expect){
       const id=db.codes[normCode(code)],r=id&&db.rooms[id];if(!r)throw new AppError('room/not-found');
+      if(expect&&id!==expect)throw new AppError('room/other');
       if(!r.members.includes(me.uid)){r.members.push(me.uid);r.memberNames={...(r.memberNames||{}),[me.uid]:me.nick};write();emit()}
       return id;
     },
@@ -1773,10 +1816,13 @@ async function makeFirebase(cfg){
         try{await b.commit();return {id:ref.id,code}}catch(e){if(e.code!=='permission-denied'||i>=4)throw e}
       }
     },
-    async joinByCode(code){
+    async joinByCode(code,expect){
       const c=normCode(code);if(c.length<4)throw new AppError('room/not-found');
       const d=await fs.getDoc(fs.doc(db,'codes',c));if(!d.exists())throw new AppError('room/not-found');
       const id=d.data().roomId;
+      if(expect&&id!==expect)throw new AppError('room/other');
+      // 이미 참가한 방이면 다시 참가 처리하지 않아요 (읽기가 되면 참가자예요)
+      try{const r=await fs.getDoc(fs.doc(db,'rooms',id));if(r.exists()&&(r.data().members||[]).includes(me.uid))return id}catch(e){}
       await fs.updateDoc(fs.doc(db,'rooms',id),{members:fs.arrayUnion(me.uid),['memberNames.'+me.uid]:me.nick,joinCode:c});
       return id;
     },
@@ -1888,6 +1934,7 @@ const ERR_MSG={
   'invite/used':'이미 사용된 추천 코드예요. 새 코드를 받아 주세요.',
   'auth/not-approved':'가입이 완료되지 않은 계정이에요. 추천 코드로 다시 가입해 주세요.',
   'room/not-found':'그 코드의 방을 찾지 못했어요. 코드를 다시 확인해 주세요.',
+  'room/other':'이 방의 참가 코드가 아니에요. 코드를 다시 확인해 주세요.',
   'permission-denied':'이 작업을 할 수 있는 권한이 없어요.'
 };
 const errText=e=>ERR_MSG[e&&e.code]||'문제가 생겼어요. 잠시 후 다시 해 주세요.';
@@ -2040,6 +2087,11 @@ function route(){
   if(location.hash==='#profile'){if(me)showProfile();else{location.hash='';showHome()}return}
   if(location.hash==='#patch'){if(me)showPatch();else{location.hash='';showHome()}return}
   if(location.hash==='#admin'){if(me&&me.admin)showAdmin();else{location.hash='';showHome()}return}
+  $('#gateView').hidden=true;
+  // 초대 링크(#join-코드): 로그인한 사람은 코드 입력 없이 바로 들어가요
+  const j=location.hash.match(/^#join-([A-Za-z0-9]{4,12})$/);
+  if(j&&!me){toast('로그인하면 초대받은 방으로 바로 들어가요');showHome();return}
+  if(j){joinFromLink(j[1]);return}
   const m=location.hash.match(/^#room-([A-Za-z0-9_-]+)$/);
   if(m&&!me){toast('로그인하면 그 방으로 바로 들어가요');showHome();return}
   if(m)openRoom(m[1]);else showHome();
@@ -2051,7 +2103,7 @@ function showHome(){
   if(maintOn()){showMaint();return}
   closeRoom();
   document.documentElement.classList.remove('in-room');
-  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#patchView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title=SITE;syncFab();
+  $('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#patchView').hidden=true;$('#gateView').hidden=true;$('#homeView').hidden=!me;$('#authView').hidden=!!me;document.title=SITE;syncFab();
   $('#authForm').hidden=!!me;$('#userArea').hidden=!me;$('#userChip').hidden=!me;
   $('#hello').innerHTML=me?`${esc(me.nick)}님,<br><em>오늘은 뭘 굴려 볼까요?</em>`:'TRPG<br><em>빠르게 준비해요</em>';
   $('#helloSub').textContent=me?'코드를 받았다면 아래에 입력하고, 직접 진행한다면 새 방을 파 보세요.':'쉽게 방을 파고, 큰 준비 없이 TRPG를 진행해요. 서로의 RP에 온전히 집중하는 시간을 가질 수 있어요.';
@@ -2473,7 +2525,7 @@ $('#pfDelForm').addEventListener('submit',async e=>{
 function closeRoom(){flushMemo();if(roomId&&B&&B.flushRoomMeta)B.flushRoomMeta(roomId);if(unsubMsgs){unsubMsgs();unsubMsgs=null}lastLogHTML='';OOC=[];chTab='main';memoText=null;msgEdit=null;closeAllSheets();bgmStop();shows=[];tracks=[];unsubRoom.forEach(f=>f());unsubRoom=[];roomId=null;R=null;M=[];MP=[];MW=[];CH=[];lastCount=0;pendingImg=null;showAttach()}
 function openRoom(id){
   if(roomId===id)return;
-  closeRoom();roomId=id;
+  closeRoom();roomId=id;$('#gateView').hidden=true;
   document.documentElement.classList.add('in-room');
   $('#homeView').hidden=true;$('#authView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#roomView').hidden=false;syncFab();
   const st=lsGet('bt-room-'+id,{});speakerId=st.speaker||null;mode=st.mode||'say';
@@ -2504,10 +2556,36 @@ function openRoom(id){
 }
 function remember(){lsSet('bt-room-'+roomId,{speaker:speakerId,mode,whTo})}
 function renderMissing(){
+  if(roomId){const id=roomId;setTimeout(()=>{if(roomId===id)showGate(id)},0);return}
   $('#log').innerHTML=`<div class="notfound"><b>들어갈 수 없는 방이에요</b><p style="color:var(--muted);margin:0 0 14px">방이 지워졌거나, 아직 참가하지 않은 방이에요.<br>방장에게 참가 코드를 받아 홈에서 입력해 주세요.</p><button class="btn primary" id="nfBack">세션 목록으로</button></div>`;
   $('#nfBack').onclick=()=>{location.hash=''};
   $('#composer').hidden=true;$('#endedBar').hidden=true;$('#roomName').value='';$('#chars').innerHTML='';$('#members').innerHTML='';$('#roomCode').textContent='······';
 }
+/* 초대 링크 · 방 링크 */
+let gateRoom=null,joiningLink=false;
+async function joinFromLink(code){
+  if(joiningLink)return;joiningLink=true;
+  try{const id=await B.joinByCode(code);toast('초대받은 방에 들어왔어요');location.replace('#room-'+id)}
+  catch(x){showGate(null,'초대 링크가 잘못됐거나 방이 사라졌어요. 참가 코드를 직접 입력해 주세요.')}
+  finally{joiningLink=false}
+}
+function showGate(id,msg){
+  const keep=id||gateRoom;closeRoom();gateRoom=keep;document.documentElement.classList.remove('in-room');
+  ['homeView','authView','roomView','profileView','adminView','patchView','maintView'].forEach(v=>$('#'+v).hidden=true);
+  $('#gateView').hidden=false;syncFab();document.title=SITE;
+  $('#gateSub').innerHTML=msg?esc(msg):'이 방은 참가 코드가 있어야 들어갈 수 있어요.<br>방장에게 받은 코드를 입력해 주세요.';
+  $('#gateErr').hidden=true;$('#gateCode').value='';setTimeout(()=>$('#gateCode').focus(),50);
+}
+$('#gateForm').addEventListener('submit',async e=>{
+  e.preventDefault();const code=$('#gateCode').value.trim(),err=$('#gateErr');
+  if(code.length<4){err.textContent='참가 코드를 입력해 주세요.';err.hidden=false;return}
+  const btn=$('#gateGo');btn.disabled=true;
+  try{const id=await B.joinByCode(code,gateRoom||undefined);gateRoom=null;$('#gateView').hidden=true;toast('방에 들어왔어요');
+    if(location.hash==='#room-'+id){roomId=null;openRoom(id)}else location.hash='room-'+id}
+  catch(x){err.textContent=errText(x);err.hidden=false}
+  finally{btn.disabled=false}
+});
+$('#gateBack').onclick=()=>{gateRoom=null;location.hash='';if(!location.hash)showHome()};
 const isGM=()=>!!(R&&me&&R.ownerUid===me.uid);
 const ownerOf=c=>c.ownerUid||R.ownerUid;
 const canEdit=c=>!!c&&(ownerOf(c)===me.uid||isGM());
@@ -2758,7 +2836,7 @@ const AC_STYLES=[['기본','위아래 짧은 줄'],['줄없음','글만 깔끔�
 let acItems=[],acSel=0,acRange=null;
 function acSkills(c){
   if(!c)return [];const sh=sheetOf(c),kind=c.sheetKind,out=[];
-  for(const [list,isAb] of [[sh.ab||[],true],[sh.sk||[],false]])for(const it of list){const sp=rollSpec(kind,sh,it,isAb);if(sp&&(+it.v||0)>0)out.push(sp)}
+  for(const [list,isAb] of [[sh.ab||[],true],[sh.sk||[],false],[sh.sp||[],false]])for(const it of list){const sp=rollSpec(kind,sh,it,isAb);if(sp&&(+it.v||0)>0)out.push(sp)}
   return out;
 }
 function acCompute(){
@@ -2856,7 +2934,7 @@ $('#menuBtn').onclick=()=>drawer(true);
 $('#scrim').onclick=()=>drawer(false);
 $('#shareBtn').onclick=()=>{
   if(!R)return;const site=location.href.split('#')[0];
-  copyText(`TRPG 세션 「${R.name}」에 초대할게요!\n참가 코드: ${R.code}\n${site} 에서 로그인한 뒤 코드를 입력하면 들어올 수 있어요.`,
+  copyText(`TRPG 세션 「${R.name}」에 초대할게요!\n초대 링크: ${site}#join-${R.code}\n(로그인하면 코드 없이 바로 들어와요 · 참가 코드 ${R.code})`,
     B.kind==='online'?'초대 문구를 복사했어요. 친구에게 보내 주세요':'초대 문구를 복사했어요. 혼자 모드라 같은 브라우저의 다른 계정만 참가할 수 있어요');
 };
 $('#copyCode').onclick=()=>{if(R&&R.code)copyText(R.code,`참가 코드 ${R.code}를 복사했어요`)};
@@ -3025,17 +3103,22 @@ const field=(f,k,label,val,type,half,ph='')=>type==='l'
 function statTabHTML(c,sh,kind,ro){
   const sum=summary(kind,sh);
   const resHTML=sh.res.map(r=>{
+    if(kind==='coc'&&r.label==='이성')return '';
+    if(kind==='coc'&&r.label==='체력')return resRow(r)+`<div class="res-st">${stChips(sh,ro,['uncon','dying','mw'])}</div>`;
+    return resRow(r);
+  }).join('');
+  function resRow(r){
     if(r.max==null)return `<div class="res"><span class="res-k">${esc(r.label)}</span><span></span>
       <span class="res-num"><button class="step" data-sres="${esc(r.id)}:-1" aria-label="${esc(r.label)} 내리기">−</button><input class="num" data-f="rescur:${esc(r.id)}" value="${esc(r.cur)}" inputmode="numeric" aria-label="${esc(r.label)}"><button class="step" data-sres="${esc(r.id)}:1" aria-label="${esc(r.label)} 올리기">+</button></span></div>`;
     const pct=Math.max(0,Math.min(100,(+r.cur||0)/(+r.max||1)*100));
     return `<div class="res" style="--resc:${r.color?safeColor(r.color):'var(--accent)'}"><span class="res-k">${esc(r.label)}</span>
       <div class="res-bar"><i data-bar="${esc(r.id)}" style="width:${pct}%"></i></div>
       <span class="res-num"><button class="step" data-sres="${esc(r.id)}:-1" aria-label="${esc(r.label)} 내리기">−</button><input class="num" data-f="rescur:${esc(r.id)}" value="${esc(r.cur)}" inputmode="numeric" aria-label="현재 ${esc(r.label)}">/<input class="num" data-f="resmax:${esc(r.id)}" value="${esc(r.max)}" inputmode="numeric" aria-label="최대 ${esc(r.label)}"><button class="step" data-sres="${esc(r.id)}:1" aria-label="${esc(r.label)} 올리기">+</button></span></div>`;
-  }).join('');
+  }
   const abHTML=sh.ab.map(a=>`<div class="ab"><span class="ab-k">${esc(a.label)}<small>${esc(a.k)}</small></span>
       <input data-f="ab:${esc(a.id)}" value="${esc(a.v)}" inputmode="numeric" aria-label="${esc(a.label)}">
       <span class="ab-sub" data-sub="ab:${esc(a.id)}">${esc(abSub(kind,sh,a))}</span>
-      <button class="rollb" data-sroll="ab:${esc(a.id)}">🎲 굴림</button>${kind==='coc'&&COC_GEN[a.k]&&!ro?`<button class="ab-gen ed" data-sgen="${esc(a.id)}" title="${genLabel(a.k)}로 이 특성치를 굴려 정해요">${genLabel(a.k)}로 정하기</button>`:''}</div>`).join('');
+      <button class="rollb" data-sroll="ab:${esc(a.id)}">🎲 굴림</button>${kind==='coc'&&COC_GEN[a.k]&&!ro?`<button class="ab-gen ed" data-sgen="${esc(a.id)}" title="${genLabel(a.k)}로 이 특성치를 굴려 정해요">${genLabel(a.k)}로 정하기</button>`:''}</div>`).join('')+(kind==='coc'?cocAutoTiles(sh):'');
   const favs=sh.sk.filter(s=>s.fav),tab=skTab||(favs.length?'fav':'all'),list=tab==='fav'?favs:sh.sk;
   const skHTML=list.map(s=>`<div class="sk${s.b!=null&&(+s.v||0)>(+s.b)?' up':''}" data-skrow="${esc(s.label)}" data-skid="${esc(s.id)}"${skEdit&&!ro?' draggable="true"':''}>
       ${skEdit&&!ro?'<span class="grip" title="끌어서 순서 바꾸기">⠿</span>':`<button class="star${s.fav?' on':''}" data-sfav="${esc(s.id)}" aria-pressed="${!!s.fav}" title="${s.fav?'자주 쓰는 항목에서 빼기':'자주 쓰는 항목에 넣기'}" aria-label="${esc(s.label)} 자주 쓰는 항목">★</button>`}
@@ -3054,8 +3137,8 @@ function statTabHTML(c,sh,kind,ro){
     </div>
     ${kind==='coc'?lastHTML(c,sh,ro):''}
     <section><div class="sh-h"><h3>자원</h3></div><div class="res-list">${resHTML}</div></section>
-    ${kind==='coc'?cocMiniHTML(sh,ro):''}
     <section><div class="sh-h"><h3>능력치</h3><span class="sh-sum" data-sum="ab">${sum.ab}</span></div><div class="ab-grid">${abHTML}</div></section>
+    ${kind==='coc'?sanHTML(sh,ro):''}
     ${kind==='coc'?ageHTML(c,sh,ro):''}
     <section><div class="sh-h"><h3>${kind==='coc'?'기능':kind==='dnd'?'기술 · 보너스':'항목'}</h3><span class="sh-sum" data-sum="sk">${sum.sk}</span></div>
       ${pfHTML}
@@ -3064,7 +3147,25 @@ function statTabHTML(c,sh,kind,ro){
       ${tab==='all'&&sh.sk.length>12&&!skEdit?'<input class="sk-search" data-sksearch placeholder="기능 찾기" aria-label="기능 찾기" autocomplete="off">':''}
       <div class="sk-list">${skHTML||(tab==='fav'?emptyFav:'<p class="sheet-foot">굴릴 항목을 추가해 보세요.</p>')}</div>
       ${skEdit?'':`<button class="ghost" data-sadd style="margin-top:6px">+ 항목 추가</button>`}</section>
+    ${spHTML(kind,sh,ro)}
     <p class="sheet-foot">${kind==='coc'?'값을 누르면 바로 고칠 수 있어요. 굴림은 1d100이며 보통·어려운·극단적 성공을 자동으로 판정해요.':kind==='dnd'?'능력치 굴림은 1d20 + 수정치, 기술은 1d20 + 적은 보너스로 굴려요.':'능력치와 항목 모두 위에서 고른 방식으로 굴려요.'} 굴린 결과는 이 인물 이름으로 로그에 올라가요.</p>`;
+}
+/* 특별 기능: 시나리오가 따로 주는 기능·스탯. 일반 기능 포인트와 따로 계산해요 */
+const allSk=sh=>[...(sh.sk||[]),...(sh.sp||[])];
+function spSum(sh){const l=sh.sp||[];return {used:l.reduce((a,x)=>a+Math.max(0,(+x.v||0)-(+x.b||0)-(+x.g||0)),0),pool:+sh.spPool||0,n:l.length}}
+function spHTML(kind,sh,ro){
+  const l=sh.sp||[],S=spSum(sh);
+  if(ro&&!l.length)return '';
+  const rows=l.map(x=>`<div class="sk sp-row${(+x.v||0)>(+x.b||0)?' up':''}">
+      <span class="sp-mark" aria-hidden="true">✦</span>
+      <input class="lbl" data-f="spl:${esc(x.id)}" value="${esc(x.label)}" maxlength="20" aria-label="특별 기능 이름" placeholder="기능 이름">
+      <span class="sk-sub">${esc(skSub(kind,sh,x))}</span>
+      <span class="sp-vals"><input class="num" data-f="spb:${esc(x.id)}" value="${esc(x.b||0)}" inputmode="numeric" title="초기치" aria-label="${esc(x.label)} 초기치"><span class="sp-arrow">→</span><input class="num" data-f="spv:${esc(x.id)}" value="${esc(x.v)}" inputmode="numeric" title="현재 값" aria-label="${esc(x.label)} 값"></span>
+      <span class="sk-act">${kind==='coc'?`<button class="sk-ck${x.ck?' on':''}" data-sck="${esc(x.id)}" aria-pressed="${!!x.ck}" title="성장 체크" aria-label="${esc(x.label)} 성장 체크">✓</button>`:''}<button class="rollb" data-sroll="sp:${esc(x.id)}" aria-label="${esc(x.label)} 굴리기">🎲</button>${ro?'':`<button class="x ed" data-spdel="${esc(x.id)}" aria-label="${esc(x.label)} 삭제">×</button>`}</span></div>`).join('');
+  return `<section class="sp-box"><div class="sh-h"><h3>✦ 특별 기능</h3><span class="sh-sum" data-sum="sp">특별 포인트 <b class="${S.pool&&S.used>S.pool?'over':''}">${S.used}</b> / ${S.pool||'—'}</span></div>
+    <div class="sp-pool"><label>시나리오가 주는 포인트<input class="num" data-f="sppool" value="${esc(sh.spPool||'')}" inputmode="numeric" placeholder="0" aria-label="특별 포인트"></label><span class="sp-hint">초기치 → 현재 값 · 올린 만큼 특별 포인트에서 빠져요</span></div>
+    <div class="sk-list">${rows||'<p class="sheet-foot" style="padding:6px 2px">시나리오에서 따로 주는 기능이나 스탯을 여기에 넣어 보세요. 일반 기능 포인트와 따로 계산돼요.</p>'}</div>
+    ${ro?'':'<button class="ghost ed" data-spadd style="margin-top:6px">+ 특별 기능 추가</button>'}</section>`;
 }
 function infoTabHTML(c,kind){
   const player=(R.memberNames||{})[ownerOf(c)]||'';
@@ -3233,7 +3334,7 @@ function cocRecalc(sh){
   const g=k=>cocG(sh,k);
   const set=(label,cur,max)=>{const x=cocRes(sh,label);if(x){x.cur=cur;x.max=max}};
   const hp=Math.max(1,Math.floor((g('CON')+g('SIZ'))/10)),mp=Math.max(1,Math.floor(g('POW')/5));
-  set('체력',hp,hp);set('마력',mp,mp);set('이성',Math.min(g('POW'),cocSanMax(sh)),cocSanMax(sh));
+  set('체력',hp,hp);set('마력',mp,mp);set('이성',Math.min(g('POW'),cocSanMax(sh)),cocSanMax(sh));sh.san0=g('POW');
   const setBase=(label,val)=>{const x=cocSk(sh,label);if(x){const raised=Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b));x.b=val;x.v=val+raised}};
   setBase('회피',Math.floor(g('DEX')/2));setBase('모국어',g('EDU'));
 }
@@ -3316,14 +3417,31 @@ function lastHTML(c,sh,ro){
     <button class="x" data-slastx aria-label="닫기" style="opacity:.6">×</button></div>`;
 }
 const CB_ST=[['mw','중상'],['uncon','기절'],['dying','빈사'],['tmp','일시적 광기'],['ind','장기적 광기']];
-const stChips=(sh,ro)=>{const st=sh.st||{};return `<div class="st-chips">${CB_ST.map(([k,l])=>`<button class="st-chip${st[k]?' on':''}${['mw','dying','ind'].includes(k)?' bad':''}" data-cbst="${k}" aria-pressed="${!!st[k]}"${ro?' disabled':''}>${st[k]?'☑':'☐'} ${l}</button>`).join('')}</div>`};
-/* 능력치 탭 위쪽: 이동력·피해 보너스·체구 (자동 계산)과 상태 체크 */
-function cocMiniHTML(sh,ro){
+const stChips=(sh,ro,keys)=>{const st=sh.st||{};return `<div class="st-chips">${CB_ST.filter(([k])=>!keys||keys.includes(k)).map(([k,l])=>`<button class="st-chip${st[k]?' on':''}${['mw','dying','ind'].includes(k)?' bad':''}" data-cbst="${k}" aria-pressed="${!!st[k]}"${ro?' disabled':''}>${st[k]?'☑':'☐'} ${l}</button>`).join('')}</div>`};
+/* 특성치 칸 끝에 붙는 자동 계산 칸: 이동력 · 피해 보너스 · 체구 */
+function cocAutoTiles(sh){
   const D=cocDB(sh),M=cocMov(sh);
-  return `<section><div class="sh-h"><h3>전투 수치 · 상태</h3><button class="ghost" data-stab="combat" style="font-size:12px">무기·전투 탭 →</button></div>
-    <div class="mini-row"><span class="mini"><small>이동력</small><b>${M.mov}</b>${M.pen?`<em>나이 −${M.pen}</em>`:''}</span><span class="mini"><small>피해 보너스</small><b>${D.db==='0'?'없음':esc(D.db)}</b></span><span class="mini"><small>체구</small><b>${D.build>0?'+':''}${D.build}</b></span></div>
-    ${stChips(sh,ro)}
-    <p class="sheet-foot" style="margin-top:6px">이동력·피해 보너스·체구는 근력·민첩·크기와 나이로 자동 계산돼요.</p></section>`;
+  const t=(k,label,val,sub,tip)=>`<div class="ab auto" title="${esc(tip)}"><span class="ab-k">${label}<small>${k}</small></span><b class="ab-val">${val}</b><span class="ab-sub">${sub}</span><span class="ab-auto">자동 계산</span></div>`;
+  return t('MOV','이동력',M.mov,M.pen?`기본 ${M.base} · 나이 −${M.pen}`:'민첩·근력·크기','민첩과 근력이 둘 다 크기보다 작으면 7, 둘 다 크면 9, 그 밖에는 8이에요. 나이 보정이 있으면 그만큼 빼요.')
+    +t('DB','피해 보너스',D.db==='0'?'없음':esc(D.db),`근력+크기 ${D.sum}`,'근력과 크기의 합으로 정해져요.')
+    +t('BLD','체구',(D.build>0?'+':'')+D.build,`근력+크기 ${D.sum}`,'근력과 크기의 합으로 정해져요.');
+}
+/* 이성 (능력치 탭): 현재 / 최대 / 시작, 광기 체크, 판정, 광기의 발작 */
+const MAD_RT=[['기억 상실','마지막으로 안전했던 순간 이후의 일을 기억하지 못해요.'],['심인성 장애','눈이 멀거나 귀가 들리지 않거나 몸이 굳는 등 몸의 기능을 잃어요.'],['폭력','적이든 동료든 가리지 않고 주변을 공격해요.'],['편집증','모두가 자신을 노리고 있다고 믿어요.'],['소중한 사람','눈앞의 사람을 배경의 소중한 사람으로 착각하고 그렇게 대해요.'],['기절','그 자리에서 정신을 잃어요.'],['공황 도주','무슨 수를 써서든 이곳에서 멀리 달아나려 해요.'],['감정 폭발','웃음·울음·비명이 터져 나와 아무것도 하지 못해요.'],['공포증','새로운 공포증이 생기고, 그 대상이 눈앞에 있다고 느껴요.'],['광증','새로운 광증(집착)이 생기고, 거기에 빠져들어요.']];
+const MAD_SUM=[['기억 상실','정신을 차려 보니 낯선 곳이고, 그동안의 기억이 없어요.'],['도둑맞음','정신을 차려 보니 소지품 일부가 사라졌어요.'],['상처투성이','정신을 차려 보니 몸 여기저기 다쳐 있어요.'],['폭력','그동안 누군가에게 폭력을 휘둘렀어요.'],['사상 · 신념','배경의 신념을 극단적인 방식으로 따랐어요.'],['소중한 사람','소중한 사람을 찾아 무작정 헤맸어요.'],['수용','병원이나 경찰서 같은 곳에서 깨어나요.'],['공황 도주','정신을 차려 보니 아주 먼 곳에 와 있어요.'],['공포증','새로운 공포증이 생겼어요.'],['광증','새로운 광증(집착)이 생겼어요.']];
+function sanHTML(sh,ro){
+  const san=cocRes(sh,'이성'),sl=sh.sanl||{s:'0',f:'1D6'},st=sh.st||{},san0=sh.san0!=null?sh.san0:cocG(sh,'POW');
+  if(!san)return '';
+  const pct=Math.max(0,Math.min(100,(+san.cur||0)/(cocSanMax(sh)||1)*100));
+  return `<section class="san-box"><div class="sh-h"><h3>이성</h3><span class="sh-sum">시작 <b>${esc(san0)}</b></span></div>
+    <div class="san-top"><input class="san-cur" data-f="rescur:${esc(san.id)}" value="${esc(san.cur)}" inputmode="numeric" aria-label="현재 이성"><span class="san-max">/ ${cocSanMax(sh)}</span>
+      <div class="res-bar san-bar"><i data-bar="${esc(san.id)}" style="width:${pct}%"></i></div></div>
+    <div class="res-st">${stChips(sh,ro,['tmp','ind'])}</div>
+    <div class="san-row"><label class="wf"><span>성공 시 잃는 이성</span><input data-f="sanl:s" value="${esc(sl.s)}" maxlength="12" placeholder="0"></label><label class="wf"><span>실패 시 잃는 이성</span><input data-f="sanl:f" value="${esc(sl.f)}" maxlength="12" placeholder="1D6"></label>
+      ${ro?'':'<button class="rollb ed" data-sanroll>🧠 이성 판정</button>'}</div>
+    <div class="mad-row"><span class="mad-lbl">광기의 발작</span>${ro?'':`<button class="rollb ed" data-mad="rt" title="장면 중에 바로 일어나는 발작이에요 (1D10 라운드)">🎲 실시간</button><button class="rollb ed" data-mad="sum" title="시간이 건너뛰어 정신을 차렸을 때의 결과예요 (1D10 시간)">🎲 요약</button>`}</div>
+    <label class="wf"><span>현재 정신 상태</span><input data-f="mind" value="${esc(sh.mind||'')}" maxlength="60" placeholder="평정심"></label>
+    <p class="sheet-foot">최대 이성은 99에서 크툴루 신화 기능치를 뺀 값이에요. 한 번에 5 이상 잃으면 일시적 광기, 하루에 이성의 1/5 이상 잃으면 장기적 광기를 알려 드려요.</p></section>`;
 }
 function combatTabHTML(c,sh,ro){
   const D=cocDB(sh),M=cocMov(sh),dodge=cocSk(sh,'회피'),hp=cocRes(sh,'체력'),san=cocRes(sh,'이성'),st=sh.st||{};
@@ -3343,7 +3461,7 @@ function combatTabHTML(c,sh,ro){
     <div class="wp-bot"><label class="wck" title="피해 식에 '피해보너스'나 'DB'를 직접 적었다면 이 체크는 무시돼요"><input type="checkbox" data-wpck="${esc(x.id)}:db"${x.db?' checked':''}> 피해 보너스 자동으로 더하기</label><label class="wck"><input type="checkbox" data-wpck="${esc(x.id)}:imp"${x.imp?' checked':''}> 관통 무기</label>
       <span class="wp-acts">${ro?'':`<button class="rollb ed" data-wpatk="${esc(x.id)}">🎯 공격 ${sk?esc(sk.v):''}</button><button class="rollb ed" data-wpdmg="${esc(x.id)}">💥 피해</button><button class="rollb ed" data-wpext="${esc(x.id)}" title="극단적 성공일 때의 피해예요. 관통 무기는 최대 피해에 한 번 더 굴려 더해요">💥 극단적</button>`}</span></div>
   </div>`}).join('');
-  const sl=sh.sanl||{s:'0',f:'1D6'},ck=sh.sk.filter(s=>s.ck);
+  const sl=sh.sanl||{s:'0',f:'1D6'},ck=allSk(sh).filter(s=>s.ck);
   return `${lastHTML(c,sh,ro)}<section><div class="sh-h"><h3>전투 수치</h3><span class="sh-sum">근력 + 크기 = ${D.sum}</span></div>
     <div class="cb-grid">
       <div class="cb"><span>피해 보너스</span><b>${D.db==='0'?'없음':esc(D.db)}</b></div>
@@ -3358,10 +3476,7 @@ function combatTabHTML(c,sh,ro){
   <section><div class="sh-h"><h3>무기</h3><span class="sh-sum">${D.db==='0'?'':'피해 보너스 '+esc(D.db)}</span></div>
     <div class="wp-list">${wp||'<p class="sheet-foot">무기가 없어요.</p>'}</div>
     ${ro?'':'<button class="ghost ed" data-wpadd style="margin-top:6px">+ 무기 추가</button>'}</section>
-  <section><div class="sh-h"><h3>이성</h3>${san?`<span class="sh-sum">현재 <b>${esc(san.cur)}</b> / 최대 ${cocSanMax(sh)}</span>`:''}</div>
-    <div class="san-row"><label class="wf"><span>성공 시 잃는 이성</span><input data-f="sanl:s" value="${esc(sl.s)}" maxlength="12" placeholder="0"></label><label class="wf"><span>실패 시 잃는 이성</span><input data-f="sanl:f" value="${esc(sl.f)}" maxlength="12" placeholder="1D6"></label>
-      ${ro?'':'<button class="rollb ed" data-sanroll>🧠 이성 판정</button>'}</div>
-    <p class="sheet-foot">한 번에 5 이상 잃으면 일시적 광기, 하루에 이성의 1/5 이상 잃으면 장기적 광기를 알려 드려요.</p></section>
+
   <section><div class="sh-h"><h3>성장</h3><span class="sh-sum">성장 체크 ${ck.length}개</span></div>
     <div class="grow-chips">${ck.length?ck.map(s=>`<span class="chip">${esc(s.label)} ${esc(s.v)}</span>`).join(''):'<span class="sheet-foot">기능 판정에 성공하면 자동으로 체크돼요. 능력치 탭의 ✓로 직접 고를 수도 있어요.</span>'}</div>
     ${ro||!ck.length?'':'<button class="btn sm ed" data-sgrowall style="margin-top:8px">📈 성장 굴림</button>'}</section>
@@ -3378,12 +3493,14 @@ function cocCheck(label,target,cid,opt={}){
 const okJ=j=>j&&j.c!=='fail'&&j.c!=='fumble'&&!!j.v;
 function setLast(c,o){const w=wins.get(c.id);if(w)w.st.last=o}
 /* 시트 버튼 처리. 처리했으면 true */
+/* 시트를 먼저 저장하고 로그에 올려요 (혼자 모드에서 방 정보가 새로 들어와도 바뀐 값이 사라지지 않게) */
+function pushS(c,msg,cid){markSheet(c);flushSheet();return push(msg,cid)}
 function cocClick(c,sh,d,b){
   const w=wins.get(c.id),ended=R.status==='ended';
   const needLive=()=>{if(ended){toast('종료된 세션에서는 굴릴 수 없어요');return false}return true};
   if(d.sgen){if(!needLive())return true;const a=sh.ab.find(x=>x.id===d.sgen);if(!a)return true;
     const r=roll(COC_GEN[a.k]||'3d6'),v=r.total*5;a.v=v;cocRecalc(sh);
-    push({type:'dice',label:`${a.label} 특성치 굴림`,f:genLabel(a.k),total:v,detail:`${r.detail} = ${r.total} × 5`},c.id);
+    pushS(c,{type:'dice',label:`${a.label} 특성치 굴림`,f:genLabel(a.k),total:v,detail:`${r.detail} = ${r.total} × 5`},c.id);
     markSheet(c);renderSheet();toast(`${a.label} ${v} · 체력·마력·이성도 다시 맞췄어요`);return true}
   if('ageapply' in d){
     const age=ageOf(c),r=ageRule(age);if(!r||r.out)return true;
@@ -3400,23 +3517,27 @@ function cocClick(c,sh,d,b){
     if(r.mov)parts.push(`이동력 −${r.mov}`);
     const text=parts.filter(Boolean).join(' · ');
     sh.ageAdj={age,mov:r.mov||0,before,text};cocRecalc(sh);
-    push({type:'dice',label:`나이 보정 (${age}세)`,f:r.chk?`교육 성장 판정 ${r.chk}회`:'나이 보정',total:cocG(sh,'EDU'),detail:text},c.id);
+    pushS(c,{type:'dice',label:`나이 보정 (${age}세)`,f:r.chk?`교육 성장 판정 ${r.chk}회`:'나이 보정',total:cocG(sh,'EDU'),detail:text},c.id);
     markSheet(c);renderSheet();toast('나이 보정을 적용했어요');return true}
   if('ageundo' in d){const a=sh.ageAdj;if(!a)return true;sh.ab.forEach(x=>{if(a.before&&x.id in a.before)x.v=a.before[x.id]});delete sh.ageAdj;cocRecalc(sh);markSheet(c);renderSheet();toast('나이 보정을 되돌렸어요');return true}
   if('slastx' in d){if(w)w.st.last=null;renderSheet();return true}
   if('spush' in d){const L=w&&w.st.last;if(!L||L.pushed||!needLive())return true;
     const res=cocCheck(L.label+' (밀어붙이기)',L.target,c.id);
-    if(okJ(res.j)&&L.sk){const s=sh.sk.find(x=>x.id===L.sk);if(s&&s.label!=='크툴루 신화'){s.ck=true;markSheet(c)}}
+    if(okJ(res.j)&&L.sk){const s=allSk(sh).find(x=>x.id===L.sk);if(s&&s.label!=='크툴루 신화'){s.ck=true;markSheet(c)}}
     w.st.last={...L,total:res.r.total,c:res.j.c,pushed:true};renderSheet();toast(`밀어붙이기 ${res.r.total} · ${res.j.v||''}`);return true}
   if('sluck' in d){const L=w&&w.st.last;if(!L||L.pushed||!needLive())return true;const lk=cocAb(sh,'LUCK'),diff=L.total-L.target,old=+lk.v||0;
     if(diff<=0||diff>old){toast('행운이 모자라요');return true}
     lk.v=old-diff;
-    push({type:'dice',label:`${L.label} · 행운 사용`,f:`행운 ${old} → ${lk.v}`,total:L.target,detail:`${L.total} → ${L.target} (행운 −${diff})`,target:L.target,verdict:'성공',vc:''},c.id);
+    pushS(c,{type:'dice',label:`${L.label} · 행운 사용`,f:`행운 ${old} → ${lk.v}`,total:L.target,detail:`${L.total} → ${L.target} (행운 −${diff})`,target:L.target,verdict:'성공',vc:''},c.id);
     w.st.last=null;markSheet(c);renderSheet();toast(`행운 ${diff}을 써서 성공으로 바꿨어요`);return true}
+  if(d.mad){if(!needLive())return true;const rt=d.mad==='rt',T=rt?MAD_RT:MAD_SUM,r=roll('1d10').total,du=roll('1d10').total,[nm,ds]=T[r-1];
+    sh.st=sh.st||{};sh.st.tmp=true;sh.mind=nm;
+    pushS(c,{type:'dice',label:`광기의 발작 (${rt?'실시간':'요약'})`,f:'1d10',total:r,detail:`${nm} — ${ds} · 지속 ${du}${rt?'라운드':'시간'}`},c.id);
+    markSheet(c);renderSheet();toast(`광기의 발작: ${nm} (${du}${rt?'라운드':'시간'})`);return true}
   if('wfill' in d){const cr=+(cocSk(sh,'신용')||{}).v||0,wl=wealthOf(cr,sh.era==='modern'?'modern':'1920');
     if((c.info.spend||c.info.cash||c.info.assets)&&!b.classList.contains('warn')){b.classList.add('warn');b.textContent='적어 둔 값을 바꿔요. 한 번 더 눌러 주세요';setTimeout(()=>{if(b.isConnected){b.classList.remove('warn');b.textContent='신용으로 채우기'}},3000);return true}
     c.info.spend=`${wl.lvl} (하루 ${wl.day}까지)`;c.info.cash=wl.cash;c.info.assets=wl.assets;markSheet(c);renderSheet();toast('신용 기능치로 생활 수준·현금·자산을 채웠어요');return true}
-  if(d.sck){const s=sh.sk.find(x=>x.id===d.sck);if(s){if(s.ck)delete s.ck;else s.ck=true;markSheet(c);renderSheet()}return true}
+  if(d.sck){const s=allSk(sh).find(x=>x.id===d.sck);if(s){if(s.ck)delete s.ck;else s.ck=true;markSheet(c);renderSheet()}return true}
   if('wpadd' in d){sh.wp=sh.wp||[];sh.wp.push({id:uid(),name:'새 무기',skill:'근접전(격투)',dmg:'1D6+피해보너스',db:false,imp:false,rng:'',att:'1',ammo:'',mal:''});markSheet(c);renderSheet();
     const ins=SE.querySelectorAll('.wp-name');const last=ins[ins.length-1];if(last){last.focus();last.select()}return true}
   if(d.wpdel){if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='삭제';setTimeout(()=>{if(b.isConnected){b.classList.remove('armed');b.textContent='×'}},3000);return true}
@@ -3433,7 +3554,7 @@ function cocClick(c,sh,d,b){
     if(!ext){const r=roll(W.f);total=Math.max(0,r.total);detail=r.detail;f=W.f.toUpperCase()}
     else{const mx=diceMax(W.f);let extra=0,ed='';if(x.imp&&W.base&&roll(W.base)){const r=roll(W.base);extra=r.total;ed=` + 관통 ${r.detail}`}
       total=Math.max(0,mx+extra);detail=`최대 ${mx}${ed}`;f=`${W.f.toUpperCase()} 극단적 성공${x.imp?' (관통)':''}`}
-    push({type:'dice',label:`${x.name} 피해`,f,total,detail},c.id);toast(`${x.name} 피해 ${total}`);return true}
+    pushS(c,{type:'dice',label:`${x.name} 피해`,f,total,detail},c.id);toast(`${x.name} 피해 ${total}`);return true}
   if('cbhit' in d||'cbheal' in d){const hp=cocRes(sh,'체력');const inp=SE.querySelector('[data-cbdmg]'),n=toNum(inp&&inp.value);if(!hp||n<=0){toast('양을 숫자로 적어 주세요');return true}
     sh.st=sh.st||{};const cur=+hp.cur||0,max=+hp.max||1;
     if('cbheal' in d){hp.cur=Math.min(max,cur+n);if(hp.cur>0){delete sh.st.uncon}markSheet(c);renderSheet();toast(`체력 ${cur} → ${hp.cur}`);return true}
@@ -3455,14 +3576,14 @@ function cocClick(c,sh,d,b){
     if(loss>=5){notes.push('일시적 광기 위험 · 지능 판정');}
     if(loss>0&&sh.sanDay.lost>=Math.max(1,Math.floor(sh.sanDay.start/5))&&!sh.st.ind){sh.st.ind=true;notes.push('장기적 광기 (오늘 이성의 1/5 이상 잃음)')}
     if(nv===0)notes.push('영구적 광기');
-    push({type:'dice',label:`이성 판정 (${sl.s||'0'}/${sl.f||'0'})`,f:'1d100',total:r.total,target:cur||null,verdict:j.v,vc:j.c,detail:`${r.detail} · 이성 −${loss} (${cur}→${nv})${j.c==='fumble'?' 대실패라 최대치':''}${notes.length?' · '+notes.join(' · '):''}`},c.id);
+    pushS(c,{type:'dice',label:`이성 판정 (${sl.s||'0'}/${sl.f||'0'})`,f:'1d100',total:r.total,target:cur||null,verdict:j.v,vc:j.c,detail:`${r.detail} · 이성 −${loss} (${cur}→${nv})${j.c==='fumble'?' 대실패라 최대치':''}${notes.length?' · '+notes.join(' · '):''}`},c.id);
     markSheet(c);renderSheet();toast(`이성 ${cur} → ${nv}${notes.length?' · '+notes[0]:''}`);return true}
-  if('sgrowall' in d){if(!needLive())return true;const ck=sh.sk.filter(s=>s.ck);if(!ck.length)return true;
+  if('sgrowall' in d){if(!needLive())return true;const ck=allSk(sh).filter(s=>s.ck);if(!ck.length)return true;
     let up=0,sanB=0;const ls=ck.map(s=>{const old=+s.v||0,t=roll('1d100').total;delete s.ck;
       if(t>old||t>=96){const g=roll('1d10').total;s.v=old+g;s.g=(+s.g||0)+g;up++;if(old<90&&s.v>=90){sanB+=roll('2d6').total}return `${s.label} ${t}✓ +${g} (${old}→${s.v})`}
       return `${s.label} ${t}✗`});
     let sanTxt='';if(sanB){const san=cocRes(sh,'이성');if(san){const o=+san.cur||0;san.cur=Math.min(cocSanMax(sh),o+sanB);sanTxt=` · 90 도달 보상 이성 +${sanB}`}}
-    push({type:'dice',label:`성장 굴림 (${ck.length}개)`,f:'1d100 > 기능치',total:up,detail:ls.join(' · ')+sanTxt},c.id);
+    pushS(c,{type:'dice',label:`성장 굴림 (${ck.length}개)`,f:'1d100 > 기능치',total:up,detail:ls.join(' · ')+sanTxt},c.id);
     markSheet(c);renderSheet();toast(`${ck.length}개 중 ${up}개가 성장했어요${sanTxt}`);return true}
   return false;
 }
@@ -3913,7 +4034,9 @@ function markSheet(c){
 }
 function flushSheet(){
   clearTimeout(sheetT);
-  for(const id of Object.keys(dirtyMap)){delete dirtyMap[id];const c=R&&R.chars.find(x=>x.id===id);
+  for(const id of Object.keys(dirtyMap)){const dm=dirtyMap[id];delete dirtyMap[id];const c=R&&R.chars.find(x=>x.id===id);
+    // 그 사이 방 정보가 새로 들어와 캐릭터 객체가 바뀌었어도, 고친 내용을 잃지 않게 옮겨 담아요
+    if(c&&dm&&c.sheets!==dm.sheets){c.sheets=dm.sheets;c.sheetKind=dm.kind;c.info=dm.info;c.story=dm.story;if(dm.name)c.name=dm.name}
     if(c&&canEdit(c))B.saveChar(roomId,c).catch(x=>toast('시트를 저장하지 못했어요. '+errText(x)))}
 }
 function refreshDerived(c){
@@ -3921,6 +4044,7 @@ function refreshDerived(c){
   sh.ab.forEach(a=>{const s=el.querySelector(`[data-sub="ab:${CSS.escape(String(a.id))}"]`);if(s)s.textContent=abSub(kind,sh,a)});
   sh.sk.forEach(x=>{const s=el.querySelector(`[data-sub="sk:${CSS.escape(String(x.id))}"]`);if(s)s.textContent=skSub(kind,sh,x)});
   sh.res.forEach(r=>{const b=el.querySelector(`[data-bar="${CSS.escape(String(r.id))}"]`);if(b)b.style.width=Math.max(0,Math.min(100,(+r.cur||0)/(+r.max||1)*100))+'%'});
+  if(kind==='coc'){const g=el.querySelector('.ab-grid');if(g&&g.querySelector('.ab.auto')){g.querySelectorAll('.ab.auto').forEach(x=>x.remove());g.insertAdjacentHTML('beforeend',cocAutoTiles(sh))}}
   const sum=summary(kind,sh),sa=el.querySelector('[data-sum="ab"]'),ss=el.querySelector('[data-sum="sk"]');
   if(sa)sa.innerHTML=sum.ab;if(ss)ss.innerHTML=sum.sk;
 }
@@ -3938,6 +4062,11 @@ onSheet('input',e=>{
   else if(k==='resmax')sh.res.find(r=>r.id===id).max=Math.max(1,toNum(v));
   else if(k==='pfm'){const t=sh.pf[+id];if(t)t.m=v.trim()===''?null:Math.max(0,toNum(v))}
   else if(k==='wp'){const j=id.indexOf(':'),wid=id.slice(0,j),fk=id.slice(j+1),x=(sh.wp||[]).find(z=>z.id===wid);if(x&&['name','dmg','rng','att','ammo','mal'].includes(fk)){x[fk]=fk==='mal'?(v.trim()===''?'':String(Math.max(0,Math.min(100,toNum(v))))):v.slice(0,40);const pv=SE.querySelector(`[data-wpprev="${CSS.escape(wid)}"]`);if(pv)pv.textContent=wpPrev(x,sh)}}
+  else if(k==='mind')sh.mind=v.slice(0,60);
+  else if(k==='spl'||k==='spv'||k==='spb'){const x=(sh.sp||[]).find(z=>z.id===id);if(!x)return;if(k==='spl')x.label=v.slice(0,20);else x[k==='spv'?'v':'b']=toNum(v);
+    const sm=SE.querySelector('[data-sum="sp"]');if(sm){const S=spSum(sh);sm.innerHTML=`특별 포인트 <b class="${S.pool&&S.used>S.pool?'over':''}">${S.used}</b> / ${S.pool||'—'}`}
+    const row=e.target.closest('.sp-row');if(row){const sub=row.querySelector('.sk-sub');if(sub)sub.textContent=skSub(c.sheetKind,sh,x)}}
+  else if(k==='sppool'){sh.spPool=Math.max(0,toNum(v));const sm=SE.querySelector('[data-sum="sp"]');if(sm){const S=spSum(sh);sm.innerHTML=`특별 포인트 <b class="${S.pool&&S.used>S.pool?'over':''}">${S.used}</b> / ${S.pool||'—'}`}}
   else if(k==='sanl'){sh.sanl=sh.sanl||{s:'0',f:'1D6'};if(id==='s'||id==='f')sh.sanl[id]=v.slice(0,12)}
   else if(k==='agesp'){const w=wins.get(sheetCid),r=ageRule(ageOf(c));if(!w||!r||!r.split)return;const sp=ageSplitOf(w,r);sp[id]=Math.max(0,toNum(v));
     const used=r.from.reduce((a,q)=>a+(+sp[q]||0),0),lf=SE.querySelector('[data-ageleft]');if(lf)lf.textContent=used===r.split?'✓ 맞아요':r.split-used>0?`${r.split-used} 더 나눠 주세요`:`${used-r.split} 넘쳤어요`;return}
@@ -3966,6 +4095,10 @@ onSheet('click',e=>{
   if(d.stab){flushSecretW(sheetCid);sheetTab=d.stab;skEdit=false;renderSheet();SE.querySelector('.sheet-body').scrollTop=0;return}
   if(d.sktab){skTab=d.sktab;skEdit=false;renderSheet();return}
   if(!canEdit(c))return;
+  if('spadd' in d){sh.sp=sh.sp||[];const v0=kind==='coc'?1:0;sh.sp.push({id:uid(),label:'새 특별 기능',v:v0,b:v0});markSheet(c);renderSheet();
+    const ins=SE.querySelectorAll('.sp-row .lbl');const last=ins[ins.length-1];if(last){last.focus();last.select()}return}
+  if(d.spdel){if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='삭제';setTimeout(()=>{if(b.isConnected){b.classList.remove('armed');b.textContent='×'}},3000);return}
+    sh.sp=(sh.sp||[]).filter(x=>x.id!==d.spdel);markSheet(c);renderSheet();return}
   if(kind==='coc'&&cocClick(c,sh,d,b))return;
   if('sedit' in d){skEdit=!skEdit;renderSheet();return}
   if(d.sfav){const s=sh.sk.find(x=>x.id===d.sfav);if(!s)return;if(s.fav)delete s.fav;else s.fav=true;markSheet(c);renderSheet();return}
@@ -3979,14 +4112,14 @@ onSheet('click',e=>{
   if('pfadd' in d){const used=new Set(sh.pf.map(t=>t.k)),next=sh.ab.find(a=>!used.has(a.k))||sh.ab[0];sh.pf.push({k:next.k,m:null});markSheet(c);renderSheet();
     const ins=SE.querySelectorAll('[data-f^="pfm:"]');const last=ins[ins.length-1];if(last)last.focus();return}
   if(d.sroll){
-    const [k,id]=d.sroll.split(':');const item=(k==='ab'?sh.ab:sh.sk).find(x=>x.id===id);if(!item)return;
+    const [k,id]=d.sroll.split(':');const item=(k==='ab'?sh.ab:k==='sp'?(sh.sp||[]):sh.sk).find(x=>x.id===id);if(!item)return;
     if(R.status==='ended'){toast('종료된 세션에서는 굴릴 수 없어요');return}
     const sp=rollSpec(kind,sh,item,k==='ab');const res=rollMsg(sp.f,sp.label,sp.target,c.id);
     if(res)toast(`${c.name} · ${sp.label}: ${res.r.total}${res.j.v?' · '+res.j.v:''}`);
     if(res&&kind==='coc'&&sp.target){
       const isLuck=k==='ab'&&item.k==='LUCK',combat=k==='sk'&&item.label==='회피';
-      if(k==='sk'&&okJ(res.j)&&item.label!=='크툴루 신화'){item.ck=true;markSheet(c)}
-      setLast(c,{label:sp.label,target:sp.target,total:res.r.total,c:res.j.c,push:!isLuck&&!combat,luck:!isLuck,sk:k==='sk'?item.id:null});
+      if((k==='sk'||k==='sp')&&okJ(res.j)&&item.label!=='크툴루 신화'){item.ck=true;markSheet(c)}
+      setLast(c,{label:sp.label,target:sp.target,total:res.r.total,c:res.j.c,push:!isLuck&&!combat,luck:!isLuck,sk:k!=='ab'?item.id:null});
       renderSheet();
     }
     return;

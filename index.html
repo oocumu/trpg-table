@@ -487,7 +487,11 @@ kbd{display:inline-block;min-width:1.5em;padding:1px 5px;border:1px solid var(--
 .sk.drop-over{box-shadow:inset 0 2px 0 var(--accent)}
 .sk-act{display:flex;gap:2px;align-items:center}
 .sheet.ro .ab input,.sheet.ro .num{pointer-events:none;background:transparent;border-color:transparent}
-.sheet.ro .sheet-body input:not([data-sksearch]),.sheet.ro .sheet-body textarea,.sheet.ro .sheet-body select{pointer-events:none;caret-color:transparent;user-select:text}
+.sheet.ro .sheet-body input:not([data-sksearch]),.sheet.ro .sheet-body select{pointer-events:none;caret-color:transparent}
+/* 긴 글 칸은 보기 전용이어도 스크롤·드래그 복사가 돼요 (readOnly라 고칠 수는 없어요) */
+.sheet.ro .sheet-body textarea{caret-color:transparent;cursor:default}
+.sheet .sheet-body textarea{overflow:hidden;resize:none}
+.sheet.ro .sf textarea{min-height:0}
 .sheet.ro .sheet-body .num,.sheet.ro .sheet-body .wf input,.sheet.ro .sheet-body .wf select,.sheet.ro .sheet-body .sf input,.sheet.ro .sheet-body .sf textarea,.sheet.ro .san-cur{background:transparent;border-color:transparent}
 .sheet.ro .sheet-body textarea{resize:none}
 .ro-chip{font-size:11px;font-weight:600;color:var(--muted);background:var(--sheet);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
@@ -1550,7 +1554,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261113194150'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261113201222'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -3356,7 +3360,7 @@ function watchSecretFor(c){
   w.st.secretUnsub=B.watchSecret(roomId,c.id,t=>{
     w.st.secretText=t==null?'':t;
     const ta=w.el.querySelector('[data-f="secret"]');
-    if(ta&&document.activeElement!==ta&&w.st.pend==null){ta.value=w.st.secretText;ta.disabled=false;ta.placeholder='HO 비밀, 숨겨진 과거, 방장에게만 알릴 내용 등을 적어 주세요.'}
+    if(ta&&document.activeElement!==ta&&w.st.pend==null){ta.value=w.st.secretText;ta.disabled=false;growTA(ta);ta.placeholder='HO 비밀, 숨겨진 과거, 방장에게만 알릴 내용 등을 적어 주세요.'}
   });
 }
 function flushSecretW(cid){
@@ -3365,6 +3369,8 @@ function flushSecretW(cid){
   B.saveSecret(roomId,cid,text).catch(x=>toast('비밀 메모를 저장하지 못했어요. '+errText(x)));
 }
 function flushSecret(){for(const cid of wins.keys())flushSecretW(cid)}
+/* 시트의 긴 글 칸은 적은 만큼 늘어나서, 칸 안에서 따로 스크롤하지 않아도 다 보여요 */
+function growTA(t){if(!t)return;t.style.height='auto';t.style.height=Math.max(t.scrollHeight+2,parseFloat(getComputedStyle(t).minHeight)||0)+'px'}
 function renderSheet(){
   const el=SE;const c=R&&R.chars.find(x=>x.id===sheetCid);
   if(!c){closeSheet(sheetCid);return}
@@ -3385,8 +3391,9 @@ function renderSheet(){
     </div>`;
   el.classList.toggle('ro',ro);
   // 다른 사람의 캐릭터: 입력칸을 모두 잠그고, 눌러도 커서가 들어가지 않게 해요 (저장도 서버에서 막혀요)
-  if(ro){el.querySelectorAll('.sheet-body input:not([data-sksearch]),.sheet-body textarea').forEach(i=>{i.readOnly=true;i.tabIndex=-1;i.setAttribute('aria-readonly','true')});
+  if(ro){el.querySelectorAll('.sheet-body input:not([data-sksearch]),.sheet-body textarea').forEach(i=>{i.readOnly=true;i.tabIndex=-1;i.setAttribute('aria-readonly','true');if(!i.value)i.placeholder='—';if(i.tagName==='TEXTAREA')i.rows=1});
     el.querySelectorAll('.sheet-body select,.sheet-body input[type=checkbox]').forEach(x=>{x.disabled=true;x.tabIndex=-1})}
+  el.querySelectorAll('.sheet-body textarea').forEach(growTA);
   const nb=el.querySelector('.sheet-body');if(nb&&scroll)nb.scrollTop=scroll;
 }
 const GEO_KEY='bt-sheet-geo',mobileSheet=()=>matchMedia('(max-width:700px)').matches;
@@ -3412,7 +3419,7 @@ function saveGeo(el){
   const key=el.dataset.cid?GEO_KEY:el.dataset.geo;if(!key)return;
   lsSet(key,{x:parseFloat(el.style.left)||0,y:parseFloat(el.style.top)||0,w:el.offsetWidth,h:el.offsetHeight});
 }
-const winRO=(()=>{try{const t=new WeakMap();return new ResizeObserver(es=>{for(const e of es){const el=e.target;clearTimeout(t.get(el));t.set(el,setTimeout(()=>{if(el.isConnected){clampWin(el);saveGeo(el)}},200))}})}catch(x){return null}})();
+const winRO=(()=>{try{const t=new WeakMap();return new ResizeObserver(es=>{for(const e of es){const el=e.target;clearTimeout(t.get(el));t.set(el,setTimeout(()=>{if(el.isConnected){clampWin(el);saveGeo(el);el.querySelectorAll('.sheet-body textarea').forEach(growTA)}},200))}})}catch(x){return null}})();
 function openSheet(cid){
   let w=wins.get(cid);
   if(w){frontWin(w.el);return}
@@ -4221,6 +4228,7 @@ function refreshDerived(c){
 }
 const toNum=v=>{const n=parseInt(String(v).replace(/[^\d-]/g,''),10);return isNaN(n)?0:n};
 onSheet('input',e=>{
+  if(e.target.tagName==='TEXTAREA')growTA(e.target);
   if('sksearch' in e.target.dataset){const q=e.target.value.trim();SE.querySelectorAll('[data-skrow]').forEach(r=>r.hidden=!!q&&!r.dataset.skrow.includes(q));return}
   const f=e.target.dataset.f;if(!f)return;
   const c=R.chars.find(x=>x.id===sheetCid);if(!canEdit(c))return;const sh=sheetOf(c);

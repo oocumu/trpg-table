@@ -53,8 +53,8 @@ h1,h2{text-wrap:balance}
 .ghost:hover{background:var(--accent-soft)}
 .err{color:var(--rose);font-size:12.5px;margin:0}
 .field{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--muted);font-weight:500}
-.field input,.field select{border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:9px 12px;font-size:15px;color:var(--ink);min-width:0;width:100%}
-.field input:focus,.field select:focus{border-color:var(--accent);outline:none}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:9px 12px;font-size:15px;color:var(--ink);min-width:0;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none}
 
 .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;white-space:nowrap}
 .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
@@ -179,6 +179,9 @@ h1,h2{text-wrap:balance}
 .cheat{font-size:12.5px;color:var(--muted);display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0;align-items:baseline}
 .cheat dt{font-family:var(--f-mono);color:var(--ink);font-size:12px}
 .cheat dd{margin:0}
+.cheat.keys dt{white-space:nowrap;display:flex;align-items:center;gap:2px;color:var(--muted)}
+kbd{display:inline-block;min-width:1.5em;padding:1px 5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--sheet);font-family:var(--f-mono);font-size:11px;line-height:1.4;color:var(--ink);text-align:center}
+.side-note{font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.6}
 
 .main{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;position:relative}
 .top{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
@@ -361,7 +364,57 @@ h1,h2{text-wrap:balance}
 .sheet-foot{font-size:12px;color:var(--muted);margin:0}
 .btn.sm{padding:3px 10px;font-size:12.5px}
 .sheet.ro .step,.sheet.ro [data-sdel],.sheet.ro [data-sadd],.sheet.ro [data-srand],.sheet.ro .rollb,.sheet.ro [data-sedit],.sheet.ro [data-pfadd],.sheet.ro .pf-del{display:none}
-.sheet.ro .star{pointer-events:none}.sheet.ro .star:not(.on){visibility:hidden}
+.sheet.ro .ed,.sheet.ro .sk-ck:not(.on),.sheet.ro .ab-gen{display:none!important}
+.sheet.ro .sk-ck,.sheet.ro .st-chip{pointer-events:none}
+.sheet.ro .star{pointer-events:none}
+/* CoC 7판: 특성치 굴림 · 나이 · 전투 */
+.ab-gen{border:0;background:none;color:var(--muted);font-size:11px;padding:2px 4px;margin-top:2px;font-family:var(--f-mono);border-radius:6px;white-space:nowrap}
+.ab-gen:hover{color:var(--accent);background:var(--accent-soft)}
+.sk-ck{width:24px;height:24px;border:1px solid var(--line);background:var(--sheet);border-radius:6px;font-size:12px;line-height:1;padding:0;color:transparent;flex:none}
+.sk-ck:hover{color:var(--muted)}.sk-ck.on{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+.sk-act{display:flex;align-items:center;gap:4px}
+.age-box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--sunk)}
+.age-box .sh-h{margin-bottom:6px}
+.age-desc{margin:0 0 10px;font-size:13px;line-height:1.6}.age-box.done .age-desc{color:var(--muted)}
+.age-split{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 10px;font-size:12.5px}
+.age-lbl{color:var(--muted);font-weight:600}.age-sp{display:flex;align-items:center;gap:4px}
+.age-in{display:flex;align-items:center;gap:4px}.age-in .num{width:3.4em}
+.age-left{font-size:12px;color:var(--accent);font-weight:600}
+.last-roll{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--rose);border-radius:10px;background:var(--sunk);font-size:13px}
+.last-roll .lr-t{flex:1 1 100%;min-width:0}.last-roll .x{margin-left:auto}
+.cb-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cb{border:1px solid var(--line);border-radius:12px;padding:10px 6px;background:var(--sunk);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;text-align:center}
+.cb span{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+.cb b{font-family:var(--f-mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums}
+.cb small{font-family:var(--f-mono);font-size:11px;color:var(--muted)}.cb .rollb{margin-top:4px}
+.hit-row{display:flex;gap:6px;align-items:center;margin:10px 0 0;flex-wrap:wrap}.hit-row .num{width:4em}
+.hp-now{color:var(--ink);font-weight:600}
+.st-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.st-chip{border:1px dashed var(--line);background:none;border-radius:999px;padding:3px 11px;font-size:12.5px;color:var(--muted)}
+.st-chip.on{border-style:solid;border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.st-chip.bad.on{border-color:var(--rose);background:var(--rose-soft);color:var(--rose)}
+.wp-list{display:flex;flex-direction:column;gap:10px}
+.wp{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--sunk);display:flex;flex-direction:column;gap:8px}
+.wp-top{display:flex;align-items:center;gap:6px}
+.wp-name{flex:1;min-width:0;border:0;background:none;font-weight:600;font-size:15px;padding:2px 4px;border-radius:6px;color:var(--ink)}
+.wp-name:focus{background:var(--sheet);outline:none}
+.wp-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.wp-prev{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);margin-top:-2px}
+.wf{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--muted);font-weight:600;min-width:0}
+.wf input,.wf select{border:1px solid var(--line);background:var(--sheet);border-radius:7px;padding:4px 6px;font-size:13px;color:var(--ink);min-width:0;width:100%;font-weight:400}
+.wf input:focus,.wf select:focus{border-color:var(--accent);outline:none}
+.wp-grid .wide{grid-column:span 2}
+.wp-bot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.wck{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--muted)}.wck input{accent-color:var(--accent);margin:0}
+.wp-acts{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}.wp-acts .rollb{margin:0}
+.san-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px}.san-row .wf{flex:1 1 120px}
+.mini-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mini{border:1px solid var(--line);border-radius:10px;background:var(--sunk);padding:7px 10px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;min-width:0}
+.mini small{font-size:11.5px;color:var(--muted);font-weight:600}.mini b{font-family:var(--f-mono);font-size:17px;font-weight:600}.mini em{font-style:normal;font-size:11px;color:var(--muted)}
+.wealth{margin-top:10px;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.wealth b{color:var(--ink)}.wealth select{border:1px solid var(--line);background:var(--sunk);border-radius:7px;padding:3px 6px;font-size:12.5px;color:var(--ink)}
+.grow-chips{display:flex;flex-wrap:wrap;gap:6px}
+@container (max-width:520px){.wp-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.wp-grid .wide{grid-column:span 2}.cb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wp-acts{margin-left:0}}.sheet.ro .star:not(.on){visibility:hidden}
 .sheet-nav{padding:8px 16px;border-bottom:1px solid var(--line)}
 .sheet-nav .seg{width:100%}
 .sheet-nav .seg button{flex:1;padding:5px 6px;font-size:13px;white-space:nowrap}
@@ -461,6 +514,10 @@ h1,h2{text-wrap:balance}
 .nt-top time{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .nt-body{margin-top:6px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
 .nt-meta{margin-top:6px;font-size:12px;color:var(--muted)}
+.nt-log{margin-top:8px;font-size:11.5px;color:var(--muted);line-height:1.6;opacity:.85}
+.nt-edit{font-size:12px;padding:0 4px;color:var(--accent)}.nt-left{font-size:11.5px}
+.nt-edit-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--sunk)}
+.nt-edit-form textarea{resize:vertical;min-height:120px;font-family:inherit;line-height:1.6}
 .notice .x{position:absolute;top:8px;right:8px;opacity:1}
 .notice .x.armed{width:auto;padding:0 8px;font-size:12px;background:var(--rose-soft);color:var(--rose)}
 .sys-bar{position:fixed;top:0;left:0;right:0;z-index:2300;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 44px 8px 16px;font-size:13.5px;font-weight:500;line-height:1.45;text-align:center;background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(30,20,60,.18);animation:sysIn .25s ease}
@@ -906,6 +963,9 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
   html.has-sys .app{height:calc(100% - 38px)}
 }
 @media (max-width:480px){.new-row{grid-template-columns:minmax(0,1fr)}}
+.boot-page{position:fixed;inset:0;display:grid;place-items:center;background:var(--paper);z-index:5}
+.boot-mark{width:44px;height:44px;border-radius:13px;animation:bootPulse 1.1s ease-in-out infinite}
+@keyframes bootPulse{0%,100%{opacity:.35;transform:scale(.94)}50%{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -919,6 +979,8 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 <div class="patch-pop" id="patchPop" hidden role="status"><b id="ppTitle"></b><p id="ppSub"></p><div class="row"><button class="btn sm" id="ppLater" type="button">나중에</button><button class="btn primary sm" id="ppGo" type="button">패치 노트 보기</button></div></div>
 <div class="sys-bar" id="sysBar" role="status" aria-live="polite" hidden><span class="sys-ic" id="sysIc"></span><span class="sys-text" id="sysText"></span><button class="sys-btn" id="sysBtn" hidden></button><button class="sys-x" id="sysX" aria-label="알림 닫기" hidden>×</button></div>
 
+<!-- 처음 들어올 때 로그인 상태를 확인하는 동안만 보이는 화면 (다른 화면이 잠깐 비치지 않게) -->
+<div class="boot-page" id="bootView" aria-label="불러오는 중"><span class="brand-mark boot-mark"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></span></div>
 <div class="maint-page" id="maintView" hidden>
   <div class="auth-top"><button class="theme-btn" aria-label="화면 밝기 바꾸기">☾</button></div>
   <div class="maint-center">
@@ -956,7 +1018,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
 </div>
 
 <!-- ================= HOME ================= -->
-<div class="home" id="homeView">
+<div class="home" id="homeView" hidden>
   <header class="home-top">
     <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M13.2 2.5 5.6 13.1c-.3.4 0 .9.5.9h4.6l-1.3 7.2c-.1.6.6.9 1 .4l7.9-10.9c.3-.4 0-.9-.5-.9h-4.7l1.1-6.9c.1-.6-.6-.9-1-.4z" fill="currentColor"/></svg></div><div><b>TRPG 번개탁</b><small>가볍게 열고 바로 굴리는 세션</small></div></div>
     <div class="home-right">
@@ -1211,12 +1273,29 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
           <dt>/rb 60 · /rbb 60</dt><dd>보너스 주사위 1·2개</dd>
           <dt>/rp 60 · /rpp 60</dt><dd>패널티 주사위 1·2개</dd>
           <dt>/rb3 60 · /rp3 60</dt><dd>숫자만큼 보너스·패널티</dd>
-          <dt>@이름 대사</dt><dd>그 캐릭터로 한 번만</dd>
+          <dt>@이름 대사</dt><dd>그 캐릭터로 한 번만 (:이름도 돼요)</dd>
           <dt>/지문 글 · /n 글</dt><dd>지문으로 한 번만</dd>
+          <dt>/대사 글 · /s 글</dt><dd>대사로 한 번만</dd>
           <dt>/지문 (캡슐) 글</dt><dd>스타일 지정 (상자·강조·명조…)</dd>
           <dt>/ 입력</dt><dd>명령어 추천이 떠요</dd>
           <dt>📜 시트</dt><dd>능력치를 누르면 바로 굴림</dd>
         </dl>
+      </section>
+
+      <section>
+        <div class="sec-h"><h2>단축키</h2></div>
+        <dl class="cheat keys">
+          <dt><kbd>Enter</kbd></dt><dd>보내기</dd>
+          <dt><kbd>Shift</kbd>+<kbd>Enter</kbd></dt><dd>줄바꿈</dd>
+          <dt><kbd>Alt</kbd>+<kbd>←</kbd><kbd>→</kbd></dt><dd>대사 · 지문 · 귓속말 바꾸기</dd>
+          <dt><kbd>Alt</kbd>+<kbd>↑</kbd><kbd>↓</kbd></dt><dd>내 캐릭터 바꾸기</dd>
+          <dt><kbd>Alt</kbd>+<kbd>1</kbd>~<kbd>9</kbd></dt><dd>몇 번째 내 캐릭터로 바로</dd>
+          <dt><kbd>Ctrl</kbd>+<kbd>B</kbd> <kbd>I</kbd> <kbd>U</kbd></dt><dd>굵게 · 기울임 · 밑줄 (Mac은 <kbd>⌘</kbd>)</dd>
+          <dt><kbd>↑</kbd><kbd>↓</kbd> · <kbd>Tab</kbd></dt><dd>명령어 추천 고르기</dd>
+          <dt><kbd>Esc</kbd></dt><dd>창·메뉴 닫기 · 수정 취소</dd>
+          <dt><kbd>Ctrl</kbd>+<kbd>V</kbd></dt><dd>이미지 붙여 넣기</dd>
+        </dl>
+        <p class="side-note">Mac에서는 <kbd>Alt</kbd> 대신 <kbd>Option</kbd> 키를 눌러 주세요. 단축키는 입력창에 커서가 있을 때 동작하고, 이미지는 끌어다 놓아도 붙어요.</p>
       </section>
     </div>
   </aside>
@@ -1364,7 +1443,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261111160256'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261113170416'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -1439,6 +1518,7 @@ function makeLocal(){
     },
     watchNotices:cb=>sub(()=>cb(me?[...db.notices].sort((a,b)=>b.ct-a.ct).slice(0,50):[])),
     async sendNotice(n){if(!me||!me.admin)throw new AppError('permission-denied');db.notices.push({id:'n'+uid(),...n,authorUid:me.uid,authorNick:me.nick,ct:now()});write();emit()},
+    async editNotice(id,p){if(!me||!me.admin)throw new AppError('permission-denied');const n=db.notices.find(x=>x.id===id);if(!n||!ntEditable(n))throw new AppError('permission-denied');const t=now();Object.assign(n,p,{et:t,edits:[...(n.edits||[]),t]});write();emit()},
     async deleteNotice(id){if(!me||!me.admin)throw new AppError('permission-denied');db.notices=db.notices.filter(n=>n.id!==id);write();emit()},
     async markNoticesSeen(ts){const a=Object.values(db.accounts).find(x=>x.uid===me.uid);if(a){a.noticeSeen=ts;write()}me={...me,noticeSeen:ts}},
     async updateNick(nick){
@@ -1618,6 +1698,8 @@ async function makeFirebase(cfg){
       s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),e=>{if(e.code!=='permission-denied')fail(e)}),
     sendNotice:n=>fs.addDoc(fs.collection(db,'notices'),{...n,authorUid:me.uid,authorNick:me.nick,ct:now()}),
     deleteNotice:id=>fs.deleteDoc(fs.doc(db,'notices',id)),
+    editNotice(id,p){const n=notices.find(x=>x.id===id);if(!n||!ntEditable(n))return Promise.reject(new AppError('permission-denied'));const t=now();
+      return fs.updateDoc(fs.doc(db,'notices',id),{...p,et:t,edits:[...(n.edits||[]).slice(-49),t]})},
     async markNoticesSeen(ts){await fs.updateDoc(fs.doc(db,'users',me.uid),{noticeSeen:ts});me={...me,noticeSeen:ts}},
     async updateNick(nick){
       const u=auth.currentUser;
@@ -1949,7 +2031,9 @@ let B=null,me=null,rooms=[],filter='all',unsubHome=null;
 let msgLim=300,unsubMsgs=null,logAnchor=null,lastLogHTML='',roomId=null,R=null,M=[],MP=[],MW=[],CH=[],unsubRoom=[],lastCount=0,whTo=null;
 let speakerId=null,mode='say',pendingImg=null;
 
+function bootDone(){const b=$('#bootView');if(b)b.remove()}
 function route(){
+  bootDone();
   if(maintOn()){showMaint();return}
   $('#maintView').hidden=true;$('#patchView').hidden=true;$('#viewPop').hidden=true;
   syncSys();
@@ -2163,12 +2247,18 @@ const inqCard=(q,admin)=>`<li class="inq${!admin&&inqUnread(q)?' unread':''}${ad
 function renderMyInq(){
   $('#myInqList').innerHTML=myInq.length?myInq.map(q=>inqCard(q,false)).join(''):'<li class="pf-hint" style="padding:6px 2px">아직 보낸 문의가 없어요.</li>';
 }
+/* 패치 노트 수정: 올린 뒤 24시간 안에만 고칠 수 있어요 */
+const NT_EDIT_MS=86400000;
+const ntEditable=n=>n&&n.kind==='patch'&&(now()-(+n.ct||0))<NT_EDIT_MS&&(n.edits||[]).length<50;
+const ntTime=n=>n.et?`<time title="처음 올린 시각 ${ymd(n.ct)} ${hhmm(n.ct)}">(수정됨) ${ymd(n.et)} ${hhmm(n.et)}</time>`:`<time>${ymd(n.ct)} ${hhmm(n.ct)}</time>`;
+const ntLog=n=>n.et&&(n.edits||[]).length?`<div class="nt-log">수정 기록 · 처음 올림 ${ymd(n.ct)} ${hhmm(n.ct)}${(n.edits||[]).map((t,i)=>` · ${i+1}차 수정 ${ymd(t)} ${hhmm(t)}`).join('')}</div>`:'';
+function ntLeft(n){const ms=NT_EDIT_MS-(now()-(+n.ct||0)),h=Math.floor(ms/3600000),m=Math.max(1,Math.floor(ms%3600000/60000));return h?`${h}시간 ${m}분`:`${m}분`}
 function renderNotices(){
   const seen=me.noticeSeen||0;
   $('#noticeForm').hidden=!me.admin||mailTab!=='notice';
   $('#noticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice${n.ct>seen&&n.authorUid!==me.uid?' unread':''}">
-    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}${n.ver?`<span class="nt-ver">${esc(n.ver)}</span>`:''}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
-    <div class="nt-body">${fmt(n.body||'')}</div>
+    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}${n.ver?`<span class="nt-ver">${esc(n.ver)}</span>`:''}</b>${ntTime(n)}</div>
+    <div class="nt-body">${fmt(n.body||'')}</div>${ntLog(n)}
     <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}</div>
     ${me.admin?`<button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button>`:''}</li>`).join('')
     :'<li class="list-empty" style="border:0;padding:28px 10px"><b>아직 받은 공지가 없어요</b>새 공지가 오면 여기에 쌓여요.</li>';
@@ -2280,12 +2370,19 @@ function setAdmTab(t){
 $('#admTabs').addEventListener('click',e=>{const b=e.target.closest('[data-adm]');if(b)setAdmTab(b.dataset.adm)});
 $('#adminFab').onclick=()=>{location.hash=$('#adminView').hidden?'admin':''};
 $('#admBack').onclick=()=>{location.hash=''};
-function renderAdminNotices(){
+function renderAdminNotices(force){
   if($('#adminView').hidden)return;
+  const fe=$('#admNoticeList [data-ntform]');if(!force&&fe&&fe.contains(document.activeElement))return; // 고치는 중엔 다시 그리지 않아요
   $('#admNoticeList').innerHTML=notices.length?notices.map(n=>`<li class="notice">
-    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}${n.ver?`<span class="nt-ver">${esc(n.ver)}</span>`:''}</b><time>${ymd(n.ct)} ${hhmm(n.ct)}</time></div>
-    <div class="nt-body">${fmt(n.body||'')}</div>
-    <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}</div>
+    <div class="nt-top"><b><span class="nt-tag${n.kind==='patch'?' patch':''}">${n.kind==='patch'?'🛠 패치 노트':'📢 공지'}</span>${esc(n.title)}${n.ver?`<span class="nt-ver">${esc(n.ver)}</span>`:''}</b>${ntTime(n)}</div>
+    <div class="nt-body">${fmt(n.body||'')}</div>${ntLog(n)}
+    <div class="nt-meta">${esc(n.authorNick||'관리자')} · ${n.kind==='patch'?'패치 노트':'전체 공지'}${ntEditable(n)?` · <button class="ghost nt-edit" data-ntedit="${esc(n.id)}">✎ 수정하기</button> <span class="nt-left">${ntLeft(n)} 동안 고칠 수 있어요</span>`:n.kind==='patch'?' · 올린 지 24시간이 지나 수정할 수 없어요':''}</div>
+    ${ntEditing===n.id&&ntEditable(n)?`<form class="nt-edit-form" data-ntform="${esc(n.id)}">
+      <label class="field">제목<input name="title" maxlength="80" value="${esc(n.title)}"></label>
+      <label class="field">버전<input name="ver" maxlength="20" value="${esc(n.ver||'')}" autocomplete="off"></label>
+      <label class="field">내용<textarea name="body" maxlength="4000" rows="7">${esc(n.body||'')}</textarea></label>
+      <p class="err" hidden></p>
+      <div class="row" style="justify-content:flex-end;gap:6px"><button class="btn sm" type="button" data-ntcancel>취소</button><button class="btn primary sm" type="submit">수정 저장</button></div></form>`:''}
     <button class="x" data-ntdel="${esc(n.id)}" aria-label="공지 삭제" title="공지 삭제">×</button></li>`).join('')
     :'<li class="pf-hint" style="padding:6px 2px">아직 보낸 공지가 없어요.</li>';
 }
@@ -2303,7 +2400,20 @@ let admNtKind='notice';
 $('#admNtKind').addEventListener('click',e=>{const b=e.target.closest('[data-ntk]');if(!b)return;admNtKind=b.dataset.ntk;$$('#admNtKind [data-ntk]').forEach(x=>x.setAttribute('aria-pressed',x===b));
   $('#admNtTitle').placeholder=admNtKind==='patch'?'예: 사담 탭과 캐릭터 보관함이 생겼어요':'예: 11월 정기 점검 안내';$('#admNtVerRow').hidden=admNtKind!=='patch';
   if(admNtKind==='patch'&&!$('#admNtVer').value){const lp=notices.find(n=>n.kind==='patch'&&n.ver);if(lp)$('#admNtVer').placeholder='지난 버전: '+lp.ver}});
+let ntEditing=null;
+$('#admNoticeList').addEventListener('submit',async e=>{
+  const f=e.target.closest('[data-ntform]');if(!f)return;e.preventDefault();
+  const id=f.dataset.ntform,n=notices.find(x=>x.id===id),err=f.querySelector('.err');
+  const el=f.elements,title=el.title.value.trim(),ver=el.ver.value.trim().slice(0,20),body=el.body.value.trim();
+  if(!title||!body||!ver){err.textContent='제목, 버전, 내용을 모두 입력해 주세요.';err.hidden=false;return}
+  if(!ntEditable(n)){err.textContent='올린 지 24시간이 지나서 더는 고칠 수 없어요.';err.hidden=false;return}
+  if(title===n.title&&body===(n.body||'')&&ver===(n.ver||'')){ntEditing=null;renderAdminNotices(true);return}
+  try{await B.editNotice(id,{title,body,ver});ntEditing=null;renderAdminNotices(true);toast('패치 노트를 고쳤어요. 회원들에게도 바로 반영돼요')}
+  catch(x){err.textContent='고치지 못했어요. '+errText(x);err.hidden=false}
+});
 $('#admNoticeList').addEventListener('click',async e=>{
+  const ed=e.target.closest('[data-ntedit]');if(ed){ntEditing=ed.dataset.ntedit;renderAdminNotices();const t=$('#admNoticeList [data-ntform] textarea');if(t)t.focus();return}
+  if(e.target.closest('[data-ntcancel]')){ntEditing=null;renderAdminNotices(true);return}
   const d=e.target.closest('[data-ntdel]');if(!d)return;
   if(!d.classList.contains('armed')){d.classList.add('armed');d.textContent='삭제?';setTimeout(()=>{if(d.isConnected){d.classList.remove('armed');d.textContent='×'}},3000);return}
   try{await B.deleteNotice(d.dataset.ntdel);toast('공지를 지웠어요')}catch(x){toast('지우지 못했어요. '+errText(x))}
@@ -2830,7 +2940,7 @@ const SHEET_TPL={
 /* 정보·서사 칸: [키, 이름, 'l'(긴 글) | 's'(한 줄), 반칸 여부] */
 const INFO_FIELDS={
   coc:[['job','직업','s',1],['age','나이','s',1],['sex','성별','s',1],['home','거주지','s',1],['birth','출신지','s',1],['hobby','취미','s',1],
-       ['spend','소비 수준','s',1],['cash','현금','s',1],['assets','자산','l'],['items','소지품 · 장비','l']],
+       ['items','소지품 · 장비','l']],
   dnd:[['class','클래스','s',1],['level','레벨','s',1],['race','종족','s',1],['background','배경','s',1],['align','성향','s',1],['hobby','취미','s',1],
        ['gold','소지금','s',1],['items','소지품 · 장비','l']],
   free:[['job','직업 · 역할','s',1],['age','나이','s',1],['sex','성별','s',1],['hobby','취미','s',1],['items','소지품','l']]
@@ -2864,6 +2974,7 @@ function sheetOf(c){
   const sh=c.sheets[c.sheetKind];
   if(c.sheetKind==='coc'&&!Array.isArray(sh.pf))sh.pf=[{k:'EDU',m:4},{k:'INT',m:2}];
   if(c.sheetKind==='coc')(sh.sk||[]).forEach(x=>{if(x.label==='도서관 이용')x.label='자료조사'});
+  if(c.sheetKind==='coc'&&!Array.isArray(sh.wp))sh.wp=[{id:uid(),name:'맨손',skill:'근접전(격투)',dmg:'1D3+피해보너스',db:false,imp:false,rng:'—',att:'1',ammo:'',mal:''}];
   c.info=c.info||{};c.story=c.story||{};
   return sh;
 }
@@ -2898,7 +3009,7 @@ function summary(kind,sh){
     const core=sh.ab.filter(a=>a.k!=='LUCK').reduce((a,x)=>a+(+x.v||0),0);
     const g=k=>+(sh.ab.find(a=>a.k===k)||{}).v||0;
     const avail=(sh.pf||[]).reduce((a,t)=>a+g(t.k)*(+t.m||0),0);
-    const used=sh.sk.filter(x=>x.label!=='크툴루 신화').reduce((a,x)=>a+Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b)),0);
+    const used=sh.sk.filter(x=>x.label!=='크툴루 신화').reduce((a,x)=>a+Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b)-(+x.g||0)),0);
     return {ab:`특성치 합계 <b>${core}</b>`,sk:`기능 포인트 <b class="${used>avail?'over':''}">${used}</b> / ${avail}`};
   }
   if(kind==='dnd'){
@@ -2924,7 +3035,7 @@ function statTabHTML(c,sh,kind,ro){
   const abHTML=sh.ab.map(a=>`<div class="ab"><span class="ab-k">${esc(a.label)}<small>${esc(a.k)}</small></span>
       <input data-f="ab:${esc(a.id)}" value="${esc(a.v)}" inputmode="numeric" aria-label="${esc(a.label)}">
       <span class="ab-sub" data-sub="ab:${esc(a.id)}">${esc(abSub(kind,sh,a))}</span>
-      <button class="rollb" data-sroll="ab:${esc(a.id)}">🎲 굴림</button></div>`).join('');
+      <button class="rollb" data-sroll="ab:${esc(a.id)}">🎲 굴림</button>${kind==='coc'&&COC_GEN[a.k]&&!ro?`<button class="ab-gen ed" data-sgen="${esc(a.id)}" title="${genLabel(a.k)}로 이 특성치를 굴려 정해요">${genLabel(a.k)}로 정하기</button>`:''}</div>`).join('');
   const favs=sh.sk.filter(s=>s.fav),tab=skTab||(favs.length?'fav':'all'),list=tab==='fav'?favs:sh.sk;
   const skHTML=list.map(s=>`<div class="sk${s.b!=null&&(+s.v||0)>(+s.b)?' up':''}" data-skrow="${esc(s.label)}" data-skid="${esc(s.id)}"${skEdit&&!ro?' draggable="true"':''}>
       ${skEdit&&!ro?'<span class="grip" title="끌어서 순서 바꾸기">⠿</span>':`<button class="star${s.fav?' on':''}" data-sfav="${esc(s.id)}" aria-pressed="${!!s.fav}" title="${s.fav?'자주 쓰는 항목에서 빼기':'자주 쓰는 항목에 넣기'}" aria-label="${esc(s.label)} 자주 쓰는 항목">★</button>`}
@@ -2932,7 +3043,7 @@ function statTabHTML(c,sh,kind,ro){
       <span class="sk-sub" data-sub="sk:${esc(s.id)}">${esc(skSub(kind,sh,s))}</span>
       <input class="num" data-f="sk:${esc(s.id)}" value="${esc(s.v)}" inputmode="numeric" aria-label="${esc(s.label)} 값">
       <span class="sk-act">${skEdit&&!ro?`<button class="step" data-smove="${esc(s.id)}:-1" aria-label="${esc(s.label)} 위로">▲</button><button class="step" data-smove="${esc(s.id)}:1" aria-label="${esc(s.label)} 아래로">▼</button>`
-        :`<button class="rollb" data-sroll="sk:${esc(s.id)}" aria-label="${esc(s.label)} 굴리기">🎲</button><button class="x" data-sdel="${esc(s.id)}" aria-label="${esc(s.label)} 삭제">×</button>`}</span></div>`).join('');
+        :`${kind==='coc'?`<button class="sk-ck${s.ck?' on':''}" data-sck="${esc(s.id)}" aria-pressed="${!!s.ck}" title="${s.ck?'성장 체크 빼기':'성장 체크 (성공하면 자동으로 체크돼요)'}" aria-label="${esc(s.label)} 성장 체크">✓</button>`:''}<button class="rollb" data-sroll="sk:${esc(s.id)}" aria-label="${esc(s.label)} 굴리기">🎲</button><button class="x" data-sdel="${esc(s.id)}" aria-label="${esc(s.label)} 삭제">×</button>`}</span></div>`).join('');
   const abOpts=k=>sh.ab.map(a=>`<option value="${esc(a.k)}"${a.k===k?' selected':''}>${esc(a.label||a.k)}</option>`).join('');
   const pfHTML=kind==='coc'?`<div class="pf-row"><span class="pf-lbl">계산식</span>${sh.pf.map((t,i)=>`${i?'<span class="pf-op">+</span>':''}<span class="pf-term"><select data-pfk="${i}" aria-label="능력치">${abOpts(t.k)}</select><span class="pf-x">×</span><input class="num" data-f="pfm:${i}" value="${t.m==null?'':esc(t.m)}" inputmode="numeric" placeholder="" aria-label="${esc((sh.ab.find(a=>a.k===t.k)||{}).label||t.k)}에 곱할 수">${sh.pf.length>1?`<button class="pf-del" data-pfdel="${i}" title="이 항목 빼기" aria-label="${esc((sh.ab.find(a=>a.k===t.k)||{}).label||t.k)} 항목 빼기">−</button>`:''}</span>`).join('')}<button class="ghost pf-add" data-pfadd>+ 항목</button></div>`:'';
   const emptyFav='<p class="sheet-foot" style="padding:8px 2px">자주 쓰는 기능이 없어요. 전체 항목에서 ★을 눌러 모아 보세요.</p>';
@@ -2941,8 +3052,11 @@ function statTabHTML(c,sh,kind,ro){
       ${kind==='free'?`<select data-sk="rule" aria-label="굴림 방식">${Object.entries(FREE_RULES).map(([k,v])=>`<option value="${k}"${k===(sh.rule||'d100')?' selected':''}>${v}</option>`).join('')}</select>`:''}
       ${kind!=='free'?`<button class="btn sm" data-srand>${kind==='coc'?'🎲 특성치 굴려 정하기':'🎲 4d6 굴려 정하기'}</button>`:''}
     </div>
+    ${kind==='coc'?lastHTML(c,sh,ro):''}
     <section><div class="sh-h"><h3>자원</h3></div><div class="res-list">${resHTML}</div></section>
+    ${kind==='coc'?cocMiniHTML(sh,ro):''}
     <section><div class="sh-h"><h3>능력치</h3><span class="sh-sum" data-sum="ab">${sum.ab}</span></div><div class="ab-grid">${abHTML}</div></section>
+    ${kind==='coc'?ageHTML(c,sh,ro):''}
     <section><div class="sh-h"><h3>${kind==='coc'?'기능':kind==='dnd'?'기술 · 보너스':'항목'}</h3><span class="sh-sum" data-sum="sk">${sum.sk}</span></div>
       ${pfHTML}
       <div class="sk-tools"><div class="seg sk-tabs"><button data-sktab="fav" aria-pressed="${tab==='fav'}">★ 자주 쓰는 ${favs.length}</button><button data-sktab="all" aria-pressed="${tab==='all'}">전체 ${sh.sk.length}</button></div>
@@ -2958,7 +3072,28 @@ function infoTabHTML(c,kind){
       <label class="sf"><span>이름</span><input data-f="name" value="${esc(c.name)}" maxlength="20"></label>
       <label class="sf"><span>플레이어</span><input value="${esc(player)}" readonly tabindex="-1" class="ro-in"></label>
       ${INFO_FIELDS[kind].map(([k,l,t,h])=>field('info',k,l,c.info[k],t,h)).join('')}
-    </div></section>`;
+    </div></section>${kind==='coc'?wealthHTML(c,sheetOf(c),!canEdit(c)):''}`;
+}
+/* 생활 수준 · 현금 · 자산: 신용 기능치로 룰북 표를 찾아 채워 줘요 (1920년대 / 현대) */
+const money=n=>'$'+(Math.round(n*100)/100).toLocaleString('en-US');
+function wealthOf(cr,era){
+  const M=era==='modern';
+  if(cr<=0)return M?{lvl:'무일푼',day:'$10',cash:'$10',assets:'없음'}:{lvl:'무일푼',day:'$0.5',cash:'$0.5',assets:'없음'};
+  if(cr>=99)return M?{lvl:'대부호',day:'$50,000',cash:'$1,000,000',assets:'$100,000,000 이상'}:{lvl:'대부호',day:'$5,000',cash:'$50,000',assets:'$5,000,000 이상'};
+  const T=M?[[9,'가난','$40',20,200],[49,'평균','$100',40,1000],[89,'부유','$500',100,10000],[98,'부자','$2,000',400,40000]]
+           :[[9,'가난','$2',1,10],[49,'평균','$10',2,50],[89,'부유','$50',5,500],[98,'부자','$250',20,2000]];
+  const r=T.find(t=>cr<=t[0]);return {lvl:r[1],day:r[2],cash:money(cr*r[3]),assets:money(cr*r[4])};
+}
+function wealthHTML(c,sh,ro){
+  const cr=+(cocSk(sh,'신용')||{}).v||0,era=sh.era==='modern'?'modern':'1920',w=wealthOf(cr,era);
+  return `<section><div class="sh-h"><h3>재산</h3><span class="sh-sum">신용 <b>${cr}</b></span></div><div class="info-grid">
+      ${field('info','spend','생활 수준',c.info.spend,'s',1,`${w.lvl} (하루 ${w.day}까지)`)}
+      ${field('info','cash','현금',c.info.cash,'s',1,w.cash)}
+      ${field('info','assets','자산',c.info.assets,'l',0,w.assets)}
+    </div>
+    <div class="wealth"><span>신용 ${cr} 기준 · <b>${w.lvl}</b> · 하루 ${w.day}까지 · 현금 ${w.cash} · 자산 ${w.assets}</span>
+      <select data-sk="era" aria-label="시대"${ro?' disabled':''}><option value="1920"${era==='1920'?' selected':''}>1920년대</option><option value="modern"${era==='modern'?' selected':''}>현대</option></select>
+      ${ro?'':'<button class="btn sm ed" data-wfill>신용으로 채우기</button>'}</div></section>`;
 }
 function storyTabHTML(c,kind){
   return `<section><div class="sh-h"><h3>${kind==='coc'?'배경 이야기':'서사'}</h3></div><div class="info-grid">
@@ -2995,8 +3130,9 @@ function renderSheet(){
   const ownerName=(R.memberNames||{})[ownerOf(c)]||'';
   if(!ro)watchSecretFor(c);
   if(sheetTab==='secret'&&ro)sheetTab='stat';
-  const tabs=[['stat','능력치'],['info','정보'],['story','서사'],...(ro?[]:[['secret','🔒 비밀']])];
-  const body=sheetTab==='info'?infoTabHTML(c,kind):sheetTab==='story'?storyTabHTML(c,kind):sheetTab==='secret'?secretTabHTML(c):statTabHTML(c,sh,kind,ro);
+  if(sheetTab==='combat'&&kind!=='coc')sheetTab='stat';
+  const tabs=[['stat','능력치'],...(kind==='coc'?[['combat','전투']]:[]),['info','정보'],['story','서사'],...(ro?[]:[['secret','🔒 비밀']])];
+  const body=sheetTab==='combat'?combatTabHTML(c,sh,ro):sheetTab==='info'?infoTabHTML(c,kind):sheetTab==='story'?storyTabHTML(c,kind):sheetTab==='secret'?secretTabHTML(c):statTabHTML(c,sh,kind,ro);
   const scroll=el.querySelector('.sheet-body')?.scrollTop||0;
   el.innerHTML=`<div class="sheet-head" style="--cc:${safeColor(c.color)}">${dot(c)}<div class="sheet-title"><b data-stitle>${esc(c.name)}</b><span>${esc(c.note||'캐릭터 시트')}${ownerName&&ownerOf(c)!==me.uid?' · '+esc(ownerName):''}</span></div>
       <span class="sheet-grip" aria-hidden="true">⠿ 끌어서 이동</span>${ownerOf(c)===me.uid?`<button class="x lib-save" data-slib style="opacity:1" title="내 캐릭터 보관함에 저장 (다른 세션에서 불러올 수 있어요)" aria-label="보관함에 저장">📥</button>`:''}<button class="x" style="opacity:1;font-size:18px;width:32px;height:32px" data-sclose aria-label="시트 닫기">×</button></div>
@@ -3006,7 +3142,7 @@ function renderSheet(){
       ${body}
     </div>`;
   el.classList.toggle('ro',ro);
-  if(ro){el.querySelectorAll('input:not([data-sksearch]),textarea').forEach(i=>i.readOnly=true);el.querySelectorAll('.sheet-body select').forEach(x=>x.disabled=true)}
+  if(ro){el.querySelectorAll('input:not([data-sksearch]),textarea').forEach(i=>i.readOnly=true);el.querySelectorAll('.sheet-body select,.sheet-body input[type=checkbox]').forEach(x=>x.disabled=true)}
   const nb=el.querySelector('.sheet-body');if(nb&&scroll)nb.scrollTop=scroll;
 }
 const GEO_KEY='bt-sheet-geo',mobileSheet=()=>matchMedia('(max-width:700px)').matches;
@@ -3067,6 +3203,269 @@ function closeTopSheet(){const all=$$('#sheets .sheet');if(!all.length)return fa
   box.addEventListener('dblclick',e=>{const el=e.target.closest('.sheet');if(el&&e.target.closest('.sheet-head')&&!e.target.closest('button')&&!mobileSheet()){const k=el.dataset.cid?GEO_KEY:el.dataset.geo;if(k)lsSet(k,{});placeWin(el)}});
   box.addEventListener('click',e=>{const b=e.target.closest('[data-wclose]');if(b){const el=b.closest('.sheet');if(el){el.dispatchEvent(new CustomEvent('winclose',{bubbles:true}));el.remove()}}});
 })();
+
+/* ---------------- CoC 7판: 특성치 굴림 · 나이 보정 · 전투 · 이성 · 성장 ---------------- */
+const COC_GEN={STR:'3d6',CON:'3d6',SIZ:'2d6+6',DEX:'3d6',APP:'3d6',INT:'2d6+6',POW:'3d6',EDU:'2d6+6',LUCK:'3d6'};
+const genLabel=k=>(COC_GEN[k]||'3d6')==='2d6+6'?'(2D6+6)×5':'3D6×5';
+const cocG=(sh,k)=>+(sh.ab.find(a=>a.k===k)||{}).v||0;
+const cocAb=(sh,k)=>sh.ab.find(a=>a.k===k);
+const cocRes=(sh,label)=>sh.res.find(r=>r.label===label);
+const cocSk=(sh,label)=>sh.sk.find(s=>s.label===label);
+/* 피해 보너스 · 체구 (근력 + 크기) */
+function cocDB(sh){
+  const s=cocG(sh,'STR')+cocG(sh,'SIZ');
+  if(s<65)return {db:'-2',build:-2,sum:s};
+  if(s<85)return {db:'-1',build:-1,sum:s};
+  if(s<125)return {db:'0',build:0,sum:s};
+  if(s<165)return {db:'+1D4',build:1,sum:s};
+  if(s<205)return {db:'+1D6',build:2,sum:s};
+  const n=2+Math.floor((s-205)/80);return {db:`+${n}D6`,build:n+1,sum:s};
+}
+/* 이동력: 민첩·근력이 둘 다 크기보다 작으면 7, 둘 다 크면 9, 그 밖에는 8. 나이 보정만큼 빼요 */
+function cocMov(sh){
+  const st=cocG(sh,'STR'),dx=cocG(sh,'DEX'),sz=cocG(sh,'SIZ');
+  const base=dx<sz&&st<sz?7:dx>sz&&st>sz?9:8,pen=(sh.ageAdj&&+sh.ageAdj.mov)||0;
+  return {mov:Math.max(1,base-pen),base,pen};
+}
+const cocSanMax=sh=>99-Math.max(0,+(cocSk(sh,'크툴루 신화')||{}).v||0);
+/* 특성치가 바뀌면 체력·마력·이성, 회피·모국어 기본값을 다시 맞춰요 */
+function cocRecalc(sh){
+  const g=k=>cocG(sh,k);
+  const set=(label,cur,max)=>{const x=cocRes(sh,label);if(x){x.cur=cur;x.max=max}};
+  const hp=Math.max(1,Math.floor((g('CON')+g('SIZ'))/10)),mp=Math.max(1,Math.floor(g('POW')/5));
+  set('체력',hp,hp);set('마력',mp,mp);set('이성',Math.min(g('POW'),cocSanMax(sh)),cocSanMax(sh));
+  const setBase=(label,val)=>{const x=cocSk(sh,label);if(x){const raised=Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b));x.b=val;x.v=val+raised}};
+  setBase('회피',Math.floor(g('DEX')/2));setBase('모국어',g('EDU'));
+}
+/* 주사위 식의 최댓값 (극단적 성공 피해용) */
+function diceMax(expr){
+  const e=String(expr||'').replace(/\s+/g,'').toLowerCase();if(!e||e==='0')return 0;
+  if(!/^[+-]?(\d*d\d+|\d+)([+-](\d*d\d+|\d+))*$/.test(e))return null;
+  let t=0;e.replace(/([+-]?)(\d*)d(\d+)|([+-]?)(\d+)/g,(m,s1,n,f,s2,k)=>{if(f!==undefined)t+=(s1==='-'?-1:1)*(+n||1)*(+f);else t+=(s2==='-'?-1:1)*(+k);return m});
+  return t;
+}
+const dbPart=db=>db==='0'?'':db.startsWith('-')?db:'+'+db.replace(/^\+/,'');
+/* 피해 보너스 절반 (던지기 무기용): 1D4→1D2, 1D6→1D3, nD6→nD3, −2→−1 */
+const dbHalf=db=>{if(db==='0')return '0';if(db==='-2')return '-1';if(db==='-1')return '-1';const m=db.match(/^\+?(\d+)D(\d+)$/i);return m?`+${m[1]}D${Math.max(1,Math.floor(+m[2]/2))}`:db};
+/* 피해 식: '1d3 + 피해보너스', '1D6+DB', '1d4+(보너스 수치)', 'DB/2' 처럼 적으면 피해 보너스로 바꿔요 */
+const DB_TOKEN=/([+-]?)\s*\(?\s*(피해\s*보너스|보너스\s*수치|보너스|db)\s*(\/\s*2)?\s*\)?/gi;
+function wpFormula(x,sh){
+  const raw=String(x.dmg||''),D=cocDB(sh);let has=false;
+  let f=raw.replace(DB_TOKEN,(m,sg,t,half)=>{has=true;const p=dbPart(half?dbHalf(D.db):D.db);return sg==='-'&&p?(p[0]==='-'?'+'+p.slice(1):'-'+p.slice(1)):p}).replace(/\s+/g,'');
+  const base=raw.replace(DB_TOKEN,'').replace(/\s+/g,'').replace(/[+-]+$/,'');
+  if(!has&&x.db)f+=dbPart(D.db);
+  f=f.replace(/^\+/,'').replace(/\+\+/g,'+').replace(/\+-/g,'-').replace(/-\+/g,'-');
+  return {f,base:base.replace(/^\+/,''),ok:!!f&&roll(f)!=null,has};
+}
+const wpPrev=(x,sh)=>{const w=wpFormula(x,sh);return w.f?(w.ok?`= ${w.f.toUpperCase()} · 최대 ${diceMax(w.f)}`:'식을 읽지 못했어요 · 예: 1D3+피해보너스'):''};
+/* 나이 보정 (CoC 7판 룰북 기준) */
+const AGE_RULES=[
+  [15,19,{edu:5,split:5,from:['STR','SIZ'],luck2:true}],
+  [20,39,{chk:1}],
+  [40,49,{chk:2,split:5,from:['STR','CON','DEX'],app:5,mov:1}],
+  [50,59,{chk:3,split:10,from:['STR','CON','DEX'],app:10,mov:2}],
+  [60,69,{chk:4,split:20,from:['STR','CON','DEX'],app:15,mov:3}],
+  [70,79,{chk:4,split:40,from:['STR','CON','DEX'],app:20,mov:4}],
+  [80,89,{chk:4,split:80,from:['STR','CON','DEX'],app:25,mov:5}]];
+const ageOf=c=>{const n=parseInt(String((c.info||{}).age||'').replace(/[^\d]/g,''),10);return isNaN(n)?null:n};
+function ageRule(age){if(age==null)return null;const r=AGE_RULES.find(([a,b])=>age>=a&&age<=b);return r?{lo:r[0],hi:r[1],...r[2]}:{out:true}}
+const AB_KO={STR:'근력',CON:'건강',SIZ:'크기',DEX:'민첩',APP:'외모',INT:'지능',POW:'정신',EDU:'교육',LUCK:'행운'};
+function ageDesc(r){
+  const t=[];
+  if(r.chk)t.push(`교육 성장 판정 ${r.chk}회`);
+  if(r.edu)t.push(`교육 −${r.edu}`);
+  if(r.split)t.push(`${r.from.map(k=>AB_KO[k]).join('·')}에서 합계 ${r.split} 감소`);
+  if(r.app)t.push(`외모 −${r.app}`);
+  if(r.mov)t.push(`이동력 −${r.mov}`);
+  if(r.luck2)t.push('행운을 한 번 더 굴려 높은 값 사용');
+  return t.join(' · ');
+}
+function ageSplitOf(w,r){
+  const st=w.st;if(!st.ageSp||st.ageSp.key!==r.lo){const sp={key:r.lo};const each=Math.floor(r.split/r.from.length);r.from.forEach((k,i)=>sp[k]=each+(i<r.split-each*r.from.length?1:0));st.ageSp=sp}
+  return st.ageSp;
+}
+function ageHTML(c,sh,ro){
+  const w=wins.get(c.id),age=ageOf(c);
+  if(sh.ageAdj){
+    const a=sh.ageAdj;
+    return `<section class="age-box done"><div class="sh-h"><h3>나이 보정</h3><span class="sh-sum">${esc(a.age)}세 적용됨</span></div>
+      <p class="age-desc">${esc(a.text||'')}</p>${ro?'':'<button class="ghost ed" data-ageundo>되돌리기</button>'}</section>`;
+  }
+  const r=ageRule(age);
+  let inner;
+  if(age==null)inner=`<p class="age-desc">나이를 적으면 나이대에 맞는 특성치 보정을 할 수 있어요. (정보 탭의 나이와 같은 칸이에요)</p>`;
+  else if(r.out)inner=`<p class="age-desc">${age}세는 룰북의 나이 보정 범위(15~89세) 밖이에요. 방장과 상의해서 정해 주세요.</p>`;
+  else{
+    const sp=r.split?ageSplitOf(w,r):null,used=sp?r.from.reduce((a,k)=>a+(+sp[k]||0),0):0;
+    inner=`<p class="age-desc"><b>${r.lo}~${r.hi}세</b> · ${ageDesc(r)}</p>
+      ${sp?`<div class="age-split"><span class="age-lbl">감소 나누기</span>${r.from.map(k=>`<label class="age-sp">${AB_KO[k]}<input class="num" data-f="agesp:${k}" value="${esc(sp[k])}" inputmode="numeric" aria-label="${AB_KO[k]}에서 뺄 값"></label>`).join('')}
+        <span class="age-left" data-ageleft>${used===r.split?'✓ 맞아요':`${r.split-used>0?r.split-used+' 더 나눠 주세요':used-r.split+' 넘쳤어요'}`}</span></div>`:''}
+      ${ro?'':`<button class="btn sm ed" data-ageapply>${age}세 보정 적용하기</button>`}`;
+  }
+  return `<section class="age-box"><div class="sh-h"><h3>나이 보정</h3><label class="sh-sum age-in"><input class="num" data-f="info:age" value="${esc((c.info||{}).age||'')}" inputmode="numeric" maxlength="4" aria-label="나이"${ro?' readonly':''}>세</label></div>${inner}</section>`;
+}
+/* 최근 굴림: 실패하면 밀어붙이기 · 행운 사용 */
+function lastHTML(c,sh,ro){
+  const w=wins.get(c.id),L=w&&w.st.last;if(!L||ro)return '';
+  const fail=L.c==='fail',fum=L.c==='fumble',diff=L.total-L.target,luck=cocG(sh,'LUCK');
+  const canPush=fail&&!L.pushed&&L.push,canLuck=fail&&!L.pushed&&L.luck&&diff>0&&diff<=luck;
+  if(!canPush&&!canLuck)return '';
+  return `<div class="last-roll"><span class="lr-t"><b>${esc(L.label)}</b> ${L.total} (기능치 ${L.target}) · ${fum?'대실패':'실패'}</span>
+    ${canPush?`<button class="btn sm ed" data-spush title="한 번 더 굴려요. 다시 실패하면 더 나쁜 결과가 생길 수 있어요">💪 밀어붙이기</button>`:''}
+    ${canLuck?`<button class="btn sm ed" data-sluck title="행운을 써서 성공으로 바꿔요 (성장 체크는 받지 않아요)">🍀 행운 ${diff} 써서 성공</button>`:''}
+    <button class="x" data-slastx aria-label="닫기" style="opacity:.6">×</button></div>`;
+}
+const CB_ST=[['mw','중상'],['uncon','기절'],['dying','빈사'],['tmp','일시적 광기'],['ind','장기적 광기']];
+const stChips=(sh,ro)=>{const st=sh.st||{};return `<div class="st-chips">${CB_ST.map(([k,l])=>`<button class="st-chip${st[k]?' on':''}${['mw','dying','ind'].includes(k)?' bad':''}" data-cbst="${k}" aria-pressed="${!!st[k]}"${ro?' disabled':''}>${st[k]?'☑':'☐'} ${l}</button>`).join('')}</div>`};
+/* 능력치 탭 위쪽: 이동력·피해 보너스·체구 (자동 계산)과 상태 체크 */
+function cocMiniHTML(sh,ro){
+  const D=cocDB(sh),M=cocMov(sh);
+  return `<section><div class="sh-h"><h3>전투 수치 · 상태</h3><button class="ghost" data-stab="combat" style="font-size:12px">무기·전투 탭 →</button></div>
+    <div class="mini-row"><span class="mini"><small>이동력</small><b>${M.mov}</b>${M.pen?`<em>나이 −${M.pen}</em>`:''}</span><span class="mini"><small>피해 보너스</small><b>${D.db==='0'?'없음':esc(D.db)}</b></span><span class="mini"><small>체구</small><b>${D.build>0?'+':''}${D.build}</b></span></div>
+    ${stChips(sh,ro)}
+    <p class="sheet-foot" style="margin-top:6px">이동력·피해 보너스·체구는 근력·민첩·크기와 나이로 자동 계산돼요.</p></section>`;
+}
+function combatTabHTML(c,sh,ro){
+  const D=cocDB(sh),M=cocMov(sh),dodge=cocSk(sh,'회피'),hp=cocRes(sh,'체력'),san=cocRes(sh,'이성'),st=sh.st||{};
+  const skOpts=sel=>sh.sk.map(s=>`<option value="${esc(s.label)}"${s.label===sel?' selected':''}>${esc(s.label)} ${esc(s.v)}</option>`).join('');
+  const wp=(sh.wp||[]).map(x=>{const sk=cocSk(sh,x.skill);return `<div class="wp" data-wprow="${esc(x.id)}">
+    <div class="wp-top"><input class="wp-name" data-f="wp:${esc(x.id)}:name" value="${esc(x.name)}" maxlength="30" aria-label="무기 이름" placeholder="무기 이름">
+      ${ro?'':`<button class="x ed" data-wpdel="${esc(x.id)}" aria-label="${esc(x.name)} 지우기">×</button>`}</div>
+    <div class="wp-grid">
+      <label class="wf wide"><span>기능</span><select data-wpsk="${esc(x.id)}" aria-label="공격 기능">${sk?'':`<option value="${esc(x.skill||'')}" selected>${esc(x.skill||'고르기')}</option>`}${skOpts(x.skill)}</select></label>
+      <label class="wf wide"><span>피해 식</span><input data-f="wp:${esc(x.id)}:dmg" value="${esc(x.dmg)}" maxlength="40" placeholder="1D3+피해보너스"></label>
+      <label class="wf"><span>사거리</span><input data-f="wp:${esc(x.id)}:rng" value="${esc(x.rng||'')}" maxlength="12"></label>
+      <label class="wf"><span>공격 횟수</span><input data-f="wp:${esc(x.id)}:att" value="${esc(x.att||'')}" maxlength="8"></label>
+      <label class="wf"><span>장탄</span><input data-f="wp:${esc(x.id)}:ammo" value="${esc(x.ammo||'')}" maxlength="8"></label>
+      <label class="wf"><span>고장</span><input data-f="wp:${esc(x.id)}:mal" value="${esc(x.mal||'')}" maxlength="3" inputmode="numeric" placeholder="—"></label>
+    </div>
+    <div class="wp-prev" data-wpprev="${esc(x.id)}">${esc(wpPrev(x,sh))}</div>
+    <div class="wp-bot"><label class="wck" title="피해 식에 '피해보너스'나 'DB'를 직접 적었다면 이 체크는 무시돼요"><input type="checkbox" data-wpck="${esc(x.id)}:db"${x.db?' checked':''}> 피해 보너스 자동으로 더하기</label><label class="wck"><input type="checkbox" data-wpck="${esc(x.id)}:imp"${x.imp?' checked':''}> 관통 무기</label>
+      <span class="wp-acts">${ro?'':`<button class="rollb ed" data-wpatk="${esc(x.id)}">🎯 공격 ${sk?esc(sk.v):''}</button><button class="rollb ed" data-wpdmg="${esc(x.id)}">💥 피해</button><button class="rollb ed" data-wpext="${esc(x.id)}" title="극단적 성공일 때의 피해예요. 관통 무기는 최대 피해에 한 번 더 굴려 더해요">💥 극단적</button>`}</span></div>
+  </div>`}).join('');
+  const sl=sh.sanl||{s:'0',f:'1D6'},ck=sh.sk.filter(s=>s.ck);
+  return `${lastHTML(c,sh,ro)}<section><div class="sh-h"><h3>전투 수치</h3><span class="sh-sum">근력 + 크기 = ${D.sum}</span></div>
+    <div class="cb-grid">
+      <div class="cb"><span>피해 보너스</span><b>${D.db==='0'?'없음':esc(D.db)}</b></div>
+      <div class="cb"><span>체구</span><b>${D.build>0?'+':''}${D.build}</b></div>
+      <div class="cb"><span>이동력</span><b>${M.mov}</b>${M.pen?`<small>나이 −${M.pen}</small>`:''}</div>
+      <div class="cb"><span>회피</span><b>${dodge?esc(dodge.v):'—'}</b>${dodge?`<small>${Math.floor((+dodge.v||0)/2)} · ${Math.floor((+dodge.v||0)/5)}</small>${ro?'':`<button class="rollb ed" data-sroll="sk:${esc(dodge.id)}">🎲 회피</button>`}`:''}</div>
+    </div></section>
+  <section><div class="sh-h"><h3>체력과 상태</h3>${hp?`<span class="sh-sum">중상 기준: 한 번에 ${Math.ceil((+hp.max||0)/2)} 이상</span>`:''}</div>
+    ${hp?`<div class="res" style="--resc:${safeColor(hp.color||'#c94a6b')}"><span class="res-k">체력</span><div class="res-bar"><i style="width:${Math.max(0,Math.min(100,(+hp.cur||0)/(+hp.max||1)*100))}%"></i></div><span class="res-num"><b class="hp-now">${esc(hp.cur)}</b>/${esc(hp.max)}</span></div>`:''}
+    ${ro?'':`<div class="hit-row"><input class="num" data-cbdmg value="" inputmode="numeric" placeholder="0" aria-label="피해 또는 회복 양"><button class="btn sm ed" data-cbhit>피해 입기</button><button class="btn sm ed" data-cbheal>회복하기</button></div>`}
+    ${stChips(sh,ro)}</section>
+  <section><div class="sh-h"><h3>무기</h3><span class="sh-sum">${D.db==='0'?'':'피해 보너스 '+esc(D.db)}</span></div>
+    <div class="wp-list">${wp||'<p class="sheet-foot">무기가 없어요.</p>'}</div>
+    ${ro?'':'<button class="ghost ed" data-wpadd style="margin-top:6px">+ 무기 추가</button>'}</section>
+  <section><div class="sh-h"><h3>이성</h3>${san?`<span class="sh-sum">현재 <b>${esc(san.cur)}</b> / 최대 ${cocSanMax(sh)}</span>`:''}</div>
+    <div class="san-row"><label class="wf"><span>성공 시 잃는 이성</span><input data-f="sanl:s" value="${esc(sl.s)}" maxlength="12" placeholder="0"></label><label class="wf"><span>실패 시 잃는 이성</span><input data-f="sanl:f" value="${esc(sl.f)}" maxlength="12" placeholder="1D6"></label>
+      ${ro?'':'<button class="rollb ed" data-sanroll>🧠 이성 판정</button>'}</div>
+    <p class="sheet-foot">한 번에 5 이상 잃으면 일시적 광기, 하루에 이성의 1/5 이상 잃으면 장기적 광기를 알려 드려요.</p></section>
+  <section><div class="sh-h"><h3>성장</h3><span class="sh-sum">성장 체크 ${ck.length}개</span></div>
+    <div class="grow-chips">${ck.length?ck.map(s=>`<span class="chip">${esc(s.label)} ${esc(s.v)}</span>`).join(''):'<span class="sheet-foot">기능 판정에 성공하면 자동으로 체크돼요. 능력치 탭의 ✓로 직접 고를 수도 있어요.</span>'}</div>
+    ${ro||!ck.length?'':'<button class="btn sm ed" data-sgrowall style="margin-top:8px">📈 성장 굴림</button>'}</section>
+  <p class="sheet-foot">보너스·패널티 주사위는 입력창의 🎲 보정이 그대로 적용돼요. 굴린 결과는 이 인물 이름으로 로그에 올라가요.</p>`;
+}
+/* 굴려서 로그에 올리기 (고장 판정 포함) */
+function cocCheck(label,target,cid,opt={}){
+  const n=opt.noBp?0:bpCur,r=n?rollBP(n):roll('1d100');let j=judge(r.total,target,'1d100');
+  if(opt.mal&&r.total>=opt.mal)j={v:'고장',c:'fumble'};
+  push({type:'dice',label,f:'1d100',total:r.total,detail:r.detail+(opt.note||''),target:target||null,verdict:j.v,vc:j.c,...(n?{bp:n}:{})},cid);
+  if(n&&!bpPin)setBp(0);
+  return {r,j};
+}
+const okJ=j=>j&&j.c!=='fail'&&j.c!=='fumble'&&!!j.v;
+function setLast(c,o){const w=wins.get(c.id);if(w)w.st.last=o}
+/* 시트 버튼 처리. 처리했으면 true */
+function cocClick(c,sh,d,b){
+  const w=wins.get(c.id),ended=R.status==='ended';
+  const needLive=()=>{if(ended){toast('종료된 세션에서는 굴릴 수 없어요');return false}return true};
+  if(d.sgen){if(!needLive())return true;const a=sh.ab.find(x=>x.id===d.sgen);if(!a)return true;
+    const r=roll(COC_GEN[a.k]||'3d6'),v=r.total*5;a.v=v;cocRecalc(sh);
+    push({type:'dice',label:`${a.label} 특성치 굴림`,f:genLabel(a.k),total:v,detail:`${r.detail} = ${r.total} × 5`},c.id);
+    markSheet(c);renderSheet();toast(`${a.label} ${v} · 체력·마력·이성도 다시 맞췄어요`);return true}
+  if('ageapply' in d){
+    const age=ageOf(c),r=ageRule(age);if(!r||r.out)return true;
+    const sp=r.split?ageSplitOf(w,r):null;
+    if(sp){const used=r.from.reduce((a,k)=>a+(+sp[k]||0),0);if(used!==r.split||r.from.some(k=>(+sp[k]||0)<0)){toast(`감소량 합계를 ${r.split}에 맞춰 주세요`);return true}
+      const bad=r.from.find(k=>cocG(sh,k)-(+sp[k]||0)<1);if(bad){toast(`${AB_KO[bad]}이 1보다 작아져요. 다르게 나눠 주세요`);return true}}
+    if(!needLive())return true;
+    const before={};sh.ab.forEach(a=>before[a.id]=a.v);const parts=[],add=(k,dv)=>{const a=cocAb(sh,k);if(a)a.v=Math.max(1,(+a.v||0)+dv)};
+    if(sp){r.from.forEach(k=>{if(+sp[k])add(k,-sp[k])});parts.push(r.from.filter(k=>+sp[k]).map(k=>`${AB_KO[k]} −${sp[k]}`).join(', '))}
+    if(r.app){add('APP',-r.app);parts.push(`외모 −${r.app}`)}
+    if(r.edu){add('EDU',-r.edu);parts.push(`교육 −${r.edu}`)}
+    if(r.chk){const ed=cocAb(sh,'EDU'),ls=[];for(let i=0;i<r.chk;i++){const t=roll('1d100').total,cur=+ed.v||0;if(t>cur&&cur<99){const g=roll('1d10').total;ed.v=Math.min(99,cur+g);ls.push(`${t}✓+${g}`)}else ls.push(`${t}✗`)}parts.push(`교육 성장 ${ls.join(' ')} → ${ed.v}`)}
+    if(r.luck2){const lk=cocAb(sh,'LUCK'),t=roll('3d6').total*5,old=+lk.v||0;lk.v=Math.max(old,t);parts.push(`행운 다시 굴림 ${t} → ${lk.v}`)}
+    if(r.mov)parts.push(`이동력 −${r.mov}`);
+    const text=parts.filter(Boolean).join(' · ');
+    sh.ageAdj={age,mov:r.mov||0,before,text};cocRecalc(sh);
+    push({type:'dice',label:`나이 보정 (${age}세)`,f:r.chk?`교육 성장 판정 ${r.chk}회`:'나이 보정',total:cocG(sh,'EDU'),detail:text},c.id);
+    markSheet(c);renderSheet();toast('나이 보정을 적용했어요');return true}
+  if('ageundo' in d){const a=sh.ageAdj;if(!a)return true;sh.ab.forEach(x=>{if(a.before&&x.id in a.before)x.v=a.before[x.id]});delete sh.ageAdj;cocRecalc(sh);markSheet(c);renderSheet();toast('나이 보정을 되돌렸어요');return true}
+  if('slastx' in d){if(w)w.st.last=null;renderSheet();return true}
+  if('spush' in d){const L=w&&w.st.last;if(!L||L.pushed||!needLive())return true;
+    const res=cocCheck(L.label+' (밀어붙이기)',L.target,c.id);
+    if(okJ(res.j)&&L.sk){const s=sh.sk.find(x=>x.id===L.sk);if(s&&s.label!=='크툴루 신화'){s.ck=true;markSheet(c)}}
+    w.st.last={...L,total:res.r.total,c:res.j.c,pushed:true};renderSheet();toast(`밀어붙이기 ${res.r.total} · ${res.j.v||''}`);return true}
+  if('sluck' in d){const L=w&&w.st.last;if(!L||L.pushed||!needLive())return true;const lk=cocAb(sh,'LUCK'),diff=L.total-L.target,old=+lk.v||0;
+    if(diff<=0||diff>old){toast('행운이 모자라요');return true}
+    lk.v=old-diff;
+    push({type:'dice',label:`${L.label} · 행운 사용`,f:`행운 ${old} → ${lk.v}`,total:L.target,detail:`${L.total} → ${L.target} (행운 −${diff})`,target:L.target,verdict:'성공',vc:''},c.id);
+    w.st.last=null;markSheet(c);renderSheet();toast(`행운 ${diff}을 써서 성공으로 바꿨어요`);return true}
+  if('wfill' in d){const cr=+(cocSk(sh,'신용')||{}).v||0,wl=wealthOf(cr,sh.era==='modern'?'modern':'1920');
+    if((c.info.spend||c.info.cash||c.info.assets)&&!b.classList.contains('warn')){b.classList.add('warn');b.textContent='적어 둔 값을 바꿔요. 한 번 더 눌러 주세요';setTimeout(()=>{if(b.isConnected){b.classList.remove('warn');b.textContent='신용으로 채우기'}},3000);return true}
+    c.info.spend=`${wl.lvl} (하루 ${wl.day}까지)`;c.info.cash=wl.cash;c.info.assets=wl.assets;markSheet(c);renderSheet();toast('신용 기능치로 생활 수준·현금·자산을 채웠어요');return true}
+  if(d.sck){const s=sh.sk.find(x=>x.id===d.sck);if(s){if(s.ck)delete s.ck;else s.ck=true;markSheet(c);renderSheet()}return true}
+  if('wpadd' in d){sh.wp=sh.wp||[];sh.wp.push({id:uid(),name:'새 무기',skill:'근접전(격투)',dmg:'1D6+피해보너스',db:false,imp:false,rng:'',att:'1',ammo:'',mal:''});markSheet(c);renderSheet();
+    const ins=SE.querySelectorAll('.wp-name');const last=ins[ins.length-1];if(last){last.focus();last.select()}return true}
+  if(d.wpdel){if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='삭제';setTimeout(()=>{if(b.isConnected){b.classList.remove('armed');b.textContent='×'}},3000);return true}
+    sh.wp=(sh.wp||[]).filter(x=>x.id!==d.wpdel);markSheet(c);renderSheet();return true}
+  const wpOf=id=>(sh.wp||[]).find(x=>x.id===id);
+  if(d.wpatk){const x=wpOf(d.wpatk);if(!x||!needLive())return true;const s=cocSk(sh,x.skill);if(!s){toast('공격에 쓸 기능을 골라 주세요');return true}
+    const res=cocCheck(`${x.name} 공격 (${s.label})`,+s.v||0,c.id,{mal:+x.mal||0});
+    if(okJ(res.j)&&res.j.v!=='고장'&&s.label!=='크툴루 신화'){s.ck=true;markSheet(c)}
+    setLast(c,{label:`${x.name} 공격`,target:+s.v||0,total:res.r.total,c:res.j.c,push:false,luck:res.j.v!=='고장',sk:s.id});
+    renderSheet();toast(`${x.name} 공격 ${res.r.total} · ${res.j.v}`);return true}
+  if(d.wpdmg||d.wpext){const x=wpOf(d.wpdmg||d.wpext);if(!x||!needLive())return true;const ext=!!d.wpext,W=wpFormula(x,sh);
+    if(!W.ok){toast('피해 식을 읽지 못했어요. 예: 1D3+피해보너스');return true}
+    let total,detail,f;
+    if(!ext){const r=roll(W.f);total=Math.max(0,r.total);detail=r.detail;f=W.f.toUpperCase()}
+    else{const mx=diceMax(W.f);let extra=0,ed='';if(x.imp&&W.base&&roll(W.base)){const r=roll(W.base);extra=r.total;ed=` + 관통 ${r.detail}`}
+      total=Math.max(0,mx+extra);detail=`최대 ${mx}${ed}`;f=`${W.f.toUpperCase()} 극단적 성공${x.imp?' (관통)':''}`}
+    push({type:'dice',label:`${x.name} 피해`,f,total,detail},c.id);toast(`${x.name} 피해 ${total}`);return true}
+  if('cbhit' in d||'cbheal' in d){const hp=cocRes(sh,'체력');const inp=SE.querySelector('[data-cbdmg]'),n=toNum(inp&&inp.value);if(!hp||n<=0){toast('양을 숫자로 적어 주세요');return true}
+    sh.st=sh.st||{};const cur=+hp.cur||0,max=+hp.max||1;
+    if('cbheal' in d){hp.cur=Math.min(max,cur+n);if(hp.cur>0){delete sh.st.uncon}markSheet(c);renderSheet();toast(`체력 ${cur} → ${hp.cur}`);return true}
+    hp.cur=Math.max(0,cur-n);const notes=[];
+    if(n>max){notes.push('한 번에 최대 체력을 넘는 피해라 즉사해요');sh.st.dying=true}
+    else{if(n*2>=max){sh.st.mw=true;notes.push('중상이에요. 건강 판정에 실패하면 기절해요')}
+      if(hp.cur===0){if(sh.st.mw){sh.st.dying=true;notes.push('빈사 상태예요. 응급처치가 필요해요')}else{sh.st.uncon=true;notes.push('기절했어요')}}}
+    markSheet(c);renderSheet();toast(`체력 ${cur} → ${hp.cur}${notes.length?' · '+notes.join(' · '):''}`);return true}
+  if(d.cbst){sh.st=sh.st||{};if(sh.st[d.cbst])delete sh.st[d.cbst];else sh.st[d.cbst]=true;markSheet(c);renderSheet();return true}
+  if('sanroll' in d){if(!needLive())return true;const san=cocRes(sh,'이성');if(!san)return true;const sl=sh.sanl||{s:'0',f:'1D6'};
+    const ok=e=>{const v=String(e||'0').replace(/\s+/g,'');return v===''||roll(v)!=null};
+    if(!ok(sl.s)||!ok(sl.f)){toast('잃는 이성을 0 또는 1D6 같은 식으로 적어 주세요');return true}
+    const cur=+san.cur||0,r=roll('1d100'),j=judge(r.total,cur,'1d100'),succ=okJ(j);
+    const ex=String((succ?sl.s:sl.f)||'0').replace(/\s+/g,'')||'0';let loss;
+    if(j.c==='fumble')loss=Math.max(0,diceMax(sl.f||'0'));else loss=Math.max(0,roll(ex).total);
+    const nv=Math.max(0,cur-loss);san.cur=nv;
+    const day=ymd(now());if(!sh.sanDay||sh.sanDay.d!==day)sh.sanDay={d:day,start:cur,lost:0};sh.sanDay.lost+=loss;
+    sh.st=sh.st||{};const notes=[];
+    if(loss>=5){notes.push('일시적 광기 위험 · 지능 판정');}
+    if(loss>0&&sh.sanDay.lost>=Math.max(1,Math.floor(sh.sanDay.start/5))&&!sh.st.ind){sh.st.ind=true;notes.push('장기적 광기 (오늘 이성의 1/5 이상 잃음)')}
+    if(nv===0)notes.push('영구적 광기');
+    push({type:'dice',label:`이성 판정 (${sl.s||'0'}/${sl.f||'0'})`,f:'1d100',total:r.total,target:cur||null,verdict:j.v,vc:j.c,detail:`${r.detail} · 이성 −${loss} (${cur}→${nv})${j.c==='fumble'?' 대실패라 최대치':''}${notes.length?' · '+notes.join(' · '):''}`},c.id);
+    markSheet(c);renderSheet();toast(`이성 ${cur} → ${nv}${notes.length?' · '+notes[0]:''}`);return true}
+  if('sgrowall' in d){if(!needLive())return true;const ck=sh.sk.filter(s=>s.ck);if(!ck.length)return true;
+    let up=0,sanB=0;const ls=ck.map(s=>{const old=+s.v||0,t=roll('1d100').total;delete s.ck;
+      if(t>old||t>=96){const g=roll('1d10').total;s.v=old+g;s.g=(+s.g||0)+g;up++;if(old<90&&s.v>=90){sanB+=roll('2d6').total}return `${s.label} ${t}✓ +${g} (${old}→${s.v})`}
+      return `${s.label} ${t}✗`});
+    let sanTxt='';if(sanB){const san=cocRes(sh,'이성');if(san){const o=+san.cur||0;san.cur=Math.min(cocSanMax(sh),o+sanB);sanTxt=` · 90 도달 보상 이성 +${sanB}`}}
+    push({type:'dice',label:`성장 굴림 (${ck.length}개)`,f:'1d100 > 기능치',total:up,detail:ls.join(' · ')+sanTxt},c.id);
+    markSheet(c);renderSheet();toast(`${ck.length}개 중 ${up}개가 성장했어요${sanTxt}`);return true}
+  return false;
+}
 
 /* ---------------- 방 공지 · 채팅 형식 · 지문 스타일 ---------------- */
 const NS_KO={'기본':'line','줄':'line','줄없음':'plain','상자':'box','박스':'box','강조':'accent','명조':'serif','속삭임':'quiet','작게':'quiet','캡슐':'chapter'},
@@ -3538,6 +3937,10 @@ onSheet('input',e=>{
   else if(k==='rescur')sh.res.find(r=>r.id===id).cur=toNum(v);
   else if(k==='resmax')sh.res.find(r=>r.id===id).max=Math.max(1,toNum(v));
   else if(k==='pfm'){const t=sh.pf[+id];if(t)t.m=v.trim()===''?null:Math.max(0,toNum(v))}
+  else if(k==='wp'){const j=id.indexOf(':'),wid=id.slice(0,j),fk=id.slice(j+1),x=(sh.wp||[]).find(z=>z.id===wid);if(x&&['name','dmg','rng','att','ammo','mal'].includes(fk)){x[fk]=fk==='mal'?(v.trim()===''?'':String(Math.max(0,Math.min(100,toNum(v))))):v.slice(0,40);const pv=SE.querySelector(`[data-wpprev="${CSS.escape(wid)}"]`);if(pv)pv.textContent=wpPrev(x,sh)}}
+  else if(k==='sanl'){sh.sanl=sh.sanl||{s:'0',f:'1D6'};if(id==='s'||id==='f')sh.sanl[id]=v.slice(0,12)}
+  else if(k==='agesp'){const w=wins.get(sheetCid),r=ageRule(ageOf(c));if(!w||!r||!r.split)return;const sp=ageSplitOf(w,r);sp[id]=Math.max(0,toNum(v));
+    const used=r.from.reduce((a,q)=>a+(+sp[q]||0),0),lf=SE.querySelector('[data-ageleft]');if(lf)lf.textContent=used===r.split?'✓ 맞아요':r.split-used>0?`${r.split-used} 더 나눠 주세요`:`${used-r.split} 넘쳤어요`;return}
   else if(k==='info')c.info[id]=v;
   else if(k==='story')c.story[id]=v;
   else if(k==='name'){const n=v.trim();if(!n)return;c.name=n;const t=SE.querySelector('[data-stitle]');if(t)t.textContent=n}
@@ -3548,7 +3951,11 @@ $('#sheets').addEventListener('focusout',e=>{const el=e.target.closest('.sheet[d
     flushSecretW(cid);renderWin(cid);if(R)renderRoom()},0)});
 onSheet('change',e=>{
   const c=R.chars.find(x=>x.id===sheetCid);if(!c||!canEdit(c))return;
-  if(e.target.dataset.sk==='kind'){c.sheetKind=e.target.value;skTab=null;sheetOf(c);markSheet(c);renderSheet();toast(`${SHEET_TPL[c.sheetKind].name} 시트로 바꿨어요. 다른 형식에 적은 값도 그대로 남아 있어요`);return}
+  if(e.target.dataset.f==='info:age'&&e.target.closest('.age-box')){markSheet(c);renderSheet();return}
+  if(e.target.dataset.wpsk){const x=(sheetOf(c).wp||[]).find(z=>z.id===e.target.dataset.wpsk);if(x){x.skill=e.target.value;markSheet(c);renderSheet()}return}
+  if(e.target.dataset.wpck){const [wid,fk]=e.target.dataset.wpck.split(':'),x=(sheetOf(c).wp||[]).find(z=>z.id===wid);if(x&&(fk==='db'||fk==='imp')){x[fk]=e.target.checked;markSheet(c);const pv=SE.querySelector(`[data-wpprev="${CSS.escape(wid)}"]`);if(pv)pv.textContent=wpPrev(x,sheetOf(c))}return}
+  if(e.target.dataset.sk==='kind'){c.sheetKind=e.target.value;skTab=null;if(sheetTab==='combat'&&c.sheetKind!=='coc')sheetTab='stat';sheetOf(c);markSheet(c);renderSheet();toast(`${SHEET_TPL[c.sheetKind].name} 시트로 바꿨어요. 다른 형식에 적은 값도 그대로 남아 있어요`);return}
+  if(e.target.dataset.sk==='era'){sheetOf(c).era=e.target.value;markSheet(c);renderSheet();return}
   if(e.target.dataset.sk==='rule'){sheetOf(c).rule=e.target.value;markSheet(c);renderSheet();return}
   if(e.target.dataset.pfk!=null){const sh=sheetOf(c),t=sh.pf[+e.target.dataset.pfk];if(t){t.k=e.target.value;markSheet(c);refreshDerived(c)}}
 });
@@ -3559,6 +3966,7 @@ onSheet('click',e=>{
   if(d.stab){flushSecretW(sheetCid);sheetTab=d.stab;skEdit=false;renderSheet();SE.querySelector('.sheet-body').scrollTop=0;return}
   if(d.sktab){skTab=d.sktab;skEdit=false;renderSheet();return}
   if(!canEdit(c))return;
+  if(kind==='coc'&&cocClick(c,sh,d,b))return;
   if('sedit' in d){skEdit=!skEdit;renderSheet();return}
   if(d.sfav){const s=sh.sk.find(x=>x.id===d.sfav);if(!s)return;if(s.fav)delete s.fav;else s.fav=true;markSheet(c);renderSheet();return}
   if(d.smove){
@@ -3575,6 +3983,12 @@ onSheet('click',e=>{
     if(R.status==='ended'){toast('종료된 세션에서는 굴릴 수 없어요');return}
     const sp=rollSpec(kind,sh,item,k==='ab');const res=rollMsg(sp.f,sp.label,sp.target,c.id);
     if(res)toast(`${c.name} · ${sp.label}: ${res.r.total}${res.j.v?' · '+res.j.v:''}`);
+    if(res&&kind==='coc'&&sp.target){
+      const isLuck=k==='ab'&&item.k==='LUCK',combat=k==='sk'&&item.label==='회피';
+      if(k==='sk'&&okJ(res.j)&&item.label!=='크툴루 신화'){item.ck=true;markSheet(c)}
+      setLast(c,{label:sp.label,target:sp.target,total:res.r.total,c:res.j.c,push:!isLuck&&!combat,luck:!isLuck,sk:k==='sk'?item.id:null});
+      renderSheet();
+    }
     return;
   }
   if(d.sres){const [id,dlt]=d.sres.split(':');const r=sh.res.find(x=>x.id===id);r.cur=(+r.cur||0)+(+dlt);markSheet(c);renderSheet();return}
@@ -3587,12 +4001,7 @@ onSheet('click',e=>{
     const r=f=>roll(f).total;
     if(kind==='coc'){
       sh.ab.forEach(a=>{a.v=['SIZ','INT','EDU'].includes(a.k)?(r('2d6')+6)*5:r('3d6')*5});
-      const g=k=>+(sh.ab.find(a=>a.k===k)||{}).v||0;
-      const set=(label,cur,max)=>{const x=sh.res.find(z=>z.label===label);if(x){x.cur=cur;x.max=max}};
-      const hp=Math.floor((g('CON')+g('SIZ'))/10),mp=Math.floor(g('POW')/5);
-      set('체력',hp,hp);set('마력',mp,mp);set('이성',g('POW'),99);
-      const setBase=(label,val)=>{const x=sh.sk.find(s=>s.label===label);if(x){const raised=Math.max(0,(+x.v||0)-(x.b==null?(+x.v||0):+x.b));x.b=val;x.v=val+raised}};
-      setBase('회피',Math.floor(g('DEX')/2));setBase('모국어',g('EDU'));
+      delete sh.ageAdj;cocRecalc(sh);
     }else{
       sh.ab.forEach(a=>{const rs=[0,0,0,0].map(()=>r('1d6')).sort((x,y)=>x-y);a.v=rs[1]+rs[2]+rs[3]});
     }
@@ -3950,7 +4359,7 @@ function showPatch(){
 function renderPatch(){
   const ps=notices.filter(n=>n.kind==='patch'),seen=+(lsGet(PATCH_KEY())||0);
   $('#ptSub').textContent=ps.length?`지금 버전 ${ps.find(n=>n.ver)?.ver||''} · 지금까지 ${ps.length}번 바뀌었어요`.replace('지금 버전  · ',''):'사이트가 어떻게 바뀌어 왔는지 볼 수 있어요.';
-  $('#patchList').innerHTML=ps.length?ps.map((n,i)=>`<li class="patch-item${i===0?' latest':''}"><div class="patch-head">${n.ver?`<span class="pv">${esc(n.ver)}</span>`:''}<b>${esc(n.title)}</b>${n.ct>seen&&i<3?'<span class="patch-new">NEW</span>':''}<time>${ymd(n.ct)}</time></div><div class="patch-body">${fmt(n.body||'')}</div>${me&&me.admin?`<button class="x" data-ntdel="${esc(n.id)}" style="position:absolute;top:10px;right:10px;opacity:1" aria-label="패치 노트 삭제">×</button>`:''}</li>`).join('')
+  $('#patchList').innerHTML=ps.length?ps.map((n,i)=>`<li class="patch-item${i===0?' latest':''}"><div class="patch-head">${n.ver?`<span class="pv">${esc(n.ver)}</span>`:''}<b>${esc(n.title)}</b>${n.ct>seen&&i<3?'<span class="patch-new">NEW</span>':''}${n.et?`<time title="처음 올린 날 ${ymd(n.ct)}">(수정됨) ${ymd(n.et)} ${hhmm(n.et)}</time>`:`<time>${ymd(n.ct)}</time>`}</div><div class="patch-body">${fmt(n.body||'')}</div>${ntLog(n)}${me&&me.admin?`<button class="x" data-ntdel="${esc(n.id)}" style="position:absolute;top:10px;right:10px;opacity:1" aria-label="패치 노트 삭제">×</button>`:''}</li>`).join('')
     :'<li class="list-empty"><b>아직 올라온 패치 노트가 없어요</b>사이트가 업데이트되면 여기에 쌓여요.</li>';
 }
 $('#patchList').addEventListener('click',async e=>{const d=e.target.closest('[data-ntdel]');if(!d||!me||!me.admin)return;
@@ -3994,6 +4403,7 @@ addEventListener('hashchange',mtCheck);
 let siteCfg={},netCache=false,netBad=false,netT=null,deployState='',sysDismissed='';
 const maintOn=()=>siteCfg.maintenance===true&&!(me&&me.admin);
 function showMaint(){
+  bootDone();
   closeRoom();closeMail&&closeMail();document.documentElement.classList.remove('in-room');
   ['#homeView','#roomView','#profileView','#adminView','#authView','#patchView'].forEach(k=>$(k).hidden=true);
   $('#adminFab').hidden=true;$('#maintView').hidden=false;document.title=SITE;
@@ -4086,6 +4496,7 @@ setTimeout(checkDeploy,3000);setInterval(checkDeploy,180000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeploy()});
 
 function showOffline(){
+  bootDone();
   $('#homeView').hidden=true;$('#roomView').hidden=true;$('#profileView').hidden=true;$('#adminView').hidden=true;$('#authView').hidden=false;$('#adminFab').hidden=true;
   $('#authForm').hidden=true;$('#authNote').textContent='';
   $('#authSub').textContent='지금은 접속이 원활하지 않아요. 잠시 후 다시 들어와 주세요.';

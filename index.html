@@ -232,10 +232,11 @@ kbd{display:inline-block;min-width:1.5em;padding:1px 5px;border:1px solid var(--
 .bubble{position:relative;margin-top:3px;background:var(--sunk);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:9px 14px;overflow-wrap:break-word;line-break:strict;width:fit-content;width:calc-size(fit-content,size + 2px);max-width:100%}
 .whisper .bubble{background:transparent;border-style:dashed;color:var(--muted);font-style:italic}
 .whisper .who{flex-wrap:wrap}
-.narr{align-self:center;text-align:center;font-family:var(--f-narr);font-size:16.5px;line-height:1.85;padding:6px 20px;max-width:560px;overflow-wrap:break-word;line-break:strict}
+/* 지문: 어느 채팅 형식이든 같은 폭(최대 560px)·같은 여백·같은 글꼴로 보여요. 형식마다 다른 건 대사 사이 구분선뿐이에요 */
+.narr{align-self:center;text-align:center;font-family:var(--f-narr);font-size:16.5px;line-height:1.85;padding:6px 20px;margin:4px 0;max-width:min(560px,100%);overflow-wrap:break-word;line-break:strict}
 /* 글자 폭 반올림 때문에 '…??' 같은 문장부호 끝 글자만 다음 줄로 밀리는 걸 막아요 (말풍선·지문 폭에 2px 여유) */
-#log:not(.tpl-table)>.narr:not(.ns-chapter){width:fit-content;width:calc-size(fit-content,size + 2px)}
-.narr::before,.narr::after{content:"";display:block;width:36px;height:1px;background:var(--line);margin:8px auto}
+#log>.narr:not(.ns-chapter){width:fit-content;width:calc-size(fit-content,size + 2px)}
+.narr::before,.narr::after{content:"";display:block;width:36px;height:1px;background:var(--line);margin:6px auto}
 .mimg{display:block;max-width:min(100%,420px);max-height:360px;border-radius:10px;margin:4px 0;cursor:zoom-in;border:1px solid var(--line)}
 .narr .mimg{margin:6px auto;max-width:min(100%,520px)}
 .bubble .mimg:first-child{margin-top:0}
@@ -886,10 +887,10 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 .narr.ns-accent{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:4px 10px 10px 4px;padding:10px 16px;font-weight:500}
 .narr.ns-serif{font-family:var(--f-narr)!important;font-size:16.5px!important;line-height:1.85!important}
 .narr.ns-quiet{font-size:13px!important;color:var(--muted);font-style:italic}
-/* 도입부: 로그 폭 전체에 걸친 캡슐 모양 띠 */
-#log .narr.ns-chapter{align-self:center;width:fit-content!important;max-width:min(92%,720px)!important;margin:20px 0!important;padding:10px 30px!important;border-radius:999px;
-  background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
-  color:var(--accent);font-weight:700!important;font-size:17px!important;letter-spacing:.06em;line-height:1.6!important;font-style:normal!important}
+/* 캡슐: 글 길이에 맞는 작은 알약 모양. 장 제목이나 장면 전환에 써요 */
+#log .narr.ns-chapter{align-self:center;width:fit-content!important;max-width:min(92%,560px)!important;margin:14px 0!important;padding:5px 16px!important;border-radius:999px;
+  background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);
+  color:var(--accent);font-weight:600!important;font-size:13.5px!important;letter-spacing:.04em;line-height:1.6!important;font-style:normal!important;font-family:var(--f-body)!important}
 .narr.ns-chapter::before,.narr.ns-chapter::after{display:none!important}
 #log .narr.ns-chapter.na-l{align-self:flex-start}
 #log .narr.ns-chapter.na-r{align-self:flex-end}
@@ -902,6 +903,7 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 .narr.na-r::before,.narr.na-r::after{margin-right:0!important}
 #log .narr.na-l{align-self:flex-start}
 #log .narr.na-r{align-self:flex-end}
+#log.tpl-coco .narr.na-l{margin-left:14px}#log.tpl-coco .narr.na-r{margin-right:14px}
 #log .narr.na-r.ns-accent{border-left:0;border-right:3px solid var(--accent);border-radius:10px 4px 4px 10px}
 .na-seg button{padding:4px 8px!important;display:grid;place-items:center}
 .al{display:block;width:14px;height:10px;background:linear-gradient(currentColor,currentColor) 0 0/100% 2px no-repeat,linear-gradient(currentColor,currentColor) var(--ax) 4px/60% 2px no-repeat,linear-gradient(currentColor,currentColor) 0 8px/100% 2px no-repeat}
@@ -916,7 +918,7 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 #log.tpl-coco .msg .del{top:2px;right:2px}
 /* 채팅 형식: 표 (Roll20) */
 /* 코코포리아·표에서도 지문·주사위·날짜는 채팅 형식과 똑같이 가운데 */
-#log.tpl-coco .narr{max-width:560px;margin:14px 0}
+#log.tpl-coco .narr{margin:10px 0}
 #log.tpl-coco .narr+.say,#log.tpl-coco .narr+.whisper,#log.tpl-coco .dice-row+.say,#log.tpl-coco .dice-row+.whisper,#log.tpl-coco .daymark+.say,#log.tpl-coco .daymark+.whisper{border-top:1px solid var(--line)}
 .tpl-lines{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:7px;margin-top:8px;font-size:12.5px;color:var(--muted);cursor:pointer;width:100%}
 .tpl-lines span{flex:1;text-align:left}
@@ -929,7 +931,7 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 #log.tpl-coco .daymark,#log.tpl-table .daymark{margin:8px 0}
 /* 채팅 형식: 표 (Roll20) */
 #log.tpl-table{gap:0;padding:8px 0}
-#log.tpl-table .msg{max-width:none}
+#log.tpl-table .msg:not(.narr){max-width:none}
 #log.tpl-table .say,#log.tpl-table .whisper{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:6px 14px;border-top:1px solid var(--line);align-items:start}
 #log.tpl-table .say.mine,#log.tpl-table .whisper.mine{background:color-mix(in srgb,var(--accent) 14%,var(--sheet));border-top-color:color-mix(in srgb,var(--accent) 28%,var(--line))}
 #log.tpl-table .say>.av>.dot,#log.tpl-table .whisper>.av>.dot{width:30px;height:30px;border-radius:5px;font-size:13px}
@@ -943,18 +945,16 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 #log.tpl-table .msg .del{top:6px;right:8px}
 #log.tpl-table .msg .edt{top:6px;right:34px}
 #log.tpl-table .mimg{display:block;max-height:220px;margin-top:4px}
-#log.tpl-table .narr:not(.ns-chapter){align-self:stretch;max-width:none;margin:0;padding:8px 40px}
+#log.tpl-table .narr{margin:10px 0;max-width:min(560px,100%)}
 #log.tpl-table{overflow-x:hidden}
-#log.tpl-table .narr:not(.ns-chapter):not(.ns-box):not(.ns-accent){border-top:1px solid var(--line)}
-#log.tpl-table .narr.ns-box::before,#log.tpl-table .narr.ns-accent::before,#log.tpl-table .narr.ns-chapter::before{display:block!important;content:"";position:absolute;left:-3000px;right:-3000px;top:-11px;width:auto!important;height:1px!important;margin:0!important;background:var(--line);border:0!important}
-#log.tpl-table .narr.ns-chapter::before{top:-15px}
+/* 표 형식: 지문 모양은 다른 형식과 같고, 대사 사이처럼 위에 가로줄만 하나 그어요 */
+#log.tpl-table .narr{position:relative}
+#log.tpl-table .narr::before{display:block!important;content:"";position:absolute;left:-3000px;right:-3000px;top:-6px;width:auto!important;height:1px!important;margin:0!important;background:var(--line);border:0!important}
+#log.tpl-table .narr.ns-line::after,#log.tpl-table .narr.ns-serif::after{display:none}
+#log.tpl-table .narr.ns-chapter::before{top:-8px}
 #log.no-lines.tpl-table .narr::before{display:none!important}
-#log.tpl-table .narr.ns-line,#log.tpl-table .narr.ns-plain,#log.tpl-table .narr.ns-serif{font-weight:700}
-#log.tpl-table .narr.ns-line::before,#log.tpl-table .narr.ns-line::after,#log.tpl-table .narr.ns-serif::before,#log.tpl-table .narr.ns-serif::after{display:none}
-#log.tpl-table .narr.ns-box,#log.tpl-table .narr.ns-accent{align-self:center;max-width:min(560px,92%);margin:10px 0;padding:10px 16px}
-#log.tpl-table .narr.ns-box.na-l,#log.tpl-table .narr.ns-accent.na-l{align-self:flex-start;margin-left:14px}
-#log.tpl-table .narr.ns-box.na-r,#log.tpl-table .narr.ns-accent.na-r{align-self:flex-end;margin-right:14px}
-#log.tpl-table .narr.ns-chapter{margin:14px 14px!important}
+#log.tpl-table .narr.na-l{margin-left:14px}#log.tpl-table .narr.na-r{margin-right:14px}
+#log.tpl-table .msg+.narr{margin-top:12px}
 #log.tpl-table .dice-row{border-top:1px solid var(--line);margin:0;padding:12px 0;align-self:stretch;justify-content:center}
 #log.tpl-table .daymark{margin:0;padding:10px 0 6px}
 /* 떠 있는 창 공통 */
@@ -1588,7 +1588,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261114192424'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261114200827'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -4749,22 +4749,21 @@ function inlineLog(withStyle){
       continue;
     }
     if(m.type==='narr'){
+      // 지문은 형식에 상관없이 같은 모양이에요. 표 형식만 위에 가로줄 하나를 더 그어요
       const ns=NS[m.ns]?m.ns:'line',al={l:'left',c:'center',r:'right'}[NA[m.na]?m.na:'c'];
       const body=inlineText(m.text)+img;
-      if(ns==='chapter'){out+=`${sepLine}<div style="text-align:${al};margin:${tpl==='table'?'14px':'20px 0'}"><span style="display:inline-block;max-width:92%;background:${EXC.soft};border:1px solid ${EXC.ring};color:${EXC.accent};font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.6;border-radius:999px;padding:10px 30px">${body}</span></div>`;continue}
-      const tbl=tpl==='table'&&['line','plain','serif','quiet'].includes(ns);
-      const shortLine=`<div style="width:36px;height:1px;background:${EXC.line};margin:8px ${al==='left'?'0':'auto'} 8px ${al==='right'?'auto':al==='left'?'0':'auto'}"></div>`;
-      const mg=tbl?'0':al==='left'?'16px auto 16px 0':al==='right'?'16px 0 16px auto':'16px auto';
-      const base=`margin:${mg};max-width:${tbl?'none':'560px'};text-align:${al};line-height:1.75;font-size:15px;${tbl?`padding:8px 40px;${rowLine}${ns==='quiet'?'':'font-weight:700;'}`:''}`;
+      const side=tpl==='chat'?'0':'14px';
+      const pos=al==='center'?`margin-left:auto;margin-right:auto;`:al==='left'?`margin-left:${side};margin-right:auto;`:`margin-left:auto;margin-right:${side};`;
+      const sepT=tpl==='table'?sepLine:'';
+      if(ns==='chapter'){out+=`${sepT}<div style="width:fit-content;max-width:92%;${pos}margin-top:12px;margin-bottom:12px;background:${EXC.soft};border:1px solid ${EXC.ring};color:${EXC.accent};font-weight:600;font-size:13.5px;letter-spacing:.04em;line-height:1.6;border-radius:999px;padding:5px 16px;text-align:${al}">${body}</div>`;continue}
+      const shortLine=`<div style="width:36px;height:1px;background:${EXC.line};margin:6px ${al==='left'?'0':'auto'} 6px ${al==='right'?'auto':al==='left'?'0':'auto'}"></div>`;
       const sty={line:'padding:4px 20px;',plain:'padding:4px 20px;',
         box:`border:1px solid ${EXC.line};background:${EXC.sunk};border-radius:12px;padding:10px 16px;`,
         accent:`background:${EXC.soft};${al==='right'?`border-right:3px solid ${EXC.accent};border-radius:10px 4px 4px 10px;`:`border-left:3px solid ${EXC.accent};border-radius:4px 10px 10px 4px;`}padding:10px 16px;font-weight:500;`,
         serif:`font-family:${F.serif};font-size:16.5px;line-height:1.85;padding:4px 20px;`,
         quiet:`font-size:13px;color:${EXC.muted};font-style:italic;padding:2px 20px;`}[ns];
-      if(tbl)out+=`<div style="${base}${ns==='serif'?`font-family:${F.serif};`:ns==='quiet'?`font-size:13px;color:${EXC.muted};font-style:italic;`:''}">${body}</div>`;
-      else if(tpl==='table'&&(ns==='box'||ns==='accent'))out+=`${sepLine}<div style="margin:10px ${al==='right'?'14px':'auto'} 10px ${al==='left'?'14px':'auto'};max-width:min(560px,92%);text-align:${al};line-height:1.75;font-size:15px;${sty}">${body}</div>`;
-      else if(tpl==='coco')out+=`<div style="${base.replace(/margin:[^;]*;/,`margin:14px ${al==='right'?'0 14px auto':al==='left'?'auto 14px 0':'auto'};`)}${sty}">${ns==='line'||ns==='serif'?shortLine:''}${body}${ns==='line'||ns==='serif'?shortLine:''}</div>`;
-      else out+=`<div style="${base}${sty}">${ns==='line'||ns==='serif'?shortLine:''}${body}${ns==='line'||ns==='serif'?shortLine:''}</div>`;
+      const lined=ns==='line'||ns==='serif';
+      out+=`${sepT}<div style="width:fit-content;max-width:560px;${pos}margin-top:10px;margin-bottom:10px;text-align:${al};line-height:1.75;font-size:15px;${sty}">${lined?shortLine:''}${body}${lined?shortLine:''}</div>`;
       continue;
     }
     const isWh=m.type==='whisper';

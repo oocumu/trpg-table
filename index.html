@@ -1586,7 +1586,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261114153642'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261114155054'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -2934,9 +2934,15 @@ async function send(){
 function autoGrow(){const t=$('#msg');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,180)+'px'}
 /* 입력창에서 드래그한 범위를 기억해 둬요. 버튼을 눌러 포커스가 빠져도(특히 모바일) 고른 글자에 효과가 붙어요 */
 let msgSel=null;
-function wrap(open,close=open){
+function wrap(open,close=open,whole=false){
   const t=$('#msg');
   if(document.activeElement!==t&&msgSel&&msgSel[1]<=t.value.length){t.focus();t.setSelectionRange(msgSel[0],msgSel[1])}
+  // 버튼으로 넣을 때 드래그한 글자가 없으면, 이미 적은 글 전체에 씌워요 (/지문 · @이름 같은 앞 명령은 빼고)
+  if(whole&&t.selectionStart===t.selectionEnd&&t.value.trim()){
+    const pre=(t.value.match(/^(?:[@:]\S+\s+)?(?:\/\S+(?:\s+\([^)]*\))?\s+)?/)||[''])[0];
+    const body=t.value.slice(pre.length),lead=body.match(/^\s*/)[0],trail=body.match(/\s*$/)[0];
+    if(body.trim()){t.setSelectionRange(pre.length+lead.length,t.value.length-trail.length)}
+  }
   const a=t.selectionStart,b=t.selectionEnd,sel=t.value.slice(a,b);
   t.setRangeText(open+sel+close,a,b,'end');
   if(!sel){const p=a+open.length;t.setSelectionRange(p,p)}
@@ -2974,7 +2980,7 @@ const CHEAT_ACT={'**굵게**':['w','**'],'*기울임*':['w','*'],'__밑줄__':['
   const run=key=>{
     const a=CHEAT_ACT[key];if(!a)return;const t=$('#msg');
     if(innerWidth<=860)drawer(false);
-    if(a[0]==='w')wrap(a[1],a[2]==null?a[1]:a[2]);
+    if(a[0]==='w')wrap(a[1],a[2]==null?a[1]:a[2],true);
     else if(a[0]==='pick')$('#tcPick').click();
     else if(a[0]==='sheet')$('#sheetBtn').click();
     else{const cur=t.value.replace(/^\/\S*\s*/,'');t.value=a[1]+cur;t.focus();const p=a[1].length;t.setSelectionRange(p,p);autoGrow();setTimeout(acRender,0)}
@@ -3024,9 +3030,9 @@ document.addEventListener('click',e=>{
     if(!t.classList.contains('armed')){t.classList.add('armed');t.textContent='삭제할까요?';setTimeout(()=>{if(t.isConnected){t.classList.remove('armed');t.textContent='×'}},3000);return}
     B.deleteMessage(roomId,d.delmsg,!!d.w).then(()=>toast('메시지를 지웠어요')).catch(()=>toast('지우지 못했어요'));return}
   if(d.mode){mode=d.mode;remember();renderRoom();$('#msg').focus();return}
-  if(d.wrap){wrap(d.wrap);return}
-  if(d.color){wrap('{'+d.color+'|','}');return}
-  if(d.fx){wrap('{'+d.fx+'|','}');closeMenus();return}
+  if(d.wrap){wrap(d.wrap,d.wrap,true);return}
+  if(d.color){wrap('{'+d.color+'|','}',true);return}
+  if(d.fx){wrap('{'+d.fx+'|','}',true);closeMenus();return}
   if(d.export){closeMenus();doExport(d.export);return}
 });
 document.addEventListener('keydown',e=>{
@@ -3138,7 +3144,7 @@ $('#msg').addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&['b','i','u'].includes(e.key.toLowerCase())){e.preventDefault();wrap({b:'**',i:'*',u:'__'}[e.key.toLowerCase()])}
 });
 $('#msg').addEventListener('input',autoGrow);
-$('#tcPick').addEventListener('change',e=>{const v=e.target.value;if(/^#[0-9a-f]{6}$/i.test(v))wrap('{'+v+'|','}')});
+$('#tcPick').addEventListener('change',e=>{const v=e.target.value;if(/^#[0-9a-f]{6}$/i.test(v))wrap('{'+v+'|','}',true)});
 $('#bpStep').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.bp)setBp(bpCur+(+b.dataset.bp));else if(b.id==='bpVal')setBp(0);
   else if(b.id==='bpPin'){bpPin=!bpPin;lsSet('bt-bp-pin',bpPin);setBp(bpCur);toast(bpPin?'굴린 뒤에도 보정을 유지해요':'한 번 굴리면 보정이 풀려요')}});

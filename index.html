@@ -959,6 +959,8 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 #log.tpl-table .daymark{margin:0;padding:10px 0 6px}
 /* 떠 있는 창 공통 */
 .fwin-body{display:flex;flex-direction:column;gap:12px}
+/* 창 안의 칸들은 줄어들지 않고, 넘치면 창 전체가 스크롤돼요 (플레이리스트 목록이 눌려 안 보이던 문제) */
+.fwin-body>*{flex:none}
 .sheet.fwin{display:flex;flex-direction:column}.sheet.fwin>.sheet-body{flex:1;min-height:0;overflow:auto}
 .show-img{flex:1;min-height:0;width:100%;object-fit:contain;cursor:zoom-in;border-radius:8px;background:var(--sunk)}
 .show-del{align-self:flex-end}
@@ -1586,7 +1588,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261114155054'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261114192424'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 

@@ -880,6 +880,18 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 .tpl-seg{width:100%}.tpl-seg button{flex:1;font-size:12.5px;padding:4px 6px}
 .ns-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
 .ns-row .seg button{font-size:12.5px;padding:3px 9px}
+.ck-row{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:6px}
+.ck-row[hidden]{display:none}
+.ck-sw{--c:#18161d;position:relative;width:20px;height:20px;flex:none;border-radius:50%;border:0;padding:0;background:var(--c);cursor:pointer;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent);transition:transform .12s,box-shadow .12s}
+.ck-sw::after{content:"";position:absolute;inset:3px;border-radius:50%;border:1px solid rgba(255,255,255,.6);pointer-events:none}
+.ck-sw:hover{transform:scale(1.12)}
+.ck-sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--sheet),0 0 0 3.5px var(--c)}
+.ck-auto{background:linear-gradient(135deg,#18161d 50%,#8e1018 50%)}
+.ck-auto[aria-pressed="true"]{--c:#18161d}
+.ck-custom{background:conic-gradient(#e0453a,#e8a43a,#e8d63a,#4cbf6a,#3a9be0,#6a4ce0,#c44cc0,#e0453a)}
+.ck-custom.on{background:var(--c)}
+.ck-custom input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
 /* 지문 스타일 */
 .narr{font-family:var(--f-body)!important;font-size:15px!important;line-height:1.75!important}
 .narr.ns-plain::before,.narr.ns-plain::after,.narr.ns-box::before,.narr.ns-box::after,.narr.ns-accent::before,.narr.ns-accent::after,.narr.ns-quiet::before,.narr.ns-quiet::after{display:none}
@@ -887,6 +899,23 @@ html.yt-show #ytHolder iframe{display:block;width:336px;height:189px}
 .narr.ns-accent{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:4px 10px 10px 4px;padding:10px 16px;font-weight:500}
 .narr.ns-serif{font-family:var(--f-narr)!important;font-size:16.5px!important;line-height:1.85!important}
 .narr.ns-quiet{font-size:13px!important;color:var(--muted);font-style:italic}
+/* 판정: 양옆에 가는 줄이 이어진 검은(이성은 붉은) 이중 테두리 배지 */
+#log .narr.ns-check{align-self:stretch!important;width:auto!important;max-width:none!important;display:flex;align-items:center;gap:12px;padding:4px 0!important;margin:12px 0!important;font-family:var(--f-body)!important}
+#log .narr.ns-check::before,#log .narr.ns-check::after{content:""!important;display:block!important;flex:1;height:1px!important;width:auto!important;margin:0!important;background:var(--line);position:static!important}
+#log .narr.ns-check.na-l::before,#log .narr.ns-check.na-r::after{flex:0 0 14px}
+/* 배지 안쪽에 얇은 흰 선이 한 바퀴 도는 메달 느낌 (바깥은 같은 색 가는 테두리) */
+.ck-badge{--ck:#18161d;position:relative;display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:999px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--ck) 82%,#fff) 0%,var(--ck) 55%,color-mix(in srgb,var(--ck) 88%,#000) 100%);
+  color:#fff;font-size:12.5px!important;font-weight:700;letter-spacing:.06em;line-height:1.4!important;white-space:nowrap;
+  box-shadow:0 0 0 1.5px var(--sheet),0 0 0 2.5px var(--ck),0 3px 8px color-mix(in srgb,var(--ck) 30%,transparent);
+  max-width:calc(100% - 40px);overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.ck-badge::after{content:"";position:absolute;inset:3px;border-radius:inherit;border:1px solid rgba(255,255,255,.62);pointer-events:none}
+
+.ck-badge b{font-family:var(--f-mono);font-weight:700;letter-spacing:0}
+.ck-star{font-size:9px;opacity:.85;transform:translateY(-.5px)}
+:root[data-theme="dark"] .ns-check:not(.ck-col) .ck-badge{--ck:#f1edf8;color:#18161d;text-shadow:none}:root[data-theme="dark"] .ns-check:not(.ck-col) .ck-badge::after{border-color:rgba(24,22,29,.45)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ns-check:not(.ck-col) .ck-badge{--ck:#f1edf8;color:#18161d;text-shadow:none}:root:not([data-theme="light"]) .ns-check:not(.ck-col) .ck-badge::after{border-color:rgba(24,22,29,.45)}}
+#log.tpl-table .narr.ns-check::before{position:static!important;top:auto}
 /* 캡슐: 글 길이에 맞는 작은 알약 모양. 장 제목이나 장면 전환에 써요 */
 #log .narr.ns-chapter{align-self:center;width:fit-content!important;max-width:min(92%,560px)!important;margin:14px 0!important;padding:5px 16px!important;border-radius:999px;
   background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);
@@ -1421,6 +1450,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
           <dt>/지문 글 · /n 글</dt><dd>지문으로 한 번만</dd>
           <dt>/대사 글 · /s 글</dt><dd>대사로 한 번만</dd>
           <dt>/지문 (캡슐) 글</dt><dd>스타일 지정 (상자·강조·명조…)</dd>
+          <dt>/판정 이성 0/1D4</dt><dd>판정 배지 (조건은 뒤에)</dd>
           <dt>/ 입력</dt><dd>명령어 추천이 떠요</dd>
           <dt>📜 시트</dt><dd>능력치를 누르면 바로 굴림</dd>
         </dl>
@@ -1484,7 +1514,7 @@ html.in-room .toast{bottom:auto;top:calc(18px + env(safe-area-inset-top,0px))}
         </div>
         </div>
       </div>
-      <div class="ns-row" id="nsRow" hidden><span>지문 스타일</span><div class="seg" id="nsSeg"><button data-ns="line">기본</button><button data-ns="plain">줄 없음</button><button data-ns="box">상자</button><button data-ns="accent">강조</button><button data-ns="serif">명조</button><button data-ns="quiet">속삭임</button><button data-ns="chapter">캡슐</button></div><span style="margin-left:6px">정렬</span><div class="seg na-seg" id="naSeg"><button data-na="l" title="왼쪽 정렬" aria-label="왼쪽 정렬"><i class="al al-l"></i></button><button data-na="c" title="가운데 정렬" aria-label="가운데 정렬"><i class="al al-c"></i></button><button data-na="r" title="오른쪽 정렬" aria-label="오른쪽 정렬"><i class="al al-r"></i></button></div></div>
+      <div class="ns-row" id="nsRow" hidden><span>지문 스타일</span><div class="seg" id="nsSeg"><button data-ns="line">기본</button><button data-ns="plain">줄 없음</button><button data-ns="box">상자</button><button data-ns="accent">강조</button><button data-ns="serif">명조</button><button data-ns="quiet">속삭임</button><button data-ns="chapter">캡슐</button><button data-ns="check" title="‘관찰력’ → ✷ 관찰력 판정 ✷ / ‘이성 0/1D4’ → ✷ 이성 판정 0/1D4 ✷ / ‘파랑 관찰력’ → 파란 배지">판정</button></div><span class="ck-row" id="ckRow" hidden><span>배지 색</span><button type="button" class="ck-sw ck-auto" data-ck="" title="자동 (기본 검정 · 이성 판정은 빨강)" aria-label="자동"></button><button type="button" class="ck-sw" data-ck="#18161d" style="--c:#18161d" title="검정" aria-label="검정"></button><button type="button" class="ck-sw" data-ck="#8e1018" style="--c:#8e1018" title="빨강" aria-label="빨강"></button><button type="button" class="ck-sw" data-ck="#1f3f8f" style="--c:#1f3f8f" title="파랑" aria-label="파랑"></button><button type="button" class="ck-sw" data-ck="#2a7fb8" style="--c:#2a7fb8" title="하늘" aria-label="하늘"></button><button type="button" class="ck-sw" data-ck="#1d6b3a" style="--c:#1d6b3a" title="초록" aria-label="초록"></button><button type="button" class="ck-sw" data-ck="#a8771c" style="--c:#a8771c" title="노랑" aria-label="노랑"></button><button type="button" class="ck-sw" data-ck="#b13a6e" style="--c:#b13a6e" title="분홍" aria-label="분홍"></button><button type="button" class="ck-sw" data-ck="#5b2fa8" style="--c:#5b2fa8" title="보라" aria-label="보라"></button><label class="ck-sw ck-custom" id="ckCustomSw" title="원하는 색 직접 고르기"><input type="color" id="ckCustom" value="#5b2fa8" aria-label="원하는 색 직접 고르기"></label></span><span style="margin-left:6px">정렬</span><div class="seg na-seg" id="naSeg"><button data-na="l" title="왼쪽 정렬" aria-label="왼쪽 정렬"><i class="al al-l"></i></button><button data-na="c" title="가운데 정렬" aria-label="가운데 정렬"><i class="al al-c"></i></button><button data-na="r" title="오른쪽 정렬" aria-label="오른쪽 정렬"><i class="al al-r"></i></button></div></div>
       <div class="ac-pop" id="acPop" hidden role="listbox" aria-label="명령어 추천"></div>
       <div class="typing" id="typingBar" aria-live="polite" hidden></div>
       <div class="box" id="box">
@@ -1588,7 +1618,7 @@ const FIREBASE_CONFIG = {
   appId: "1:408083328859:web:3856e1b16e84eff45a747e",
   measurementId: "G-KHGVNGNGN5"
 };
-const BUILD_ID = '20261114200827'; // 배포 파일을 만들 때마다 바뀌는 번호예요
+const BUILD_ID = '20261114210150'; // 배포 파일을 만들 때마다 바뀌는 번호예요
 /* 다른 사이트가 이 사이트를 몰래 틀 안에 넣어 클릭을 유도하지 못하게 막아요 (배포 사이트에서만) */
 if(FIREBASE_CONFIG&&window.top!==window.self){document.documentElement.style.display='none';try{window.top.location.href=location.href}catch(e){}}
 
@@ -2774,6 +2804,23 @@ const avWrap=(inner,keys,cls='')=>{const ks=stKeysOk(keys);return `<span class="
 let AVS={};
 function msgAv(m,ch){if(m.av==='none')return null;if(m.av&&AVS[m.av])return AVS[m.av];return ch?ch.avatar:null}
 function onAvatars(o){const had=Object.keys(AVS).length;AVS=o||{};if(Object.keys(AVS).length!==had){lastLogHTML='';renderLog(false)}}
+/* 판정 배지: '관찰력' → ✷ 관찰력 판정 ✷, '이성 0/1D4' → ✷ 이성 판정 0/1D4 ✷ (이성은 붉은색) */
+/* 판정 배지 배경색: 맨 앞에 색 이름(빨강·파랑…)이나 #색코드를 적으면 그 색으로 칠해요 */
+const CK_COL={'검정':'#18161d','검은':'#18161d','빨강':'#8e1018','빨간':'#8e1018','적':'#8e1018','파랑':'#1f3f8f','파란':'#1f3f8f','초록':'#1d6b3a','녹색':'#1d6b3a','노랑':'#a8771c','노란':'#a8771c','금색':'#a8771c','보라':'#5b2fa8','회색':'#5e5a66','남색':'#1b2550','갈색':'#5a3a22','분홍':'#b13a6e','하늘':'#2a7fb8',
+  r:'#8e1018',b:'#1f3f8f',g:'#1d6b3a',y:'#a8771c',p:'#5b2fa8',m:'#5e5a66',k:'#18161d'};
+function checkParts(text){
+  let t=String(text||'').trim(),col=null;
+  const cm=t.match(/^(#[0-9a-fA-F]{6}|[가-힣]{1,2}|[rbgypmk])(?:색)?\s+(?=\S)/);
+  if(cm){const k=cm[1];if(/^#/.test(k)){col=k.toLowerCase()}else if(CK_COL[k]){col=CK_COL[k]}if(col)t=t.slice(cm[0].length)}
+  t=t.replace(/\s*판정\s*/,' ').replace(/\s+/g,' ').trim();
+  const m=t.match(/^(.*?)\s+((?:\d+|\d*[dD]\d+(?:[+-]\d+)?)\s*\/\s*(?:\d+|\d*[dD]\d+(?:[+-]\d+)?)|[+-]?\d+%?|(?:보너스|패널티|어려움|극단적)\S*)$/);
+  const name=(m?m[1]:t)||'',cond=m?m[2].replace(/\s+/g,'').toUpperCase():'';
+  const san=/이성|SAN|정신/i.test(name);
+  return {name,cond,san,col:col||(san?'#8e1018':null)};
+}
+/* 판정 글 맨 앞에 이미 색이 적혀 있는지 */
+function ckHasCol(text){const cm=String(text||'').trim().match(/^(#[0-9a-fA-F]{6}|[가-힣]{1,2}|[rbgypmk])(?:색)?\s+(?=\S)/);return !!(cm&&(/^#/.test(cm[1])||CK_COL[cm[1]]))}
+function checkLabel(text){const p=checkParts(text);return `${p.name} 판정${p.cond?' '+p.cond:''}`}
 function msgHTML(m,opts={}){
   const ch=R&&R.chars.find(x=>x.id===m.cid);if(ch)m={...m,name:ch.name,color:ch.color,avatar:msgAv(m,ch)};
   const canDel=!opts.export&&R&&me&&(!m.uid||m.uid===me.uid||R.ownerUid===me.uid);
@@ -2789,6 +2836,8 @@ function msgHTML(m,opts={}){
   const img=m.img?`<img class="mimg" src="${opts.export?safeImg(m.img):fastImg(m.img)}" alt="첨부 이미지" loading="lazy">`:'';
   if(m.type==='res'){const dl=(+m.to||0)-(+m.from||0),rc=safeColor(m.rc||'#7c5cff');
     return `<div class="msg resmsg${dl<0?' down':' up'}${cls}" style="--rc:${rc}">${del}<span class="rm-who">${esc(m.name)}</span><span class="rm-lbl">${esc(m.label)}</span><b class="rm-from">${esc(m.from)}</b><span class="rm-arr" aria-hidden="true">→</span><b class="rm-to">${esc(m.to)}</b>${m.max!=null?`<span class="rm-max">/ ${esc(m.max)}</span>`:''}<span class="rm-d">${dl>0?'+'+dl:'−'+(-dl)}</span>${m.note?`<span class="rm-note">${esc(m.note)}</span>`:''}</div>`}
+  if(m.type==='narr'&&m.ns==='check'&&!isEd){const cp=checkParts(m.text);
+    return `<div class="msg narr ns-check na-${NA[m.na]?m.na:'c'}${cp.san?' san':''}${cp.col?' ck-col':''}${cls}">${edBtn}${del}<span class="ck-badge"${cp.col?` style="--ck:${safeColor(cp.col)}"`:''}><span class="ck-star" aria-hidden="true">✦</span><span class="ck-txt">${fmt(cp.name)} 판정${cp.cond?` <b>${esc(cp.cond)}</b>`:''}</span><span class="ck-star" aria-hidden="true">✦</span></span>${edMark}${img}</div>`}
   if(m.type==='narr')return `<div class="msg narr ns-${NS[m.ns]?m.ns:'line'} na-${NA[m.na]?m.na:'c'}${cls}${isEd?' editing':''}">${edBtn}${del}${img}${isEd?edBox:fmt(m.text)+edMark}</div>`;
   if(m.type==='dice')return `<div class="msg dice-row${cls}" style="--cc:${safeColor(m.color)}">${del}<div class="dice">${avWrap(`<div class="die">${esc(m.total)}</div>`,m.sx,'av-die')}<div class="dice-meta">
     <div class="dice-top"><b>${esc(m.name)}</b> · ${esc(m.label||'주사위')}${m.target?' (기능치 '+esc(m.target)+')':''}${m.bp?`<span class="bp-tag">${+m.bp>0?'보너스':'패널티'} ${Math.abs(+m.bp)||''}</span>`:''}${m.verdict?`<span class="verdict ${esc(m.vc)}">${esc(m.verdict)}</span>`:''}</div>
@@ -2908,8 +2957,10 @@ async function send(){
   const pm=body.match(/^[@:](\S+)\s+([\s\S]+)$/);
   if(pm){const nm=pm[1].toLowerCase(),cand=mine();const hit=cand.find(c=>String(c.name).toLowerCase()===nm)||(()=>{const l=cand.filter(c=>String(c.name).toLowerCase().startsWith(nm));return l.length===1?l[0]:null})();
     if(hit){onceCid=hit.id;body=pm[2].trim()}}
-  const mm=body.match(/^\/(n|지문|s|대사)\s+([\s\S]+)$/i);
   let onceNs=null,onceNa=null;
+  // "/판정 관찰력", "/판정 이성 0/1D4" → 판정 배지 지문
+  const jm=body.match(/^\/판정\s+([\s\S]+)$/);if(jm){body='/지문 (판정) '+jm[1].trim()}
+  const mm=body.match(/^\/(n|지문|s|대사)\s+([\s\S]+)$/i);
   if(mm){onceMode=/^(n|지문)$/i.test(mm[1])?'narr':'say';body=mm[2].trim();
     // "/지문 (캡슐) 글", "/지문 (상자 왼쪽) 글" → 괄호 안이 전부 스타일 이름일 때만 스타일로 써요
     const sm=onceMode==='narr'&&body.match(/^\(([^()]+)\)\s*([\s\S]+)$/);
@@ -2929,6 +2980,8 @@ async function send(){
   }
   // 보내는 즉시 입력창을 비워서 바로 다음 말을 칠 수 있게 해요. 실패하면 글을 되돌려 놓아요.
   const img=pendingImg,ns={...(useMode==='narr'?{ns:onceNs||nsCur,na:onceNa||naCur}:{})};
+  // 판정 배지: 고른 배지 색을 글 앞에 붙여요 (글에 직접 색을 적었다면 그걸 우선해요)
+  if(ns.ns==='check'&&ckCur&&!ckHasCol(body))body=ckCur+' '+body;
   ta.value='';pendingImg=null;showAttach();autoGrow();ta.focus();
   const ok=await push({type:useMode,text:body,...extra,...ns,...(img?{img}:{})},onceCid);
   if(!ok){if(!ta.value.trim())ta.value=text;else ta.value=text+'\n'+ta.value;if(!pendingImg)pendingImg=img;showAttach();autoGrow()}
@@ -2936,6 +2989,13 @@ async function send(){
 function autoGrow(){const t=$('#msg');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,180)+'px'}
 /* 입력창에서 드래그한 범위를 기억해 둬요. 버튼을 눌러 포커스가 빠져도(특히 모바일) 고른 글자에 효과가 붙어요 */
 let msgSel=null;
+/* 판정 지문을 쓰는 중이면 색 버튼이 배지 배경색이 돼요 (맨 앞에 색을 붙이거나 바꿔요) */
+function ckPrefix(c){
+  const t=$('#msg');const isCk=(mode==='narr'&&nsCur==='check')||/^\/판정\s/.test(t.value)||/^\/지문\s+\(판정/.test(t.value);if(!isCk)return false;
+  const pm=t.value.match(/^(\/판정\s+|\/지문\s+\(판정[^)]*\)\s*)?/)[0];let rest=t.value.slice(pm.length);
+  rest=rest.replace(/^(#[0-9a-fA-F]{6}|[rbgypmk])\s+/,'');
+  t.value=pm+c+' '+rest;t.focus();const p=t.value.length;t.setSelectionRange(p,p);autoGrow();toast('판정 배지 배경색을 바꿨어요');return true;
+}
 function wrap(open,close=open,whole=false){
   const t=$('#msg');
   if(document.activeElement!==t&&msgSel&&msgSel[1]<=t.value.length){t.focus();t.setSelectionRange(msgSel[0],msgSel[1])}
@@ -2974,7 +3034,7 @@ const CHEAT_ACT={'**굵게**':['w','**'],'*기울임*':['w','*'],'__밑줄__':['
   '{r|색}':['w','{r|','}'],'{#ff6699|색}':['pick'],'{지직|글}':['w','{지직|','}'],'{흔들|글}':['w','{흔들|','}'],'{물결|글}':['w','{물결|','}'],'{빛|글}':['w','{빛|','}'],
   '{희미|글}':['w','{희미|','}'],'{작게|글}':['w','{작게|','}'],'{뒤집|글}':['w','{뒤집|','}'],
   '/r 2d6+1':['pre','/r 2d6+1 '],'/r 1d100<=60':['pre','/r 1d100<='],'/rb 60 · /rbb 60':['pre','/rb '],'/rp 60 · /rpp 60':['pre','/rp '],'/rb3 60 · /rp3 60':['pre','/rb3 '],
-  '@이름 대사':['pre','@'],':이름 대사':['pre',':'],'/지문 글 · /n 글':['pre','/지문 '],'/대사 글 · /s 글':['pre','/대사 '],'/지문 (캡슐) 글':['pre','/지문 ('],'/ 입력':['pre','/'],'📜 시트':['sheet']};
+  '@이름 대사':['pre','@'],':이름 대사':['pre',':'],'/지문 글 · /n 글':['pre','/지문 '],'/대사 글 · /s 글':['pre','/대사 '],'/지문 (캡슐) 글':['pre','/지문 ('],'/판정 이성 0/1D4':['pre','/판정 '],'/ 입력':['pre','/'],'📜 시트':['sheet']};
 (()=>{
   const dl=document.querySelector('#side .cheat:not(.keys)');if(!dl)return;
   dl.querySelectorAll('dt').forEach(dt=>{const a=CHEAT_ACT[dt.textContent.trim()];if(!a)return;const dd=dt.nextElementSibling;
@@ -3033,7 +3093,7 @@ document.addEventListener('click',e=>{
     B.deleteMessage(roomId,d.delmsg,!!d.w).then(()=>toast('메시지를 지웠어요')).catch(()=>toast('지우지 못했어요'));return}
   if(d.mode){mode=d.mode;remember();renderRoom();$('#msg').focus();return}
   if(d.wrap){wrap(d.wrap,d.wrap,true);return}
-  if(d.color){wrap('{'+d.color+'|','}',true);return}
+  if(d.color){if(ckPrefix(d.color))return;wrap('{'+d.color+'|','}',true);return}
   if(d.fx){wrap('{'+d.fx+'|','}',true);closeMenus();return}
   if(d.export){closeMenus();doExport(d.export);return}
 });
@@ -3059,9 +3119,10 @@ const AC_CMDS=[
   {c:'/rp3',d:'패널티 주사위를 숫자만큼 (1~9)',ex:'/rp3 60 관찰력',ins:'/rp3 '},
   {c:'/지문',a:['/n'],d:'이번 한 번만 지문으로',ex:'/지문 (캡슐) 제1장',ins:'/지문 '},
   {c:'/대사',a:['/s'],d:'이번 한 번만 대사로',ex:'/대사 안녕하세요',ins:'/대사 '},
+  {c:'/판정',d:'판정 배지 지문 (조건은 뒤에)',ex:'/판정 이성 0/1D4',ins:'/판정 '},
   {c:'@',d:'이번 한 번만 다른 캐릭터로',ex:'@이름 대사',ins:'@'}
 ];
-const AC_STYLES=[['기본','위아래 짧은 줄'],['줄없음','글만 깔끔하게'],['상자','테두리 상자'],['강조','보라 띠 강조'],['명조','명조체'],['속삭임','작고 흐리게'],['캡슐','캡슐 모양 띠 · 챕터 제목용'],['왼쪽','왼쪽 정렬'],['가운데','가운데 정렬'],['오른쪽','오른쪽 정렬']];
+const AC_STYLES=[['기본','위아래 짧은 줄'],['줄없음','글만 깔끔하게'],['상자','테두리 상자'],['강조','보라 띠 강조'],['명조','명조체'],['속삭임','작고 흐리게'],['캡슐','캡슐 모양 띠 · 챕터 제목용'],['판정','✷ 관찰력 판정 ✷ 배지 · 앞에 색, 뒤에 0/1D4 같은 조건'],['왼쪽','왼쪽 정렬'],['가운데','가운데 정렬'],['오른쪽','오른쪽 정렬']];
 let acItems=[],acSel=0,acRange=null;
 function acSkills(c){
   if(!c)return [];const sh=sheetOf(c),kind=c.sheetKind,out=[];
@@ -3146,7 +3207,7 @@ $('#msg').addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&['b','i','u'].includes(e.key.toLowerCase())){e.preventDefault();wrap({b:'**',i:'*',u:'__'}[e.key.toLowerCase()])}
 });
 $('#msg').addEventListener('input',autoGrow);
-$('#tcPick').addEventListener('change',e=>{const v=e.target.value;if(/^#[0-9a-f]{6}$/i.test(v))wrap('{'+v+'|','}',true)});
+$('#tcPick').addEventListener('change',e=>{const v=e.target.value;if(/^#[0-9a-f]{6}$/i.test(v)){if(ckPrefix(v))return;wrap('{'+v+'|','}',true)}});
 $('#bpStep').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.bp)setBp(bpCur+(+b.dataset.bp));else if(b.id==='bpVal')setBp(0);
   else if(b.id==='bpPin'){bpPin=!bpPin;lsSet('bt-bp-pin',bpPin);setBp(bpCur);toast(bpPin?'굴린 뒤에도 보정을 유지해요':'한 번 굴리면 보정이 풀려요')}});
@@ -3919,9 +3980,9 @@ function cocClick(c,sh,d,b){
 }
 
 /* ---------------- 방 공지 · 채팅 형식 · 지문 스타일 ---------------- */
-const NS_KO={'기본':'line','줄':'line','줄없음':'plain','상자':'box','박스':'box','강조':'accent','명조':'serif','속삭임':'quiet','작게':'quiet','캡슐':'chapter'},
+const NS_KO={'기본':'line','줄':'line','줄없음':'plain','상자':'box','박스':'box','강조':'accent','명조':'serif','속삭임':'quiet','작게':'quiet','캡슐':'chapter','판정':'check'},
   NA_KO={'왼쪽':'l','좌':'l','가운데':'c','중앙':'c','오른쪽':'r','우':'r'};
-const NS={line:1,plain:1,box:1,accent:1,serif:1,quiet:1,chapter:1},NA={l:1,c:1,r:1},TPLS={chat:1,coco:1,table:1};
+const NS={line:1,plain:1,box:1,accent:1,serif:1,quiet:1,chapter:1,check:1},NA={l:1,c:1,r:1},TPLS={chat:1,coco:1,table:1};
 let naCur='c',nsCur='line',shows=[],showsInit=false,tracks=[],bgmKey='';
 function renderRoomExtras(){
   if(!R)return;
@@ -3936,6 +3997,7 @@ function renderRoomExtras(){
   $('#noticeDel').hidden=!(R.notice&&R.notice.text);
   if(!NS[nsCur])nsCur='line';
   $('#nsRow').hidden=mode!=='narr';
+  $('#ckRow').hidden=nsCur!=='check';syncCk();
   if(chTab==='ooc')$('#msg').placeholder='사담을 입력하세요 · 닉네임으로 보내져요';
   syncToolBtns();
   $$('#nsSeg [data-ns]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ns===nsCur));
@@ -3963,6 +4025,15 @@ $('#tplSeg').addEventListener('click',e=>{const b=e.target.closest('[data-tpl]')
 $('#naSeg').addEventListener('click',e=>{const b=e.target.closest('[data-na]');if(!b||!NA[b.dataset.na])return;naCur=b.dataset.na;lsSet('bt-na-'+roomId,naCur);renderRoomExtras();$('#msg').focus()});
 $('#tplLines').addEventListener('change',e=>{if(!isGM())return;saveRoom({tplLines:e.target.checked});renderRoomExtras()});
 $('#stBadgeChk').addEventListener('change',e=>{if(!isGM())return;saveRoom({stBadge:e.target.checked});lastLogHTML='';renderRoom();renderLog(false);toast(e.target.checked?'캐릭터 상태를 이름 옆에 보여 줘요':'상태 표시를 껐어요')});
+/* 판정 배지 색: 자동 / 기본 색 / 직접 고르기 (이 기기에 기억해요) */
+let ckCur=(v=>/^#[0-9a-f]{6}$/i.test(v||'')?v.toLowerCase():'')(lsGet('bt-ckcol'));
+function syncCk(){const row=$('#ckRow');if(!row)return;let hit=false;
+  $$('#ckRow [data-ck]').forEach(b=>{const on=b.dataset.ck===ckCur;if(on)hit=true;b.setAttribute('aria-pressed',on)});
+  const cs=$('#ckCustomSw'),custom=!!ckCur&&!hit;cs.classList.toggle('on',custom);cs.setAttribute('aria-pressed',custom);
+  if(custom){cs.style.setProperty('--c',ckCur);$('#ckCustom').value=ckCur}else cs.style.removeProperty('--c')}
+function setCk(v){ckCur=v?String(v).toLowerCase():'';lsSet('bt-ckcol',ckCur);syncCk()}
+$('#ckRow').addEventListener('click',e=>{const b=e.target.closest('[data-ck]');if(!b)return;setCk(b.dataset.ck);$('#msg').focus()});
+$('#ckCustom').addEventListener('input',e=>{if(/^#[0-9a-f]{6}$/i.test(e.target.value))setCk(e.target.value)});
 $('#nsSeg').addEventListener('click',e=>{const b=e.target.closest('[data-ns]');if(!b||!NS[b.dataset.ns])return;nsCur=b.dataset.ns;lsSet('bt-ns-'+roomId,nsCur);renderRoomExtras();$('#msg').focus()});
 
 /* ---------------- 떠 있는 창 (이미지·플레이리스트) ---------------- */
@@ -4567,6 +4638,7 @@ function plainLog(){
     if(m.type==='res')return `▸ ${name} ${m.label} ${m.from} → ${m.to}${m.max!=null?' / '+m.max:''} (${(m.to-m.from)>0?'+':''}${m.to-m.from})${m.note?' · '+m.note:''}`;
     if(m.type==='dice')return `🎲 ${name}${stx} · ${m.label||'주사위'} ${m.f}${m.target?' (≤'+m.target+')':''}${m.bp?(m.bp>0?' 보너스 ':' 패널티 ')+Math.abs(m.bp):''} → ${m.total}${m.verdict?' '+m.verdict:''}`;
     const img=m.img?' [이미지]':'';
+    if(m.type==='narr'&&m.ns==='check')return `✦ ${plain(checkLabel(m.text))} ✦${img}`;
     if(m.type==='narr')return `— ${plain(m.text)}${img}`;
     return `${name}${stx}${m.type==='whisper'?`(귓속말→${m.toName||''})`:''}: ${plain(m.text)}${img}`;
   }).join('\n');
@@ -4755,6 +4827,8 @@ function inlineLog(withStyle){
       const side=tpl==='chat'?'0':'14px';
       const pos=al==='center'?`margin-left:auto;margin-right:auto;`:al==='left'?`margin-left:${side};margin-right:auto;`:`margin-left:auto;margin-right:${side};`;
       const sepT=tpl==='table'?sepLine:'';
+      if(ns==='check'){const cp=checkParts(m.text),ck=safeColor(cp.col||'#18161d'),ln=`<td style="border:0;padding:0;width:${al==='center'?'50%':'100%'}"><div style="height:1px;background:${EXC.line}"></div></td>`;
+        out+=`${sepT}<table style="width:100%;border-collapse:collapse;border:0;margin:12px 0"><tr>${al==='left'?`<td style="border:0;padding:0;width:14px"><div style="height:1px;background:${EXC.line}"></div></td>`:ln}<td style="border:0;padding:0 10px;white-space:nowrap;text-align:center"><span style="display:inline-block;padding:1.5px;border-radius:999px;border:1px solid ${ck};background:#ffffff"><span style="display:inline-block;padding:3px;border-radius:999px;background:${ck}"><span style="display:inline-block;padding:3px 15px;border-radius:999px;border:1px solid rgba(255,255,255,.62);color:#ffffff;font-size:12.5px;font-weight:700;letter-spacing:.06em;line-height:1.4">✦ ${inlineText(cp.name)} 판정${cp.cond?` <b style="font-family:${F.mono};letter-spacing:0">${esc(cp.cond)}</b>`:''} ✦</span></span></span></td>${al==='right'?`<td style="border:0;padding:0;width:14px"><div style="height:1px;background:${EXC.line}"></div></td>`:ln}</tr></table>`;continue}
       if(ns==='chapter'){out+=`${sepT}<div style="width:fit-content;max-width:92%;${pos}margin-top:12px;margin-bottom:12px;background:${EXC.soft};border:1px solid ${EXC.ring};color:${EXC.accent};font-weight:600;font-size:13.5px;letter-spacing:.04em;line-height:1.6;border-radius:999px;padding:5px 16px;text-align:${al}">${body}</div>`;continue}
       const shortLine=`<div style="width:36px;height:1px;background:${EXC.line};margin:6px ${al==='left'?'0':'auto'} 6px ${al==='right'?'auto':al==='left'?'0':'auto'}"></div>`;
       const sty={line:'padding:4px 20px;',plain:'padding:4px 20px;',
